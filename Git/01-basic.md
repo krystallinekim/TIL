@@ -79,3 +79,12 @@ git push origin main
 
 local에 저장된 **commit**을 remote에 저장함
 
+## **`git clone`**
+
+```
+git clone <URL>
+```
+
+github의 remote repo에서 local repo로 복사함
+
+bash에서 작성할 경우에는 ctrl+v가 안먹히므로 우클릭으로 하면 됨
