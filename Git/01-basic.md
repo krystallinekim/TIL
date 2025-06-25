@@ -21,6 +21,9 @@ Git 저장소 초기화.
 ```
 git init
 ```
+
+---
+
 ## **`git config`**
 
 ```
@@ -32,6 +35,7 @@ git config --global.user.emali # 이메일 지정
 
 github의 유저네임과 이메일과 똑같이 적용하는게 맞다
 
+---
 
 ## **`git add`**
 
@@ -42,6 +46,7 @@ git add <파일명>  # 특정 파일만 지정
 git add .  # 현재 폴더 전체 -> 매우 유용
 ```
 
+---
 
 ## **`git commit`**
 
@@ -53,6 +58,8 @@ git commit -m "<메시지>"
 
 이미 add된 변경사항만 commit할 수 있다.
 
+---
+
 ## **`git status`**
 
 현재 Git 상태 확인. 어떤 파일이 수정되었고, 추가할 파일은 무엇인지 확인.
@@ -61,13 +68,19 @@ git commit -m "<메시지>"
 git status
 ```
 
+---
+
 ## **`git remote add origin`**
+
 ```
 git remote add origin <URL> #연결해줄 github의 remote repository의 주소를 지정해줌
 ```
+
 내 컴퓨터의 repo는 local, github는 remote repo라고 부른다.
 
 github에 새로운 repo를 올릴 때마다 최초 한번씩 적용하는 용도
+
+---
 
 ## **`git push origin main`**
 
@@ -79,6 +92,8 @@ git push origin main
 
 local에 저장된 **commit**을 remote에 저장함
 
+---
+
 ## **`git clone`**
 
 ```
@@ -88,3 +103,5 @@ git clone <URL>
 github의 remote repo에서 local repo로 복사함
 
 bash에서 작성할 경우에는 ctrl+v가 안먹히므로 우클릭으로 하면 됨
+
+---
