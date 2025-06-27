@@ -6,6 +6,7 @@ Git ≠ Github. Git은 내 컴퓨터 내부에서 버전 관리(Version Control 
 
 Github는 그걸 인터넷에 올리는 클라우드
 
+---
 # Git 명령어(Github에 올릴 때까지)
 
 1. ## **`git init`**
@@ -18,7 +19,7 @@ Github는 그걸 인터넷에 올리는 클라우드
 
     폴더 안에 .git 폴더를 만들어줌 → 지워버리면 저장소가 아니게 됨
 
-    ```
+    ```bash
     git init
     ```
 
@@ -29,8 +30,8 @@ Github는 그걸 인터넷에 올리는 클라우드
 
     github의 유저네임과 이메일과 똑같이 적용하는게 맞다
 
-    ```
-    git config --global.user.name # 유저네임 지정
+    ```bash
+    git config --global.user.name  # 유저네임 지정
     git config --global.user.emali # 이메일 지정
     ```
 
@@ -39,9 +40,9 @@ Github는 그걸 인터넷에 올리는 클라우드
 
     수정한 파일을 커밋할 준비. 최초 등록 포함해서 특정 파일 또는 모든 파일을 추가.
 
-    ```
+    ```bash
     git add <파일명>  # 특정 파일만 지정
-    git add .  # 현재 폴더 전체 -> 매우 유용
+    git add .        # 현재 폴더 전체 -> 매우 유용
     ```
 
 
@@ -49,7 +50,7 @@ Github는 그걸 인터넷에 올리는 클라우드
 
     변경 사항을 Git에 저장. **커밋 메시지로 설명 추가.**
 
-    ```
+    ```bash
     git commit -m "<메시지>"
     ```
 
@@ -60,7 +61,7 @@ Github는 그걸 인터넷에 올리는 클라우드
 
     현재 Git 상태 확인. 어떤 파일이 수정되었고, 추가할 파일은 무엇인지 확인.
 
-    ```
+    ```bash
     git status
     ```
 
@@ -78,7 +79,7 @@ Github는 그걸 인터넷에 올리는 클라우드
 
 1. ## **`git push`**
 
-    ```
+    ```bash
     git push origin main
     ```
 
@@ -98,7 +99,7 @@ Github는 그걸 인터넷에 올리는 클라우드
 
 1. ## **`git clone`**
 
-    ```
+    ```bash
     git clone <URL>
     ```
 
