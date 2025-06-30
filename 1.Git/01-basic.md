@@ -6,6 +6,7 @@ Git ≠ Github. Git은 내 컴퓨터 내부에서 버전 관리(Version Control 
 
 Github는 그걸 인터넷에 올리는 클라우드
 
+
 ---
 # Git 명령어(Github에 올릴 때까지)
 
@@ -108,3 +109,5 @@ Github는 그걸 인터넷에 올리는 클라우드
     bash에서 작성할 경우에는 ctrl+v가 안먹히므로 우클릭으로 하면 됨
 
 ---
+
+# [Git 연습](https://github.com/krystallinekim/Git-Practice)
