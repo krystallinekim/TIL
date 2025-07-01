@@ -139,8 +139,8 @@
             `join_date DATE DEFAULT(CURRENT_DATE)`
 
 
-
 1. **`SHOW / DESC`** : 테이블 구조 확인 
+
     ```sql
     -- 테이블 목록 보기
     SHOW TABLES;
@@ -164,13 +164,14 @@
     -- 컬럼 삭제
     ALTER TABLE table_name DROP COLUMN column_name;
     ```
+
 1. **`DROP`** : 테이블 삭제 
     
     ```sql
     DROP TABLE table_name;
     ```
 
-    `DROP TABLE` 뒤에 `IF EXISTS`를 붙이면 있는 경우에만 삭제해줌 (+ 에러가 안남 / - 문제가 있어도 에러를 못봄)
+    `DROP` 뒤에 `IF EXISTS`를 붙이면 있는 경우에만 삭제해줌 (+ 에러가 안남 / - 문제가 있어도 에러를 못봄)
 
 
 ### DML(데이터 조작)
@@ -200,73 +201,53 @@
     SELECT * FROM table_name WHERE condition;
     ```
     이 때 condition에는 PK인 `id=2` 말고도 `name='이름'` 등의 일반 키도 들어갈 수 있다.
-     
-UPDATE - 데이터 수정
-UPDATE table_name SET column1 = value1 WHERE condition;
-DELETE - 데이터 삭제
-DELETE FROM table_name WHERE condition;
+    
+1. **`UPDATE`** : 데이터 수정
+    
+    ```sql
+    UPDATE table_name SET column1 = value1 WHERE condition;
+    ```
+
+1. **`DELETE`** : 데이터 삭제
+    
+    ```sql
+    DELETE FROM table_name WHERE condition;
+    ```
+
+    `SELECT`, `UPDATE`, `DELETE` 뒤에는 항상 `WHERE condition`이 들어간다고 생각하면 됨
 
 
+## 참고사항
 
+### 데이터 지정 범위의 위험성
 
-
-⚠️ 주의사항
-
-안전한 쿼리 작성
-
--- ❌ 위험 (모든 데이터 영향)
-
+```sql
 UPDATE users SET status = 'inactive';
-
+-- 모든 유저를 비활성으로 처리
 DELETE FROM users;
+-- users의 모든 데이터를 삭제
+```
+데이터 범위를 지정하지 않게 되면 테이블 안의 모든 데이터를 수정/삭제해 버릴 수 있다.
 
--- ✅ 안전 (조건 지정)
-
+```sql
 UPDATE users SET status = 'inactive' WHERE id = 1;
 
 DELETE FROM users WHERE status = 'deleted';
-
-WHERE 절 필수 상황
-
-UPDATE: 특정 데이터만 수정
-
-DELETE: 특정 데이터만 삭제
-
-SELECT: 조건에 맞는 데이터만 조회
-
-IF EXISTS 사용
-
--- 에러 방지
-
-DROP TABLE IF EXISTS table_name;
-
-DROP DATABASE IF EXISTS database_name;
-
-🎯 핵심 포인트
-
-DDL로 구조를 만들고, DML로 데이터를 다룬다
-
-스키마는 데이터베이스의 설계도
-
-제약조건은 데이터 무결성 보장
-
-WHERE 절은 안전한 데이터 조작의 핵심
-
-PRIMARY KEY + AUTO_INCREMENT는 기본 패턴
-
-DEFAULT + CURRENT_TIMESTAMP로 자동 시간 입력
+```
+꼭 필요한 경우를 제외하면 WHERE 구문을 이용해 수정/삭제할 범위를 지정해 주도록 하자.
 
 
+### CRUD
 
-**CRUD**
+| | 의미 | 예시
+| --- | --- | ---|
+| Create | 생성 | DB CREATE, 테이블 CREATE, 데이터 INSERT 등|
+|Read/Retrieve| 조회 | DB와 테이블 SHOW, DESC, 데이터 SELECT 등|
+|Update |  변경 | 테이블 구조 변경(ALTER), 데이터 UPDATE 등|
+| Delete | 삭제 | DB, 테이블 DROP, 데이터 DELETE 등|
 
-Create - 생성
+데이터베이스에서 할 수 있는 모든 작업은 크게 4개의 operation중 하나로 이루어져 있다
 
-Read/Retrieve - 조회
+이 중 Create/Delete는 한번만 하게 되고, Update는 필요할 때만 하게 되지만, Read는 정말 매 순간 하게 될 것
 
-Update - 변경
-
-Delete - 삭제
-
-모든 데이터베이스는 이렇게 4개의 operation으로 이루어져 있음
 
