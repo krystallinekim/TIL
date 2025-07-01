@@ -8,3 +8,23 @@ SELECT * FROM students;
 -- 이름순 정렬 (ASC는 생략 가능)
 SELECT * FROM students ORDER BY name;
 SELECT * FROM students ORDER BY name DESC;
+
+ALTER TABLE students ADD COLUMN grade VARCHAR(1) DEFAULT('B');
+
+UPDATE students SET grade = 'A' WHERE id BETWEEN 1 AND 3;
+
+-- 다중 컬럼 정렬 : 앞에 말한게 우선
+SELECT * FROM students ORDER BY
+age ASC,
+grade DESC;
+
+SELECT * FROM students ORDER BY
+grade DESC,
+age ASC;
+
+SELECT * FROM students
+WHERE age < 40
+ORDER BY
+grade,
+age DESC
+LIMIT 5;

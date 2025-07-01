@@ -94,10 +94,10 @@
 
     ```sql
     CREATE TABLE table_name (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(30) NOT NULL,
-        email VARCHAR(50) UNIQUE,
-        join_date DATE DEFAULT(CURRENT_DATE)
+        id          INT         AUTO_INCREMENT PRIMARY KEY,
+        name        VARCHAR(30) NOT NULL,
+        email       VARCHAR(50) UNIQUE,
+        join_date   DATE        DEFAULT CURRENT_DATE 
     );
     ```
 
