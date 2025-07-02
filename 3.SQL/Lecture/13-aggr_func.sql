@@ -15,22 +15,34 @@ FROM sales;
 SELECT
 	FORMAT(SUM(total_amount),0) AS 총매출액, 							-- FORMAT(큰 수, 소수점) : 3자리마다 콤마를 찍어 보기 쉽게 함
     SUM(quantity) AS 총판매수량,
-	FORMAT(SUM(IF(region = '서울', total_amount,0)),0) AS 서울매출, 	-- IF를 이용해서 특정 값만 뽑아 쓸 수 있는데, 이러면 서울이 아니면 0값을 줘서 더해버린 셈임 -> 최적화면에서 별로 좋진 않음
-	FORMAT(															-- SUM 안쪽이 길어지면 엔터로 구분해주는 게 좋다
+	FORMAT(SUM(IF(region = '서울', total_amount,0)),0) AS 서울매출, 
+	FORMAT(
 		SUM(
 			IF(
 				category = '전자제품',total_amount,0
 			)
         ),0
-	) AS 전자매출
-
+	) AS 전자매출														-- SUM 안쪽이 길어지면 엔터로 구분해주는 게 좋다
 FROM sales;
+
+-- 적당한 데이터량?
+-- 서울매출 방법1(SUM(IF))
+SELECT
+	SUM(IF(region = '서울', total_amount,0)) AS 서울매출 
+FROM sales; 	-- IF를 이용해서 특정 값만 뽑아 쓸 수 있는데, 이러면 서울이 아니면 0값을 줘서 더해버린 셈임 -> 최적화면에서 별로 좋진 않음, 데이터 양이 적당하면 딱히 상관은 없다
+-- 서울매출 방법2(WHERE)
+SELECT
+	SUM(total_amount)
+FROM sales
+WHERE region = '서울';
+
+
 
 
 -- AVG() -> 평균
 SELECT
     FORMAT(AVG(total_amount),0)							 AS 평균매출액,
-	FORMAT(SUM(total_amount) / COUNT(total_amount),0)	 AS 평균매출액2,
+	FORMAT(SUM(total_amount) / COUNT(total_amount),0)	 AS 평균매출액2, 	-- 둘은 같은 작용을 함
     FORMAT(AVG(quantity),0) 							 AS 평균판매수량,
     FORMAT(AVG(unit_price),0)							 AS 평균단가
 FROM sales;
