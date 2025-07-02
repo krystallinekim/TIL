@@ -9,8 +9,8 @@ INSERT INTO members (name,email) VALUES ('김정수','kim@a.com');
 INSERT INTO members (name,email) VALUES ('김정수2','kim2@a.com');
 -- 여러개를 한번에 넣는 것도 가능함
 INSERT INTO members (email,name) VALUES
-('lee@a.com','이이이'),
-('park@b.com','박박박');
+    ('lee@a.com','이이이'),
+    ('park@b.com','박박박');
 
 -- 데이터 확인/조회 (Read)
 

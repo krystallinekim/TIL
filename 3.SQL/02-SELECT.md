@@ -20,6 +20,7 @@ SELECT 컬럼명 FROM 테이블명 WHERE 조건 ORDER BY 정렬기준 LIMIT 개�
 
 ```sql
 SELECT * FROM students WHERE name = '이도윤';
+
 SELECT * FROM students WHERE id != 1;
 ```
 
@@ -28,13 +29,16 @@ SELECT * FROM students WHERE id != 1;
 - `BETWEEN A AND B` : A와 B 사이 값 (포함)  
     ```sql
     column BETWEEN num1 AND num2
+
     column >= num1 AND column <= num2
     ```
     위 두 구문은 같은 구문임
 
 ```sql
 SELECT * FROM students WHERE age >= 20;
+
 SELECT * FROM students WHERE age < 40;
+
 SELECT * FROM students WHERE age BETWEEN 20 AND 40;
 ```
 
@@ -47,6 +51,7 @@ SELECT * FROM students WHERE age BETWEEN 20 AND 40;
 
 ```sql
 SELECT * FROM students WHERE id IN (1, 3, 4, 7);
+
 SELECT * FROM userinfo WHERE name IN ('alice', 'bruce');
 ```
 
@@ -60,7 +65,9 @@ SELECT * FROM userinfo WHERE name IN ('alice', 'bruce');
 
 ```sql
 SELECT * FROM students WHERE name LIKE '김%';    -- '김'으로 시작  
+
 SELECT * FROM students WHERE name LIKE '%윤%';   -- 이름에 '윤' 포함  
+
 SELECT * FROM students WHERE name LIKE '윤__';    -- '윤'으로 시작하고 총 3글자  
 ```
 
@@ -73,6 +80,7 @@ SELECT * FROM students WHERE name LIKE '윤__';    -- '윤'으로 시작하고 �
 
 ```sql
 SELECT * FROM userinfo WHERE email IS NULL;
+
 SELECT * FROM userinfo WHERE email IS NOT NULL;
 ```
 
@@ -107,8 +115,11 @@ SELECT * FROM userinfo WHERE email IS NOT NULL;
 
 ```sql
 SELECT * FROM userinfo ORDER BY name LIMIT 3;
+
 SELECT * FROM userinfo WHERE email LIKE '%@gmail.com' ORDER BY age;
+
 SELECT name, phone, age FROM userinfo ORDER BY age DESC, phone LIMIT 3;
+
 SELECT * FROM userinfo ORDER BY age LIMIT 3 OFFSET 1;
 ```
 
@@ -150,6 +161,7 @@ SELECT * FROM userinfo ORDER BY age LIMIT 3 OFFSET 1;
   문자열의 길이를 반환합니다.  
   ```sql
   SELECT CHAR_LENGTH('hello sql');  -- 결과: 9
+
   SELECT name, CHAR_LENGTH(name) AS 길이 FROM dt_demo; -- 각 이름의 길이 조회
   ```
 
@@ -157,6 +169,7 @@ SELECT * FROM userinfo ORDER BY age LIMIT 3 OFFSET 1;
   여러 문자열을 이어붙입니다.  
   ```sql
   SELECT CONCAT('hello ', 'sql', ' !!');  -- 결과: 'hello sql !!'
+
   SELECT CONCAT(name, ' (', score, '점)') AS info FROM dt_demo; -- 이름과 점수 합쳐서 출력
   ```
 
@@ -176,7 +189,9 @@ SELECT * FROM userinfo ORDER BY age LIMIT 3 OFFSET 1;
   문자열의 특정 위치부터 지정한 길이만큼 부분 문자열을 추출합니다.  
   ```sql
   SELECT SUBSTRING('hello sql!', 2, 4);  -- 결과: 'ello'
+
   SELECT LEFT(description, 3) FROM dt_demo;  -- 설명의 앞 3글자만 추출
+
   SELECT RIGHT(description, 3) FROM dt_demo; -- 설명의 뒤 3글자만 추출
   ```
 
@@ -184,6 +199,7 @@ SELECT * FROM userinfo ORDER BY age LIMIT 3 OFFSET 1;
   문자열 내 특정 부분을 다른 문자열로 치환합니다.  
   ```sql
   SELECT REPLACE('A@gmail.com', 'A', 'B');  -- 결과: 'B@gmail.com'
+  
   SELECT REPLACE(description, '학생', '**') AS secret FROM dt_demo;  -- '학생'을 '**'로 대체
   ```
 

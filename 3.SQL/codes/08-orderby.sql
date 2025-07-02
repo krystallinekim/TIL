@@ -15,16 +15,16 @@ UPDATE students SET grade = 'A' WHERE id BETWEEN 1 AND 3;
 
 -- 다중 컬럼 정렬 : 앞에 말한게 우선
 SELECT * FROM students ORDER BY
-age ASC,
-grade DESC;
+    age ASC,
+    grade DESC;
 
 SELECT * FROM students ORDER BY
-grade DESC,
-age ASC;
+    grade DESC,
+    age ASC;
 
 SELECT * FROM students
-WHERE age < 40
-ORDER BY
-grade,
-age DESC
-LIMIT 5;
+    WHERE age < 40
+    ORDER BY
+    grade,
+    age DESC
+    LIMIT 5;
