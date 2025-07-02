@@ -69,7 +69,7 @@ SELECT
     DAY(birth) AS 일,			-- 일
     DAYNAME(birth) AS 요일,		-- 요일 -> Friday로 고정값
     DAYOFWEEK(birth) AS 요일번호,	-- 요일번호 -> 요일번호에 따라 '일요일', 'SUN' 등으로 매핑 가능함
-    QUARTER(birth)AS 분기		-- 분기
+    QUARTER(birth) AS 분기		-- 분기
 FROM dt_demo;
 
 -- 월별, 연도별
