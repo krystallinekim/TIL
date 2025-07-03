@@ -1,0 +1,248 @@
+# Functions
+
+##  문자열 함수
+
+- **CHAR_LENGTH(str)**  
+  문자열의 길이를 반환  
+  ```sql
+  SELECT CHAR_LENGTH('hello sql');  -- 결과: 9
+
+  SELECT name, CHAR_LENGTH(name) AS 길이 FROM dt_demo; -- 각 이름의 길이 조회
+  ```
+
+- **CONCAT(str1, str2, ...)**  
+  여러 문자열을 이어붙임 
+  ```sql
+  SELECT CONCAT('hello ', 'sql', ' !!');  -- 결과: 'hello sql !!'
+
+  SELECT CONCAT(name, ' (', score, '점)') AS info FROM dt_demo; -- 이름과 점수 합쳐서 출력
+  ```
+
+- **UPPER(str)**  
+  문자열을 모두 대문자로 변환  
+  ```sql
+  SELECT UPPER(nickname) AS 대문자닉네임 FROM dt_demo;
+  ```
+
+- **LOWER(str)**  
+  문자열을 모두 소문자로 변환  
+  ```sql
+  SELECT LOWER(nickname) AS 소문자닉네임 FROM dt_demo;
+  ```
+
+- **SUBSTRING(str, pos, len) / LEFT,RIGHT(str,len)**  
+  부분 문자열 추출  
+  ```sql
+  SELECT SUBSTRING('hello sql!', 2, 4);  -- 결과: 'ello'
+
+  SELECT LEFT(description, 3) FROM dt_demo;  -- 설명의 앞 3글자만 추출
+
+  SELECT RIGHT(description, 3) FROM dt_demo; -- 설명의 뒤 3글자만 추출
+  ```
+
+- **REPLACE(str, old, new)**  
+  문자열 내 특정 부분을 다른 문자열로 치환합니다.  
+  ```sql
+  SELECT REPLACE('A@gmail.com', 'A', 'B');  -- 결과: 'B@gmail.com'
+  
+  SELECT REPLACE(description, '학생', '**') AS secret FROM dt_demo;  -- '학생'을 '**'로 대체
+  ```
+
+- **TRIM(str)**  
+  문자열 앞뒤의 공백을 제거합니다.  
+  ```sql
+  SELECT TRIM('   what??   ') AS trimmed;  -- 결과: 'what??'
+  ```
+
+- **LOCATE(substr, str)**  
+  특정 문자열이 전체 문자열 내에 위치한 시작 인덱스(1부터)를 반환합니다.  
+  ```sql
+  SELECT LOCATE('@', 'username@gmail.com');  -- 결과: 9 ('@' 위치)
+  
+  SELECT SUBSTRING(description, 1, LOCATE('학생', description) - 1) AS 학생설명 FROM dt_demo;
+  -- '학생' 앞까지 설명 일부 추출
+  ```
+
+  
+## 날짜/시간 함수
+
+| 함수명 | 용도 | 예시 | 결과 |
+|--------|------|------|------------|
+| `NOW()` | 현재 날짜 + 시간 | `SELECT NOW();` | 2025-07-02 14:30:21 |
+| `CURDATE()` | 현재 날짜만 | `SELECT CURDATE();` | 2025-07-02 |
+| `CURTIME()` | 현재 시간만 | `SELECT CURTIME();` | 14:30:21 |
+| `DATE_FORMAT(date, format)` | 날짜 포맷 변경 | `DATE_FORMAT(birth, '%Y년 %m월')` | 2010년 05월 |
+| `DATEDIFF(a, b)` | 두 날짜 간 일수 차이 | `DATEDIFF(CURDATE(), birth)` | 5521 |
+| `TIMESTAMPDIFF(unit, a, b)` | 단위별 날짜 차이 | `TIMESTAMPDIFF(YEAR, birth, CURDATE())` | 15 |
+| `DATE_ADD(date, INTERVAL n unit)` | 날짜 더하기 | `DATE_ADD(birth, INTERVAL 100 DAY)` | 2010-08-29 |
+| `DATE_SUB(date, INTERVAL n unit)` | 날짜 빼기 | `DATE_SUB(CURDATE(), INTERVAL 1 MONTH)` | 2025-06-02 |
+| `YEAR(date)` | 연도 추출 | `YEAR(birth)` | 2010 |
+| `MONTH(date)` | 월 추출 | `MONTH(birth)` | 5 |
+| `DAY(date)` | 일 추출 | `DAY(birth)` | 21 |
+| `DAYNAME(date)` | 요일 이름 | `DAYNAME(birth)` | Friday |
+| `QUARTER(date)` | 분기 추출 | `QUARTER(birth)` | 2 |
+
+
+ **주요 포맷 문자**
+- `%Y`: 4자리 연도 / `%y`: 2자리 연도  
+- `%m`: 월 (숫자) / `%M`: 월 (영문)  
+- `%d`: 일  
+- `%W`: 요일 이름 / `%w`: 요일 번호  
+- `%H`: 시(24시) / `%h`: 시(12시) / `%i`: 분 / `%p`: AM/PM
+
+---
+
+## 숫자 함수
+
+| 함수명 | 용도 | 예시 | 결과 |
+|--------|------|------|------------|
+| `ROUND(n)` | 반올림 | `ROUND(87.5)` | 88 |
+| `ROUND(n, 1)` | 소수 첫째자리 반올림 | `ROUND(87.56, 1)` | 87.6 |
+| `CEIL(n)` | 올림 | `CEIL(87.1)` | 88 |
+| `FLOOR(n)` | 내림 | `FLOOR(87.9)` | 87 |
+| `TRUNCATE(n, 1)` | 소수점 버림 | `TRUNCATE(87.56, 1)` | 87.5 |
+| `ABS(n)` | 절댓값 | `ABS(-10)` | 10 |
+| `MOD(a, b)` 또는 `a % b` | 나머지 | `MOD(10, 3)` / `10 % 3` | 1 |
+| `DIV` | 몫 | `10 DIV 3` | 3 |
+| `POWER(a, b)` | 제곱 | `POWER(2, 3)` | 8 |
+| `SQRT(n)` | 제곱근 | `SQRT(16)` | 4 |
+
+---
+
+## 조건 함수
+조건에 따라 다른 값을 반환
+
+### **IF()**  
+단순 조건 분기: `IF(조건, 참값, 거짓값)`
+
+```sql
+SELECT
+  name,
+  score,
+  IF(score >= 80, '우수', '보통') AS 평가
+FROM dt_demo;
+```
+
+### **CASE WHEN**  
+다양한 조건 분기 처리:
+
+```sql
+SELECT
+  score,
+  CASE
+    WHEN score >= 90 THEN 'A'
+    WHEN score >= 80 THEN 'B'
+    WHEN score >= 70 THEN 'C'
+    ELSE 'D'
+  END AS 등급
+FROM dt_demo;
+```
+
+### **NULL 처리**
+- `IFNULL(score, 0)`: NULL일 경우 0 반환
+- `COALESCE(a, b, c)`: a, b, c 중 가장 먼저 NULL이 아닌 값을 반환
+
+
+## 집계 함수 (Aggregate)
+
+다수의 행에 대해 요약된 결과를 계산
+
+| 함수 | 설명 |
+|------|------|
+| `COUNT()` | 행 개수 |
+| `SUM()` | 총합 |
+| `AVG()` | 평균 |
+| `MIN()` / `MAX()` | 최소 / 최대값 |
+
+```sql
+SELECT
+  COUNT(*) AS 총주문건수,
+  SUM(total_amount) AS 총매출,
+  AVG(total_amount) AS 평균주문액,
+  MIN(order_date) AS 첫주문,
+  MAX(order_date) AS 마지막주문
+FROM sales;
+```
+
+---
+
+## GROUP BY
+
+**기본 구조**: 특정 컬럼으로 묶어서 요약 통계를 계산
+
+스프레드시트에서 피벗테이블과 비슷
+
+```sql
+SELECT
+  category,
+  COUNT(*) AS 카테고리별_건수,
+  SUM(total_amount) AS 카테고리별_매출
+FROM sales
+GROUP BY category
+ORDER BY 카테고리별_매출 DESC;
+```
+- GROUP BY는 지정된 컬럼 기준으로 집계를 나눔
+
+- ORDER BY로 결과 정렬도 가능
+
+**다중 그룹핑**
+
+그룹핑은 2개 기준 이상으로도 가능함
+
+```sql
+SELECT
+  region,
+  category,
+  SUM(total_amount) AS 지역별_카테고리별_매출
+FROM sales
+GROUP BY region, category;
+```
+
+**예제**
+
+```sql
+-- 월별 매출 추이
+SELECT
+  DATE_FORMAT(order_date, '%Y-%m') AS 월,
+  SUM(total_amount) AS 월매출
+FROM sales
+GROUP BY DATE_FORMAT(order_date, '%Y-%m');
+```
+
+---
+
+## HAVING
+
+GROUP BY 결과에 조건 필터를 적용할 때 사용
+
+```sql
+SELECT
+  category,
+  SUM(total_amount) AS 카테고리별_총매출
+FROM sales
+GROUP BY category
+HAVING 카테고리별_총매출 >= 10000000;
+```
+
+**WHERE vs HAVING**
+
+| 항목 | WHERE | HAVING |
+|------|-------|--------|
+| 조건 대상 | 개별 행 | 그룹핑 결과 |
+| 실행 시점 | GROUP BY 전에 작동 | GROUP BY 이후 작동 |
+
+HAVING은 피벗 테이블의 결과에 필터를 걸고, WHERE은 전체 데이터에 필터를 걸어놓고 피벗 테이블을 만드는 과정이라고 보면 편함
+
+**예제**
+
+```sql
+-- 우수 영업사원 찾기 (월평균 매출 50만원 이상)
+SELECT
+  sales_rep,
+  SUM(total_amount) AS 사원별_총매출,
+  COUNT(DISTINCT MONTH(order_date)) AS 사원별_활동개월수,
+  ROUND(SUM(total_amount) / COUNT(DISTINCT MONTH(order_date))) AS 사원별_월평균매출
+FROM sales
+GROUP BY sales_rep
+HAVING 사원별_월평균매출 >= 500000
+ORDER BY 사원별_월평균매출 DESC;
