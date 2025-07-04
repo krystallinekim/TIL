@@ -107,19 +107,22 @@ SELECT
     MAX(s.order_date) AS 최근주문일
 FROM customers c
 JOIN sales s ON c.customer_id = s.customer_id
-GROUP BY 고객명, 고객유형;
+GROUP BY 고객명, 고객유형
+ORDER BY 고객유형, 평균구매 DESC;
 
 -- 문제 7: 모든 고객의 주문 통계 (LEFT JOIN) - 주문 없는 고객도 포함
 SELECT
 	c.customer_name AS 고객명,
     c.customer_type AS 고객유형,
-    COUNT(s.id) AS 주문횟수,
-    COALESCE(SUM(s.total_amount),0) AS 총구매,
+    c.join_date AS 가입일,
+    COUNT(s.id) AS 주문횟수,								-- LEFT JOIN에서는 COUNT 안에 *를 쓰는 것을 주의 - 데이터가 NULL인 값이 분명 나올 것이기 때문
+    COALESCE(SUM(s.total_amount),0) AS 총구매,			-- NULL이 나올 것이기 때문에 합, 평균 등등 숫자 쓰려면 COALESCE가 나와야 할 것
     COALESCE(ROUND(AVG(s.total_amount)),0) AS 평균구매,
+    COALESCE(MAX(s.total_amount),0) AS 최대구매,
     COALESCE(MAX(s.order_date),'주문없음') AS 최근주문일
 FROM customers c
 LEFT JOIN sales s ON c.customer_id = s.customer_id
-GROUP BY c.customer_name, c.customer_type
+GROUP BY 고객명, 고객유형, 가입일
 ORDER BY 고객명;
 
 -- 문제 8: 카테고리별 고객 유형 분석
@@ -131,13 +134,15 @@ SELECT
     SUM(s.total_amount) AS 주문_총액
 FROM customers c
 JOIN sales s ON c.customer_id = s.customer_id
-GROUP BY 카테고리, 고객유형;
+GROUP BY s.category, c.customer_type;
 
 -- 문제 9: 고객별 등급 분류
 -- 활동등급(구매횟수) : [0(잠재고객) < 브론즈 < 3 <= 실버 < 5 <= 골드 < 10 <= 플래티넘]
 -- 구매등급(구매총액) : [0(신규) < 일반 <= 10만 < 우수 <= 20만 < 최우수 < 50만 <= 로얄]
 SELECT
-	c.customer_name,
+	c.customer_name AS 고객명,
+    c.customer_type AS 고객유형,
+-- 	COUNT(s.id) AS 구매횟수,
     CASE
 		WHEN COUNT(s.id) >= 10 	THEN '플래티넘'
         WHEN COUNT(s.id) >= 5 	THEN '골드'
@@ -145,16 +150,17 @@ SELECT
         WHEN COUNT(s.id) >= 1 	THEN '브론즈'
         ELSE '잠재고객'
 	END AS 활동등급,
+-- 	COALESCE(SUM(s.total_amount),0) AS 구매총액,
     CASE
-		WHEN SUM(s.total_amount) >= 500000 	THEN '👑로얄'
-        WHEN SUM(s.total_amount) >= 200000 	THEN '❤️최우수'
-        WHEN SUM(s.total_amount) >= 100000 	THEN '🟡우수'
-        WHEN SUM(s.total_amount) > 0 		THEN '🚫일반'
-        ELSE '신규'
+		WHEN COALESCE(SUM(s.total_amount)) >= 500000 	THEN '👑 로얄'
+        WHEN COALESCE(SUM(s.total_amount)) >= 200000 	THEN '❤️ 최우수'
+        WHEN COALESCE(SUM(s.total_amount)) >= 100000 	THEN '🟡 우수'
+        WHEN COALESCE(SUM(s.total_amount)) >= 0 		THEN '⭕  일반'
+        ELSE '--  신규'
 	END AS 구매등급
 FROM customers c
 LEFT JOIN sales s ON c.customer_id = s.customer_id
-GROUP BY c.customer_name;
+GROUP BY c.customer_id, c.customer_name, c.customer_type;
 
 -- 문제 10: 활성 고객 분석
 -- 고객상태(최종구매일) [NULL(구매없음) | 활성고객 <= 30 < 관심고객 <= 90 < 휴면고객]별로
