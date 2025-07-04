@@ -207,9 +207,9 @@ ORDER BY 사원별_월평균매출 DESC;
 
 - 위 코드와 아래 코드를 각각 실행 후, 한 테이블에 보여줌
 
-- 위 아래 컬럼 숫자도 맞춰 줘야 한다
+- 위 아래 컬럼 숫자, 데이터 타입도 맞춰 줘야 한다
 
-- 위아래 AS가 다르다면 순서 기준으로 들어감
+- 위아래 컬럼명이 다르다면 첫 번째 컬럼명을 사용함
 
     ```sql
     SELECT COUNT(*) AS 개수 FROM sales
@@ -217,7 +217,7 @@ ORDER BY 사원별_월평균매출 DESC;
     SELECT COUNT(*) AS 개수 FROM customers;
     -- 결과: 개수 컬럼에 sales 줄수, customers 줄수가 이어서 나옴
     ```
-
+- `UNION ALL`을 이용하면 중복 데이터도 포함해서 보여준다. 
 
 ## View
 
