@@ -6,6 +6,8 @@
 
 주로 `WHERE`, `SELECT`, `FROM` 절에서 사용하며 외부 쿼리에서 필요한 데이터를 미리 계산해 사용.
 
+괄호 안에 다른 쿼리(SELECT ***)를 이용하면 그 안의 쿼리를 먼저 계산 후, 그 결과를 하나의 데이터로 사용해 외부 쿼리를 계산한다.
+
 ## 서브쿼리 결과의 형태
 
 1. **단일 값 (Scalar)**  
@@ -37,65 +39,94 @@
 
 ## 왜 서브쿼리를 써야 하는가
 
-```sql
--- ❌ 잘못된 예시 (집계함수 WHERE에서 바로 사용 불가)
-SELECT *
-FROM sales
-WHERE total_amount > AVG(total_amount);
--- 오류: 집계함수는 테이블 전체 스캔 후 결과가 나오는데,
--- WHERE는 각 행에 대해 조건 검사 → 작동하지 않음
-```
+예시로, 평균보다 매출이 높은 주문들을 보고 싶을 때,
 
 ```sql
--- ✅ 올바른 예시 (집계값을 서브쿼리로 처리)
-SELECT *
-FROM sales
+SELECT * FROM sales
+WHERE total_amount > AVG(total_amount);
+```
+AVG로 바로 비교하려 하면 오류가 나온다.
+
+집계함수는 테이블 전체 스캔 후 결과가 나오는데, WHERE는 각 행에 대해 조건 검사를 하려 해서 작동하지 않음
+
+```sql
+SELECT AVG(total_amounts) FROM sales;
+
+SELECT * FROM sales
+WHERE total_amount > 288375;
+```
+
+이걸 평균값을 직접 구한 뒤 그 값을 이용해 계산하는 건 오류도 안나오고, 답도 제대로 나온다
+
+다만, 이러면 평균값이 바뀔 때(데이터가 변경될 때) 마다 계산을 다시 돌리고, 코드도 수정해 줘야 함
+
+```sql
+SELECT * FROM sales
 WHERE total_amount > (SELECT AVG(total_amount) FROM sales);
 ```
 
-#### 1.4.2 최대값, 최근값 찾기
-
-```sql
--- 최대 주문 찾기
-SELECT *
-FROM sales
-WHERE total_amount = (SELECT MAX(total_amount) FROM sales);
-```
-
-```sql
--- 최근 주문 찾기
-SELECT *
-FROM sales
-WHERE order_date = (SELECT MAX(order_date) FROM sales);
-```
-
-```sql
--- 서브쿼리 없이도 가능하지만...
-SELECT *
-FROM sales
-ORDER BY total_amount DESC
-LIMIT 1;
--- ⚠️ 차이점: 데이터가 많을 때 정렬 방식은 성능 저하 가능
-```
+위 2줄짜리 코드를 한 줄에 적어 놓은게 서브쿼리
 
 
-#### 1.4.3 벡터 서브쿼리 (IN 사용)
+## 서브쿼리로 할 수 있는 것들
 
-```sql
--- VIP 고객들의 모든 주문
-SELECT *
-FROM sales
-WHERE customer_id IN (
-    SELECT customer_id
-    FROM customers
-    WHERE customer_type = 'VIP'
-)
-ORDER BY total_amount DESC;
-```
+1. 평균과 비교
+
+    ```sql
+    -- 평균보다 높은 주문들
+    SELECT
+        product_name,
+        total_amount,
+        total_amount - (SELECT AVG(total_amount) FROM sales) AS 평균차이
+    FROM sales
+    WHERE total_amount > (SELECT AVG(total_amount) FROM sales);
+    -- 결과: 평균보다 높은 주문들의 이름, 판매액, 편차로 이루어진 표
+    ```
+
+1. 최대/최소값 찾기
+    ```sql
+    -- 가장 비싼 주문
+    SELECT * FROM sales
+    WHERE total_amount = (SELECT MAX(total_amount) FROM sales);
+    -- 결과: total_amount의 최댓값을 가진 주문들의 전체 판매 데이터
+
+    -- 가장 최근 주문들
+    SELECT * FROM sales
+    WHERE order_date = (SELECT MAX(order_date) FROM sales);
+    -- 결과: order_date가 가장 최근인 주문들의 전체 판매 데이터
+    ```
+    위 경우는 결과 데이터가 여러 개 나올 수도 있다. 가장 최근에 거래된 주문이 여러 개일 수도 있기 때문
+
+    같은 작업을 서브쿼리 없이도 할 수 있지만(order_date로 정렬 후 LIMIT 1로 숫자를 제한), 결과에 해당하는 주문이 여러 개인 경우를 검색하지 못한다.
 
 
+1. 목록에 포함된 것들 (IN 사용)
 
-### 서브쿼리를 써야 하는 경우
+    ```sql
+    -- VIP 고객들의 모든 주문
+    SELECT * FROM sales
+    WHERE customer_id IN (
+        SELECT customer_id FROM customers
+        WHERE customer_type = 'VIP'
+    )
+    ORDER BY total_amount DESC;
+    -- 결과: customer_type이 VIP인 고객들의 모든 판매 데이터
+    ```
+
+    ```sql
+    -- 전자제품을 구매한 적 있는 고객들의 모든 주문
+    SELECT * FROM sales
+    WHERE customer_id IN (
+        SELECT DISTINCT customer_id
+        FROM sales
+        WHERE category = '전자제품'
+    );
+    -- 결과: category가 전자제품인 제품들의 모든 판매 데이터
+    ```
+    위 경우는 서브쿼리를 돌리면 결과가 한 줄로 나온다(Vector). 벡터 데이터를 이용하려면 IN을 써야 한다.
+
+
+## 서브쿼리를 써야 하는 경우
 
 -  **집계값과 비교** (평균, 최대, 최소 등)
 
@@ -106,39 +137,54 @@ ORDER BY total_amount DESC;
    - 예) VIP 고객들의 주문 내역
 
 
-### 쓰면 안되는 경우
+## 쓰면 안되는 경우
 
 - 조건이 **단순하거나 고정된 값**일 때
 
 - 여러 테이블 데이터 결합 시 **JOIN이 더 직관적**일 때
 
+---
 
 # JOIN
 
-### 2.1 JOIN 개념
+## JOIN 개념
 
-- 여러 테이블 데이터를 **연결**하여 하나의 결과로 합침.  
-- `ON` 절에 테이블 연결 조건 지정.
+여러 테이블 데이터를 **연결**하여 하나의 결과로 합침.  
 
-### 2.2 서브쿼리 방식과 JOIN 방식 비교
+`ON` 절 뒤에 테이블 연결 조건 지정.
 
-#### 2.2.1 서브쿼리 방식 (복잡하고 비효율적)
+### JOIN의 형식
 
 ```sql
--- ❌ 서브쿼리 방식: 코드 길고 비효율적
 SELECT
-    s.product_name,
-    s.total_amount,
-    (SELECT customer_name 
-     FROM customers
-     WHERE customers.customer_id = s.customer_id) AS customer_name
-FROM sales s;
+    t1.column1,
+    t2.column2,
+    ...
+FROM table1 t1
+JOIN table2 t2
+ON JOIN_연결조건;
 ```
+JOIN 연결조건에는 보통 두 테이블 간의 공통 키이면서 고유키를 사용함
 
-#### 2.2.2 JOIN 방식 (간단하고 효율적)
+
+## 왜 JOIN을 써야 하는가
+
+테이블이 2개 있고, 테이블 c(customer)에 고객정보 / 테이블 s(sale)에 판매 데이터가 존재할 때, 한 테이블에 고객정보와 판매데이터를 같이 보고 싶을 때가 있을 수 있다.
 
 ```sql
--- ✅ JOIN 방식: 간단하고 효율적
+SELECT
+    customer_id,
+    product_name,
+    total_amount,
+    (SELECT customer_name FROM customers WHERE customer_id = sales.customer_id) AS customer_name,
+    (SELECT customer_type FROM customers WHERE customer_id = sales.customer_id) AS customer_type
+FROM sales;
+```
+이걸 서브쿼리를 이용한다면, 매우 길고 현학적이 된다.
+
+보면, 내가 보고싶은 데이터 하나마다 서브쿼리를 하나씩 짜서 넣는 걸 알 수 있음. 매우 비효율적임
+
+```sql
 SELECT
     c.customer_name,
     c.customer_type,
@@ -147,65 +193,30 @@ SELECT
 FROM customers c
 INNER JOIN sales s ON c.customer_id = s.customer_id;
 ```
+이걸 JOIN을 이용한다면 짧고 효율적으로 이 코드를 만들 수 있다.
 
-### 2.3 LEFT JOIN으로 잠재고객 포함 분석
+JOIN을 통해 두 테이블을 customer_id를 기준으로 하나로 합치고, 각각 테이블에서 원하는 컬럼을 뽑아오는 것.
 
-```sql
-SELECT
-    c.customer_name,
-    c.customer_type,
-    COUNT(s.id) AS 주문횟수,
-    COALESCE(SUM(s.total_amount), 0) AS 총구매액,
-    CASE 
-        WHEN COUNT(s.id) = 0 THEN '잠재고객'
-        WHEN COUNT(s.id) >= 5 THEN '충성고객'
-        ELSE '일반고객'
-    END AS 고객분류
-FROM customers c
-LEFT JOIN sales s ON c.customer_id = s.customer_id
-GROUP BY c.customer_id, c.customer_name, c.customer_type;
-```
+## JOIN의 종류
 
-### 2.4 JOIN의 종류와 집합 개념
+[참고하면 좋은 그림](https://i.stack.imgur.com/1UKp7.png)
 
-| JOIN 종류            | 설명                                                   | SQL 예제                                                        | 집합 개념          |
+| JOIN 종류            | 설명                                                   | 코드                                                        | 집합 개념          |
 |-----------------------|---------------------------------------------------------|------------------------------------------------------------------|---------------------|
-| **INNER JOIN**        | 양쪽 테이블 모두 존재하는 데이터만 반환               | `INNER JOIN`                                                    | A ∩ B (교집합)     |
+| **INNER JOIN**        | 양쪽 테이블 모두 존재하는 데이터만 반환               | `(INNER) JOIN`                                                    | A ∩ B (교집합)     |
 | **LEFT JOIN**         | 왼쪽 테이블(A)의 모든 데이터 + 오른쪽 매칭 데이터     | `LEFT JOIN`                                                     | A                  |
 | **LEFT JOIN + NULL**  | 왼쪽 데이터 중 오른쪽에 매칭되지 않는 데이터만 반환   | `LEFT JOIN ... WHERE b.key IS NULL`                             | A ∩ Bᶜ (차집합)    |
 | **RIGHT JOIN**        | 오른쪽 테이블(B)의 모든 데이터 + 왼쪽 매칭 데이터     | `RIGHT JOIN`                                                    | B                  |
 | **FULL OUTER JOIN**   | 양쪽 테이블의 모든 데이터 반환                        | `FULL OUTER JOIN`                                               | A ∪ B (합집합)     |
 
-### 2.5 오류와 올바른 JOIN 예제
+보통 INNER JOIN, LEFT JOIN을 주로 사용한다. RIGHT JOIN은 테이블 순서를 바꾸면 LEFT JOIN과 같기 때문.
 
-```sql
--- ❌ 오류: LEFT JOIN 후 COUNT(*), 주문 없는 고객도 1로 카운트됨
-SELECT c.customer_name, COUNT(*)
-FROM customers c LEFT JOIN sales s ON c.customer_id = s.customer_id
-GROUP BY c.customer_name;
-```
+## GROUP BY + JOIN
 
-```sql
--- ✅ 올바른 방법: COUNT(s.id), 주문 없는 고객은 0으로 카운트됨
-SELECT c.customer_name, COUNT(s.id) AS 주문횟수
-FROM customers c LEFT JOIN sales s ON c.customer_id = s.customer_id
-GROUP BY c.customer_name;
-```
+항상 유형별로 데이터를 보고싶은 경우가 생기기 때문
 
-```sql
--- ✅ NULL 처리: COALESCE 사용
-SELECT
-    c.customer_name,
-    COALESCE(SUM(s.total_amount), 0) AS 총구매액,
-    COALESCE(MAX(s.order_date), '주문없음') AS 최근주문일
-FROM customers c
-LEFT JOIN sales s ON c.customer_id = s.customer_id
-GROUP BY c.customer_name;
-```
 
-## 3. GROUP BY + JOIN
-
-### 3.1 고객 유형별 평균 구매금액
+고객정보와 판매정보가 다른 테이블에 존재할 때, 고객유형별로 판매 데이터를 보고 싶을 경우
 
 ```sql
 SELECT
@@ -219,10 +230,10 @@ GROUP BY c.customer_type
 ORDER BY 평균구매금액 DESC;
 ```
 
-## 4. 자주하는 실수와 해결법
+## 자주하는 실수와 해결법
 
-| 실수                                        | 올바른 방법                                                  |
-|---------------------------------------------|---------------------------------------------------------------|
-| **GROUP BY 누락**                          | SELECT의 일반 컬럼은 모두 GROUP BY에 포함                     |
-| **LEFT JOIN 후 COUNT(*) 사용**              | COUNT(오른쪽테이블.id) 사용, NULL 값 제외                     |
-| **NULL 값 처리 누락**                       | COALESCE로 NULL → 기본값 대체                                 |
+| 실수 | 해석 | 해결법 |
+| --- | --- | --- |
+| **GROUP BY 누락** | 일반 컬럼을 카테고리화 하지 않았을 경우 |SELECT의 집계함수를 제외한 일반 컬럼은 모두 GROUP BY에 포함해야 함|
+| **LEFT JOIN 후 COUNT(*) 사용** | LEFT JOIN하면 교집합이 아닌 경우도 데이터로 들어가는데, NULL이라 데이터가 없어야 하는 상황에서도 *는 데이터를 세어버림 |COUNT(오른쪽테이블.id) 사용, NULL 값 제외 |
+| **컬럼 앞에 테이블명 안 쓰기** | 어디서 참조해 올지 몰라 에러가 생김 | 테이블명을 꼭 써주자 |

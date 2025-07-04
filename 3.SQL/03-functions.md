@@ -2,36 +2,46 @@
 
 ##  문자열 함수
 
-- **CHAR_LENGTH(str)**  
-  문자열의 길이를 반환  
+- **CHAR_LENGTH(str)** 
+
+  문자열의 길이를 반환 
+
   ```sql
   SELECT CHAR_LENGTH('hello sql');  -- 결과: 9
 
-  SELECT name, CHAR_LENGTH(name) AS 길이 FROM dt_demo; -- 각 이름의 길이 조회
+  SELECT name, CHAR_LENGTH(name) AS 길이 FROM dt_demo; -- 이름과 각 이름의 길이
   ```
 
 - **CONCAT(str1, str2, ...)**  
+
   여러 문자열을 이어붙임 
+
   ```sql
   SELECT CONCAT('hello ', 'sql', ' !!');  -- 결과: 'hello sql !!'
 
-  SELECT CONCAT(name, ' (', score, '점)') AS info FROM dt_demo; -- 이름과 점수 합쳐서 출력
+  SELECT CONCAT(name, '(', score, '점)') AS info FROM dt_demo; -- 이름과 점수 합쳐서 출력, 형태는 김김김(90점) 처럼
   ```
 
 - **UPPER(str)**  
+
   문자열을 모두 대문자로 변환  
+
   ```sql
   SELECT UPPER(nickname) AS 대문자닉네임 FROM dt_demo;
   ```
 
 - **LOWER(str)**  
-  문자열을 모두 소문자로 변환  
+
+  문자열을 모두 소문자로 변환
+
   ```sql
   SELECT LOWER(nickname) AS 소문자닉네임 FROM dt_demo;
   ```
 
 - **SUBSTRING(str, pos, len) / LEFT,RIGHT(str,len)**  
+
   부분 문자열 추출  
+
   ```sql
   SELECT SUBSTRING('hello sql!', 2, 4);  -- 결과: 'ello'
 
@@ -41,7 +51,9 @@
   ```
 
 - **REPLACE(str, old, new)**  
-  문자열 내 특정 부분을 다른 문자열로 치환합니다.  
+
+  문자열 내 특정 부분을 다른 문자열로 치환  
+
   ```sql
   SELECT REPLACE('A@gmail.com', 'A', 'B');  -- 결과: 'B@gmail.com'
   
@@ -49,18 +61,21 @@
   ```
 
 - **TRIM(str)**  
-  문자열 앞뒤의 공백을 제거합니다.  
+
+  문자열 앞뒤의 공백을 제거  
+
   ```sql
   SELECT TRIM('   what??   ') AS trimmed;  -- 결과: 'what??'
   ```
 
 - **LOCATE(substr, str)**  
-  특정 문자열이 전체 문자열 내에 위치한 시작 인덱스(1부터)를 반환합니다.  
+
+  특정 문자열이 전체 문자열 내에 위치한 시작 인덱스(1부터)를 반환  
+
   ```sql
   SELECT LOCATE('@', 'username@gmail.com');  -- 결과: 9 ('@' 위치)
   
-  SELECT SUBSTRING(description, 1, LOCATE('학생', description) - 1) AS 학생설명 FROM dt_demo;
-  -- '학생' 앞까지 설명 일부 추출
+  SELECT SUBSTRING(description, 1, LOCATE('학생', description) - 1) AS 학생설명 FROM dt_demo; -- 첫번째 글자부터 '학생' 앞까지 설명 추출
   ```
 
   
@@ -84,10 +99,15 @@
 
 
  **주요 포맷 문자**
+
 - `%Y`: 4자리 연도 / `%y`: 2자리 연도  
+
 - `%m`: 월 (숫자) / `%M`: 월 (영문)  
+
 - `%d`: 일  
+
 - `%W`: 요일 이름 / `%w`: 요일 번호  
+
 - `%H`: 시(24시) / `%h`: 시(12시) / `%i`: 분 / `%p`: AM/PM
 
 ---
@@ -110,9 +130,11 @@
 ---
 
 ## 조건 함수
+
 조건에 따라 다른 값을 반환
 
 ### **IF()**  
+
 단순 조건 분기: `IF(조건, 참값, 거짓값)`
 
 ```sql
@@ -121,10 +143,12 @@ SELECT
   score,
   IF(score >= 80, '우수', '보통') AS 평가
 FROM dt_demo;
+-- 점수가 80점 이상이면 우수, 나머지는 보통
 ```
 
 ### **CASE WHEN**  
-다양한 조건 분기 처리:
+
+다양한 조건 분기 처리 가능
 
 ```sql
 SELECT
@@ -136,12 +160,20 @@ SELECT
     ELSE 'D'
   END AS 등급
 FROM dt_demo;
+-- 90점 이상은 A, 나머지 중 80점 이상은 B, 나머지 중 70점 이상은 C, 나머지는 D
 ```
 
-### **NULL 처리**
-- `IFNULL(score, 0)`: NULL일 경우 0 반환
-- `COALESCE(a, b, c)`: a, b, c 중 가장 먼저 NULL이 아닌 값을 반환
+항상 가장 좁은 조건이 위에 가게 해야함. 위에서부터 조건에 맞으면 바로 값을 할당하기 때문.
 
+### **NULL 처리**
+
+- `IFNULL(score, 0)`: score가 NULL일 경우 0을 반환
+
+- `COALESCE(a, b, ...)`: 가장 먼저 NULL이 아닌 값을 반환
+
+  COALESCE는 a에 NULL이 될수도 있는 값을 넣고, 만약 NULL이면 b에 있는 값을, b도 NULL이면 c에 있는 값을 반환하는 식으로 쓰임
+
+  IFNULL과 달리 조건을 여러 개 걸 수 있다.
 
 ## 집계 함수 (Aggregate)
 
@@ -163,12 +195,16 @@ SELECT
   MAX(order_date) AS 마지막주문
 FROM sales;
 ```
+결과는 보통 보던 테이블이 아닌, 결과값만 보여주는 다른 테이블로 나옴
 
----
+위 예시의 경우, 총주문건수, 총매출, ..., 마지막 주문 날짜를 컬럼명으로 가지고, 컬럼 아래에 값만 나오는 식
+
 
 ## GROUP BY
 
-**기본 구조**: 특정 컬럼으로 묶어서 요약 통계를 계산
+### 기본 구조
+
+특정 컬럼으로 묶어서 요약 통계를 계산
 
 스프레드시트에서 피벗테이블과 비슷
 
@@ -185,7 +221,7 @@ ORDER BY 카테고리별_매출 DESC;
 
 - ORDER BY로 결과 정렬도 가능
 
-**다중 그룹핑**
+### 다중 그룹핑
 
 그룹핑은 2개 기준 이상으로도 가능함
 
@@ -198,20 +234,8 @@ FROM sales
 GROUP BY region, category;
 ```
 
-**예제**
 
-```sql
--- 월별 매출 추이
-SELECT
-  DATE_FORMAT(order_date, '%Y-%m') AS 월,
-  SUM(total_amount) AS 월매출
-FROM sales
-GROUP BY DATE_FORMAT(order_date, '%Y-%m');
-```
-
----
-
-## HAVING
+### HAVING
 
 GROUP BY 결과에 조건 필터를 적용할 때 사용
 
@@ -222,7 +246,9 @@ SELECT
 FROM sales
 GROUP BY category
 HAVING 카테고리별_총매출 >= 10000000;
+-- 그룹으로 묶었을 때, 카테고리별 총매출이 천만원 이상인 값만 출력함
 ```
+
 
 **WHERE vs HAVING**
 
@@ -235,8 +261,8 @@ HAVING은 피벗 테이블의 결과에 필터를 걸고, WHERE은 전체 데이
 
 **예제**
 
+우수 영업사원(월평균 매출 50만원 이상) 찾기 
 ```sql
--- 우수 영업사원 찾기 (월평균 매출 50만원 이상)
 SELECT
   sales_rep,
   SUM(total_amount) AS 사원별_총매출,
@@ -246,3 +272,4 @@ FROM sales
 GROUP BY sales_rep
 HAVING 사원별_월평균매출 >= 500000
 ORDER BY 사원별_월평균매출 DESC;
+```
