@@ -93,6 +93,53 @@ WHERE s.id IS NULL;
 
 -- JOIN의 종류(JOIN 앞에 붙을 수 있는 것들)
 -- 벤 다이어그램(원 2개짜리)으로 이해 가능, 원에서 칠하고 싶은 부분을 JOIN으로 정리할 수 있다.
--- LEFT JOIN : 왼쪽 테이블(c) 와 매칭되는 데이터 + 매칭되는 오른쪽 데이터 -> 오른쪽 데이터에 결과가 없어도 붙여줌 (A)
 -- LEFT JOIN + WHERE b.key IS NULL : 한번도 주문한적 없는 사람이 나옴 (A∩Bᶜ)
+
 -- (INNER) JOIN : 왼쪽 테이블(c)와 오른쪽 테이블(s) 둘 다 존재하는 것만 붙일 수 있음 (A∩B)
+SELECT
+	'1. INNER JOIN' AS 구분,
+    COUNT(*) AS 줄수,
+    COUNT(DISTINCT c.customer_id) AS 고객수
+FROM customers c
+INNER JOIN sales s ON c.customer_id = s.customer_id
+-- customers 테이블에 sales를 붙인 형태
+-- 사실 컬럼 명이 있기만 하면 되고, 컬럼의 순서는 별로 중요하지 않다. 어차피 합치면 한 테이블이기 때문
+-- 앞에 오는건 내가 보고싶은 데이터의 주어가 앞에 오는게 맞긴 함(어떤 고객의 ~, 어떤 조건인 상품의 ~)
+-- 결과는 줄수 120에 고객수 45
+-- 교집합인 데이터만 보여줌
+
+
+UNION
+-- 이 구문 위와 아래 코드를 동시에 실행하겠다는 뜻
+
+-- LEFT JOIN : 왼쪽 테이블(c) 와 매칭되는 데이터 + 매칭되는 오른쪽 데이터 -> 오른쪽 데이터에 결과가 없어도 붙여줌 (A)
+-- 왼쪽은 다 보여주겠다고 이해해도 된다.
+SELECT
+	'2. LEFT JOIN' AS 구분,
+    COUNT(*) AS 줄수,
+    COUNT(DISTINCT c.customer_id) AS 고객수
+FROM customers c
+LEFT JOIN sales s ON c.customer_id = s.customer_id
+-- 이번 결과는 줄수 125에 고객수 50
+-- 구매를 하지 않은 고객 5명이 추가되어 보이는 것
+
+UNION
+SELECT
+	'3. RIGHT JOIN' AS 구분,
+    COUNT(*) AS 줄수,
+    COUNT(DISTINCT c.customer_id) AS 고객수
+FROM customers c
+RIGHT JOIN sales s ON c.customer_id = s.customer_id
+-- RIGHT JOIN은 사실 쓸 일이 없다.
+-- 그냥 customers와 sales 순서만 바꿔주면 되기 때문
+-- 다만 기준은 customers에 맞춰져 있다.
+
+UNION
+-- 위 아래 컬럼 숫자도 맞춰 줘야 함
+-- AS가 다르다면 순서 기준으로 들어간다
+
+SELECT
+	'전체 고객수' AS 구분,
+    COUNT(*) AS 줄수,
+    COUNT(DISTINCT customer_id) AS 고객수
+FROM customers;
