@@ -203,3 +203,42 @@ JOIN
     ) ct ON c.customer_id = ct.customer_id
 GROUP BY 고객상태
 ORDER BY FIELD(고객상태,'활성고객','관심고객','휴면고객','구매없음');
+
+-- 참고: 테이블 서브쿼리를 쓰면?
+-- -- 고객상태(최종구매일) [NULL(구매없음) | 활성고객 <= 30 < 관심고객 <= 90 < 휴면고객]별로
+-- -- 고객수, 총주문건수, 총매출액, 평균주문금액 분석
+
+-- 서브쿼리1: 고객별로 인당 주문건수, 매출액, 최근구매 n일전을 계산
+SELECT
+	c.customer_id,
+    COUNT(s.id) AS 인당_주문건수,
+    COALESCE(SUM(s.total_amount),0) AS 인당_매출액,
+	DATEDIFF('2024-12-31', MAX(s.order_date)) AS 최근구매
+FROM customers c
+LEFT JOIN sales s ON c.customer_id = s.customer_id
+GROUP BY c.customer_id;
+
+-- 최종: 최근구매 기반으로 고객상태 설정, 고객상태 별 총주문건수, 총매출액, 평균주문금액 계산 
+SELECT
+    CASE
+		WHEN 최근구매 > 90 THEN '휴면고객'
+		WHEN 최근구매 > 30 THEN '관심고객'
+		WHEN 최근구매 <= 30 THEN '활성고객'
+		ELSE '구매없음'
+	END AS 고객상태,
+    COUNT(customer_id) AS 고객수,
+    SUM(인당_주문건수) AS 총주문건수,
+    SUM(인당_매출액) AS 총매출액,
+    COALESCE(ROUND(SUM(인당_매출액) / SUM(인당_주문건수)),0) AS 평균주문금액    
+FROM(
+	SELECT
+		c.customer_id,
+		COUNT(s.id) AS 인당_주문건수,
+		COALESCE(SUM(s.total_amount),0) AS 인당_매출액,
+		DATEDIFF('2024-12-31', MAX(s.order_date)) AS 최근구매
+	FROM customers c
+	LEFT JOIN sales s ON c.customer_id = s.customer_id
+	GROUP BY c.customer_id
+) AS 최종구매일
+GROUP BY 고객상태
+ORDER BY FIELD(고객상태,'활성고객','관심고객','휴면고객','구매없음');

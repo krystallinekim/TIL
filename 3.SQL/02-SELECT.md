@@ -128,6 +128,81 @@ SELECT 컬럼명 FROM 테이블명 WHERE 조건 ORDER BY 정렬기준 LIMIT 개�
     SELECT * FROM userinfo ORDER BY age LIMIT 3 OFFSET 1;
     ```
 
+
+## GROUP BY
+
+### 기본 구조
+
+특정 컬럼으로 묶어서 요약 통계를 계산
+
+스프레드시트에서 피벗테이블과 비슷
+
+```sql
+SELECT
+  category,
+  COUNT(*) AS 카테고리별_건수,
+  SUM(total_amount) AS 카테고리별_매출
+FROM sales
+GROUP BY category
+ORDER BY 카테고리별_매출 DESC;
+```
+- GROUP BY는 지정된 컬럼 기준으로 집계를 나눔
+
+- ORDER BY로 결과 정렬도 가능
+
+### 다중 그룹핑
+
+그룹핑은 2개 기준 이상으로도 가능함
+
+```sql
+SELECT
+  region,
+  category,
+  SUM(total_amount) AS 지역별_카테고리별_매출
+FROM sales
+GROUP BY region, category;
+```
+
+
+### HAVING
+
+GROUP BY 결과에 조건 필터를 적용할 때 사용
+
+```sql
+SELECT
+  category,
+  SUM(total_amount) AS 카테고리별_총매출
+FROM sales
+GROUP BY category
+HAVING 카테고리별_총매출 >= 10000000;
+-- 그룹으로 묶었을 때, 카테고리별 총매출이 천만원 이상인 값만 출력함
+```
+
+
+**WHERE vs HAVING**
+
+| 항목 | WHERE | HAVING |
+|------|-------|--------|
+| 조건 대상 | 개별 행 | 그룹핑 결과 |
+| 실행 시점 | GROUP BY 전에 작동 | GROUP BY 이후 작동 |
+
+HAVING은 피벗 테이블의 결과에 필터를 걸고, WHERE은 전체 데이터에 필터를 걸어놓고 피벗 테이블을 만드는 과정이라고 보면 편함
+
+**예제**
+
+우수 영업사원(월평균 매출 50만원 이상) 찾기 
+```sql
+SELECT
+  sales_rep,
+  SUM(total_amount) AS 사원별_총매출,
+  COUNT(DISTINCT MONTH(order_date)) AS 사원별_활동개월수,
+  ROUND(SUM(total_amount) / COUNT(DISTINCT MONTH(order_date))) AS 사원별_월평균매출
+FROM sales
+GROUP BY sales_rep
+HAVING 사원별_월평균매출 >= 500000
+ORDER BY 사원별_월평균매출 DESC;
+```
+
 ## UNION
 
 - 위 코드와 아래 코드를 각각 실행 후, 한 테이블에 보여줌
@@ -142,3 +217,65 @@ SELECT 컬럼명 FROM 테이블명 WHERE 조건 ORDER BY 정렬기준 LIMIT 개�
     SELECT COUNT(*) AS 개수 FROM customers;
     -- 결과: 개수 컬럼에 sales 줄수, customers 줄수가 이어서 나옴
     ```
+
+
+## View
+
+### Inline View (인라인 뷰)
+
+FROM 절에 사용되는 서브쿼리 = 임시 테이블
+
+```sql
+-- 카테고리별 평균 매출을 구한 후, 50만원 이상만 필터링
+SELECT *
+FROM (
+    SELECT
+        category,
+        AVG(total_amount) AS 평균매출,
+        COUNT(*) AS 주문건수
+    FROM sales s
+    JOIN products p ON s.product_id = p.product_id
+    GROUP BY category
+) AS category_stats  -- 인라인 뷰
+WHERE 평균매출 >= 500000;
+```
+매트릭스 서브쿼리와 같은 개념임
+
+
+### View (뷰)
+
+복잡한 쿼리를 재사용 가능한 가상 테이블로 저장
+
+테이블 내용을 저장하는 것이 아닌, 쿼리를 저장해서 매크로를 돌리는 개념
+
+원본 데이터가 수정되면 뷰도 같이 수정된다.
+
+```sql
+-- View 생성 : SELECT 앞에 구문 추가가 끝
+CREATE VIEW customer_summary AS
+SELECT
+    c.customer_id,
+    c.customer_name,
+    c.customer_type,
+    COUNT(s.id) AS 주문횟수,
+    COALESCE(SUM(s.total_amount), 0) AS 총구매액,
+    COALESCE(AVG(s.total_amount), 0) AS 평균주문액
+FROM customers c
+LEFT JOIN sales s ON c.customer_id = s.customer_id
+GROUP BY c.customer_id, c.customer_name, c.customer_type;
+
+-- View 사용 : 다른 테이블 자리에 똑같이 사용할 수 있다.
+SELECT * FROM customer_summary WHERE 주문횟수 >= 5;
+SELECT * FROM customer_summary WHERE customer_type = 'VIP';
+
+-- View 삭제
+DROP VIEW customer_summary;
+```
+
+### 비교
+| 구분 | Inline View | View |
+| --- | --- | --- |
+| 저장 여부 | 일회용 | 데이터베이스에 저장
+| 재사용 | 불가능 | 가능 |
+| 성능| 매번 실행 | 한 번 정의 후 재사용 |
+| 용도 | 복잡한 일회성 분석 | 자주 사용하는 쿼리
