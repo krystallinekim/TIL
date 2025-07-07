@@ -52,17 +52,32 @@ JOIN을 통해 두 테이블을 customer_id를 기준으로 하나로 합치고,
 
 ## JOIN의 종류
 
-[참고하면 좋은 그림](https://i.stack.imgur.com/1UKp7.png)
+![참고하면 좋은 그림](https://i.stack.imgur.com/1UKp7.png)
 
 | JOIN 종류            | 설명                                                   | 코드                                                        | 집합 개념          |
 |-----------------------|---------------------------------------------------------|------------------------------------------------------------------|---------------------|
 | **INNER JOIN**        | 양쪽 테이블 모두 존재하는 데이터만 반환               | `(INNER) JOIN`                                                    | A ∩ B (교집합)     |
 | **LEFT JOIN**         | 왼쪽 테이블(A)의 모든 데이터 + 오른쪽 매칭 데이터     | `LEFT JOIN`                                                     | A                  |
-| **LEFT JOIN + NULL**  | 왼쪽 데이터 중 오른쪽에 매칭되지 않는 데이터만 반환   | `LEFT JOIN ... WHERE b.key IS NULL`                             | A ∩ Bᶜ (차집합)    |
+| **LEFT JOIN + IS NULL**  | 왼쪽 데이터 중 오른쪽에 매칭되지 않는 데이터만 반환   | `LEFT JOIN ... WHERE b.key IS NULL`                             | A ∩ Bᶜ (차집합)    |
 | **RIGHT JOIN**        | 오른쪽 테이블(B)의 모든 데이터 + 왼쪽 매칭 데이터     | `RIGHT JOIN`                                                    | B                  |
 | **FULL OUTER JOIN**   | 양쪽 테이블의 모든 데이터 반환                        | `FULL OUTER JOIN`                                               | A ∪ B (합집합)     |
+| **CROSS JOIN** | 양쪽 테이블의 카르테시안 곱을 반환, 테이블의 데이터가 매칭되는 모든 경우의 수를 보여준다 | `CROSS JOIN` | A X B (곱집합) |
+| **SELF JOIN** | 같은 테이블 안의 데이터끼리 JOIN | 같은 테이블끼리 `INNER JOIN` | X |
 
-보통 INNER JOIN, LEFT JOIN을 주로 사용한다. RIGHT JOIN은 테이블 순서를 바꾸면 LEFT JOIN과 같기 때문.
+
+- 보통 `INNER JOIN`, `LEFT JOIN`을 주로 사용한다. `RIGHT JOIN`은 테이블 순서를 바꾸면 `LEFT JOIN`과 같기 때문.
+
+- `FULL OUTER JOIN`은 데이터 무결성 검사용, 모든 데이터를 한 눈에 봐야 할 때 사용
+
+    - MYSQL에서는 지원하지 않아 `LEFT JOIN`과 `RIGHT JOIN + IS NULL`을 `UNION`으로 합쳐줘야함 ( A ∪ B = A ∪ (B ∩ Aᶜ))
+
+- `CROSS JOIN` 은 두 테이블이 매칭되는 모든 경우의 수를 보여주는 JOIN
+
+    - 모든 경우를 계산한 후, 특정 조건을 기준으로 지워 나갈 때 사용한다.
+
+- `SELF JOIN` 은 한 테이블 안에서 서로 JOIN하는 것
+    - 팔로우-팔로워(유저-유저), 상사-부하(직원-직원) 등의 관계를 나타낼 때 쓰인다.
+
 
 ## GROUP BY + JOIN
 
