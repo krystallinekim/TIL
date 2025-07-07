@@ -10,6 +10,7 @@
 - 가장 단순한 관계 형태
 - 실제로는 하나의 테이블로 합칠 수 있지만, 보안이나 성능상의 이유로 분리하는 경우가 많음
 - 외래키(Foreign Key)에 UNIQUE 제약조건이 필요
+- CASCADE를 쓰면 원래 테이블에서 삭제되면 관계로 묶인 테이블에서도 데이터가 삭제됨
 
 ### 구현 방법
 ```sql
@@ -27,12 +28,12 @@ CREATE TABLE user_profiles (
     full_name VARCHAR(100),
     phone VARCHAR(20),
     address TEXT,
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE -- CASCADE 옵션으로 데이터의 일관성을 유지
 );
 ```
 
 ### 실제 예시
-- 사용자 ↔ 사용자 프로필
+- 사용자 ↔ 사용자 개인정보
 - 직원 ↔ 직원 상세정보
 - 제품 ↔ 제품 상세설명
 
@@ -48,44 +49,24 @@ CREATE TABLE user_profiles (
 - 부모 테이블(1)과 자식 테이블(N)로 구성
 - 자식 테이블에 부모 테이블의 기본키를 외래키로 참조
 - 외래키에는 UNIQUE 제약조건을 두지 않음
+- 부모를 삭제 시 자식의 데이터를 삭제할 방법을 고려해야 함
+
 
 ### 구현 방법
 ```sql
--- 부서 테이블 (1쪽)
+-- 부서 테이블 (1)
 CREATE TABLE departments (
     dept_id INT PRIMARY KEY,
     dept_name VARCHAR(50) NOT NULL
 );
 
--- 직원 테이블 (N쪽)
+-- 직원 테이블 (N)
 CREATE TABLE employees (
     emp_id INT PRIMARY KEY,
     emp_name VARCHAR(50) NOT NULL,
     dept_id INT,  -- 외래키, UNIQUE 제약조건 없음
     FOREIGN KEY (dept_id) REFERENCES departments(dept_id)
 );
-
--- 샘플 데이터
-INSERT INTO departments VALUES (1, '개발팀'), (2, '마케팅팀');
-INSERT INTO employees VALUES 
-    (1, '김개발', 1),
-    (2, '이개발', 1),
-    (3, '박마케팅', 2);
-```
-
-### 조회 예시
-```sql
--- 부서별 직원 수 조회
-SELECT d.dept_name, COUNT(e.emp_id) as employee_count
-FROM departments d
-LEFT JOIN employees e ON d.dept_id = e.dept_id
-GROUP BY d.dept_id, d.dept_name;
-
--- 특정 부서의 모든 직원 조회
-SELECT d.dept_name, e.emp_name
-FROM departments d
-JOIN employees e ON d.dept_id = e.dept_id
-WHERE d.dept_name = '개발팀';
 ```
 
 ### 실제 예시
@@ -103,8 +84,9 @@ WHERE d.dept_name = '개발팀';
 
 ### 특징
 - 가장 복잡한 관계 형태
-- 연결 테이블(Bridge Table, Junction Table)이 필요
-- 연결 테이블은 양쪽 테이블의 기본키를 외래키로 가짐
+- 반드시 중간 테이블이 필요
+- 중간 테이블은 양쪽 테이블의 기본키를 외래키로 가짐
+- 중간 테이블에도 추가 속성을 저장할 수 있음
 
 ### 구현 방법
 ```sql
@@ -120,83 +102,20 @@ CREATE TABLE subjects (
     subject_name VARCHAR(50) NOT NULL
 );
 
--- 수강 신청 테이블 (연결 테이블)
-CREATE TABLE enrollments (
-    enrollment_id INT PRIMARY KEY,
+-- 수강 신청 테이블 (중간 테이블)
+CREATE TABLE students_subjects (
     student_id INT,
     subject_id INT,
     enrollment_date DATE,
     grade CHAR(1),
     FOREIGN KEY (student_id) REFERENCES students(student_id),
     FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
-    UNIQUE KEY (student_id, subject_id)  -- 중복 수강 방지
+    PRIMARY KEY (student_id, subject_id)  -- 중복 수강 방지, 복합 기본키
 );
-
--- 샘플 데이터
-INSERT INTO students VALUES (1, '김학생'), (2, '이학생'), (3, '박학생');
-INSERT INTO subjects VALUES (1, '수학'), (2, '영어'), (3, '과학');
-INSERT INTO enrollments VALUES 
-    (1, 1, 1, '2024-03-01', 'A'),
-    (2, 1, 2, '2024-03-01', 'B'),
-    (3, 2, 1, '2024-03-01', 'A'),
-    (4, 2, 3, '2024-03-01', 'C'),
-    (5, 3, 2, '2024-03-01', 'B');
 ```
 
-### 조회 예시
-```sql
--- 학생별 수강 과목 조회
-SELECT s.student_name, sub.subject_name, e.grade
-FROM students s
-JOIN enrollments e ON s.student_id = e.student_id
-JOIN subjects sub ON e.subject_id = sub.subject_id
-ORDER BY s.student_name;
-
--- 과목별 수강 학생 수 조회
-SELECT sub.subject_name, COUNT(e.student_id) as student_count
-FROM subjects sub
-LEFT JOIN enrollments e ON sub.subject_id = e.subject_id
-GROUP BY sub.subject_id, sub.subject_name;
-
--- 특정 학생의 모든 수강 과목 조회
-SELECT sub.subject_name, e.grade
-FROM subjects sub
-JOIN enrollments e ON sub.subject_id = e.subject_id
-WHERE e.student_id = 1;
-```
 
 ### 실제 예시
 - 학생 ↔ 과목 (한 학생이 여러 과목 수강, 한 과목을 여러 학생이 수강)
 - 제품 ↔ 주문 (한 제품이 여러 주문에 포함, 한 주문에 여러 제품)
 - 사용자 ↔ 역할 (한 사용자가 여러 역할, 한 역할을 여러 사용자가 가짐)
-
----
-
-## 관계 설정 시 고려사항
-
-### 1. 데이터 무결성
-- **참조 무결성**: 외래키는 참조하는 테이블의 기본키 값이어야 함
-- **개체 무결성**: 기본키는 NULL이나 중복값을 가질 수 없음
-- **도메인 무결성**: 컬럼에 올바른 데이터 타입과 제약조건 설정
-
-### 2. 성능 최적화
-- 외래키 컬럼에 인덱스 생성 권장
-- 자주 조인되는 컬럼들에 대한 인덱스 설정
-- 대용량 데이터에서는 파티셔닝 고려
-
-### 3. 설계 원칙
-- 정규화를 통한 데이터 중복 최소화
-- 비즈니스 로직에 맞는 적절한 관계 설정
-- 확장성을 고려한 유연한 구조 설계
-
----
-
-## 요약
-
-| 관계 타입 | 특징 | 구현 방법 | 예시 |
-|-----------|------|-----------|------|
-| **1:1** | 양방향 유일 관계 | 외래키 + UNIQUE 제약조건 | 사용자 ↔ 프로필 |
-| **1:N** | 한쪽이 여러 개 | 외래키 (UNIQUE 없음) | 부서 ↔ 직원 |
-| **M:N** | 양방향 다대다 관계 | 중간 테이블 사용 | 학생 ↔ 과목 |
-
-각 관계 타입을 올바르게 이해하고 적절히 구현하는 것이 효율적인 데이터베이스 설계의 핵심입니다.

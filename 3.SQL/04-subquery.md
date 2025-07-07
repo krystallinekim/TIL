@@ -187,7 +187,9 @@ WHERE total_amount > (SELECT AVG(total_amount) FROM sales);
     **주의: 서브쿼리를 테이블로 가져올 때는, AS 뒤에 가져온 테이블 이름을 지정해 줘야함** 
 
 
-## 서브쿼리를 써야 하는 경우
+## 언제 서브쿼리를 써야 할까?
+
+### 써야 하는 경우
 
 -  **집계값과 비교** (평균, 최대, 최소 등)
 
@@ -197,9 +199,91 @@ WHERE total_amount > (SELECT AVG(total_amount) FROM sales);
 
    - 예) VIP 고객들의 주문 내역
 
-
-## 쓰면 안되는 경우
+### 쓰면 안되는 경우
 
 - 조건이 **단순하거나 고정된 값**일 때
 
 - 여러 테이블 데이터 결합 시 **JOIN이 더 직관적**일 때
+
+
+## ANY 
+
+여러 값들(벡터) 가운데 하나라도 만족하면 통과
+
+```sql
+-- 모든 매출들 중 어떤 지역 평균 매출액의 최소값보다 매출이 높은 주문들
+SELECT * FROM sales 
+-- 2. 벡터 중 작은 값이 있다면 조회
+WHERE total_amount > ANY(
+	-- 1. 각 지역 평균 매출액들(벡터)
+	SELECT AVG(total_amount) FROM sales GROUP BY region)
+ORDER BY total_amount;
+```
+
+간단한 문제면 그냥 MIN/MAX를 쓰는게 편할 수 있지만, 지금처럼 벡터의 최솟값이나 최댓값을 구해야 할 경우엔 너무 복잡해져 ANY를 쓰는게 맞을 수도 있다.
+
+또, 결과는 똑같지만 코드의 뉘앙스가 다르다
+
+## ALL
+
+모든 값들(벡터)이 전부 조건을 만족하면 통과
+
+```sql
+-- 모든 부서별 연봉 평균들보다 큰 연봉을 받는 직원들
+SELECT * FROM employees
+-- 2. 벡터 안의 모든 값보다 큰 값이면 반환
+WHERE salary > ALL(
+	-- 1. 부서 내 연봉의 평균들(벡터)
+	SELECT AVG(salary) FROM employees GROUP BY department_id);
+```
+
+ANY/ALL은 WHERE 조건 뒤에서, 계산을 더 간단하고 최적화해서 보여주는 역할을 한다.
+
+## EXISTS
+
+문제에 *한적이 있는* 같은 구문이 나온 경우 쓰임
+
+IN으로 전부 처리 가능하지만, 처리시간과 성능적인 측면에서 비교할 수 없다.
+
+예를 들어, 전자제품을 구매한 고객의 정보가 보고 싶을 때
+
+`IN`을 이용하면
+
+```sql
+SELECT * FROM customers
+WHERE customer_id IN (SELECT DISTINCT customer_id FROM sales WHERE category = '전자제품');
+```
+sales 안의 모든 customer_id를 뽑아옴 -> customer_id와 일일이 대조하는 과정을 거친다.
+
+--> 매우 비효율적임
+
+`EXISTS`를 쓰면?
+```sql
+SELECT * FROM customers c
+-- sales에서 카테고리가 전자제품을 산 사람들이면 TRUE
+WHERE EXISTS (SELECT 1 FROM sales s WHERE s.customer_id = c.customer_id AND s.category = '전자제품');
+```
+
+결과는 똑같이 나온다.
+
+데이터를 어딘가에 불러오는 개념이 아닌, 바로 비교하면서 있으면 바로 검색도 멈춰줌
+
+--> 최적화 측면에서 매우 유리
+
+데이터가 있나 없나만 확인한다면, EXISTS가 훨씬 좋다
+
+```sql
+-- 전자제품과 의류를 모두 구매해 본 이력이 있고, 50만원 이상 구매도 해본 고객을 찾자
+SELECT * FROM customers c
+WHERE 
+    -- 전자제품 구매 이력 있음
+    EXISTS(SELECT 1 FROM sales s1 WHERE s1.customer_id = c.customer_id AND s1.category = '전자제품') AND
+    -- 의류 구매 이력 있음
+    EXISTS(SELECT 1 FROM sales s2 WHERE s2.customer_id = c.customer_id AND s2.category = '의류') AND
+    -- 50만원 이상
+    EXISTS(SELECT 1 FROM sales s3 WHERE s3.customer_id = c.customer_id AND s3.total_amount >= 500000);
+```
+
+*한번도 ~~한적 없는* 같은 경우, NOT EXISTS를 쓰면 좋다.
+
+이런 경우, IN을 쓰려면 매우 복잡해서 힘듦

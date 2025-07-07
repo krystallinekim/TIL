@@ -17,8 +17,10 @@ SELECT
 -- 1번 손님의 구매데이터
 FROM customers c1
 INNER JOIN sales s1 ON s1.customer_id = c1.customer_id
--- 2번 손님의 구매데이터 -> 1번 id와 다른 사람을 고름(같은 사람끼리 / 이미 비교한 사람 다시 고르는 경우 제거)
-INNER JOIN customers c2 ON c1.customer_id < c2.customer_id
+-- 2번 손님의 구매데이터 -> 1번 id와 다른 사람을 고름
+-- =를 쓰면 본인과 본인 간 비교만 나옴
+-- >를 써서 다른 사람의 데이터를 고르게 함
+INNER JOIN customers c2 ON c1.customer_id > c2.customer_id
 -- 모든 경우의 수 중에 s1과 s2에 공통카테고리가 있는 경우만
 INNER JOIN sales s2 ON s2.customer_id = c2.customer_id AND s1.category = s2.category
 GROUP BY c1.customer_name, c2.customer_name

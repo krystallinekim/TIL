@@ -75,9 +75,23 @@ JOIN을 통해 두 테이블을 customer_id를 기준으로 하나로 합치고,
 
     - 모든 경우를 계산한 후, 특정 조건을 기준으로 지워 나갈 때 사용한다.
 
+    ```sql
+    SELECT c.customer_name, p.product_name, p.selling_price
+    FROM customers c
+    CROSS JOIN products p
+    WHERE c.customer_type = 'VIP'  -- 조건으로 결과 제한
+    ORDER BY c.customer_name, p.selling_price DESC;
+    ```
+
 - `SELF JOIN` 은 한 테이블 안에서 서로 JOIN하는 것
     - 팔로우-팔로워(유저-유저), 상사-부하(직원-직원) 등의 관계를 나타낼 때 쓰인다.
-
+    ```sql
+    SELECT
+    직원.emp_name AS 직원명,
+    상사.emp_name AS 상사명
+    FROM employees 직원
+    LEFT JOIN employees 상사 ON 직원.manager_id = 상사.emp_id;
+    ```
 
 ## GROUP BY + JOIN
 
@@ -105,4 +119,4 @@ ORDER BY 평균구매금액 DESC;
 | **GROUP BY 누락** | 일반 컬럼을 카테고리화 하지 않았을 경우 |SELECT의 집계함수를 제외한 일반 컬럼은 모두 GROUP BY에 포함해야 함|
 | **LEFT JOIN 후 COUNT(*) 사용** | LEFT JOIN하면 교집합이 아닌 경우도 데이터로 들어가는데, NULL이라 데이터가 없어야 하는 상황에서도 *는 데이터를 세어버림 |COUNT(오른쪽테이블.id) 사용, NULL 값 제외 |
 | **컬럼 앞에 테이블명 안 쓰기** | 어디서 참조해 올지 몰라 에러가 생김 | 테이블명을 꼭 써주자 |
-| **JOIN 조건 누락** | ON을 쓰지 않고, 그냥 JOIN하면 모든 데이터별로 하나씩 붙여준다 -> 카르테시안 곱 발생 | ON을 꼭 써주자 |
+| **JOIN 조건 누락** | ON을 쓰지 않고, 그냥 JOIN하면 모든 데이터별로 하나씩 붙여준다 -> 카르테시안 곱 발생 (CROSS JOIN해줌) | ON을 꼭 써주자 |
