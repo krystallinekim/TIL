@@ -91,3 +91,5 @@ SELECT COUNT(DISTINCT customer_id) AS 고유고객수, COUNT(*) AS 전체행수 
 -- 약 5%
 
 -- 일반적으로 선택도가 높은(amount -> region 순서) 것부터 인덱싱하는게 맞다
+
+-- 내용은 쉬운데, 실질적인 적용은 최적화에 관여된거라 어려움
