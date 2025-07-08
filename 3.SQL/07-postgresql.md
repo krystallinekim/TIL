@@ -136,8 +136,9 @@ SELECT * FROM large_orders WHERE customer_id = 'CUST-025000';
 Seq Scan on large_orders  (cost=0.00..1234.56 rows=10 width=100)
   Filter: (customer_id = 'CUST-025000'::text)
 ```
+EXPLAIN만 쓰면, 실제로 쿼리를 돌리지는 않고 컴퓨터가 예상하는 쿼리 실행 정보를 보여준다.
 
-- Seq Scan: 전체 테이블을 순차적으로 스캔 (인덱스 미사용)  
+- Seq Scan: 전체 테이블을 순차적으로 스캔 (INDEX 없음)
 - cost=0.00..1234.56: 예상 시작 비용과 총 비용  
 - rows=10: 예상 반환 행 수  
 
@@ -156,8 +157,10 @@ Seq Scan on large_orders  (cost=0.00..1234.56 rows=10 width=100) (actual time=0.
 Planning Time: 0.123 ms
 Execution Time: 1.456 ms
 ```
+EXPLAIN ANALYZE는 실제로 쿼리를 실행 후, 그 결과를 분석해 준다.
+
 - actual time=0.020..1.234: 실제 실행 시간 (최초 출력~마지막 출력)  
-- rows=12: 실제 반환 행 수 (예상 10행 대비 다름)  
+- rows=12: 실제 반환 행 수  
 - Rows Removed by Filter: 필터 조건에 걸러진 행 수  
 - Planning Time: 쿼리 계획 수립 시간  
 - Execution Time: 쿼리 실행 전체 시간  
@@ -179,8 +182,12 @@ Seq Scan on public.large_customers large_customers  (cost=0.00..1000.00 rows=500
 Planning Time: 0.200 ms
 Execution Time: 20.500 ms
 ```
-- Output: 출력 컬럼명과 순서  
+
+`BUFFERS` - 진짜 많이 사용하는 데이터를 저장하는 곳
 - Buffers: 메모리 버퍼 사용 통계 (shared hit=캐시에서 읽음, read=디스크에서 읽음)  
+
+`VERBOSE` - 컬럼명 같은 상세정보를 볼 수 있음
+- Output: 출력 컬럼명과 순서  
 
 
 ---
