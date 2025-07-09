@@ -1,5 +1,7 @@
 # INDEX
 
+## 기초
+
 데이터베이스에서 검색 성능을 향상시키기 위해 사용되는 데이터 구조
 
 책의 목차(INDEX)처럼, 원하는 데이터를 빠르게 찾을 수 있도록 도와주는 역할
@@ -7,8 +9,6 @@
 WHERE, ORDER BY, JOIN, GROUP BY 등의 성능을 향상시킬 수 있음
 
 모든 상황에서 효과적이진 않음 → *인덱스를 "언제", "어떻게" 쓰는지가 핵심*
-
-## 기초
 
 
 ### 인덱스 생성
@@ -137,3 +137,51 @@ CREATE INDEX <index_name> ON USING HASH(<col>);
 - 조회를 자주 해야 하는 데이터에는 인덱스를 추가하는 게 맞다.
 
 - 실제 쿼리 패턴을 분석해 인덱스를 설계해야 함
+
+## 인덱스가 적용되지 않는 경우
+
+인덱스를 적용해 둬도, 이하의 경우에는 깡통이 된다.
+
+1. 함수
+
+   함수 내부의 데이터에 인덱스가 걸려 있어도 함수 밖에서 인덱싱은 적용되지 않는다.
+   ```sql
+   SELECT * FROM users WHERE UPPER(name) = 'JOHN';
+   ```
+   아예 함수 기반으로 인덱싱을 하면 해결됨.
+   ```sql
+   CREATE INDEX <index_name> ON users(UPPER(name));
+   ```
+   ---
+1. 타입을 잘못 썼을 경우
+   
+   ```sql
+   SELECT * FROM users WHERE age = '25';
+   ```
+   age의 데이터타입을 INT로 정의했는데, '25'는 str임
+
+   사실, 이정도는 프로그램이 알아서 '25'를 25로 적용해 답을 구해주기는 한다.
+   ```sql
+   SELECT * FROM users WHERE age = 25;
+   ```
+   그래도, 인덱싱은 적용이 안되기 때문에 매우 느리게 검색할 것
+   
+   ---
+1. 부정조건
+
+   부정조건을 쓰면 인덱싱이 안된다.
+   ```sql
+   SELECT * FROM users WHERE age != 25;
+   ```
+   놀랍게도, 부등호를 써서 조건을 정의하면 인덱싱이 됨
+   ```sql
+   SELECT * FROM users WHERE age > 25 OR age < 25;
+   ```
+   ---
+
+1. 앞에 와일드카드를 썼을 경우
+   
+   ```sql
+   SELECT * FROM users WHERE name LIKE '%김';
+   ```
+   이건 딱히 해결방법이 없다. 전체 텍스트 검색 인덱스를 고려해 보자.
