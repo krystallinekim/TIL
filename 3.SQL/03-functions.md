@@ -2,81 +2,81 @@
 
 ##  문자열 함수
 
-- **CHAR_LENGTH(str)** 
+### **CHAR_LENGTH(str)** 
 
-  문자열의 길이를 반환 
+문자열의 길이를 반환 
 
-  ```sql
-  SELECT CHAR_LENGTH('hello sql');  -- 결과: 9
+```sql
+SELECT CHAR_LENGTH('hello sql');  -- 결과: 9
 
-  SELECT name, CHAR_LENGTH(name) AS 길이 FROM dt_demo; -- 이름과 각 이름의 길이
-  ```
+SELECT name, CHAR_LENGTH(name) AS 길이 FROM dt_demo; -- 이름과 각 이름의 길이
+```
 
-- **CONCAT(str1, str2, ...)**  
+### **CONCAT(str1, str2, ...)**  
 
-  여러 문자열을 이어붙임 
+여러 문자열을 이어붙임 
 
-  ```sql
-  SELECT CONCAT('hello ', 'sql', ' !!');  -- 결과: 'hello sql !!'
+```sql
+SELECT CONCAT('hello ', 'sql', ' !!');  -- 결과: 'hello sql !!'
 
-  SELECT CONCAT(name, '(', score, '점)') AS info FROM dt_demo; -- 이름과 점수 합쳐서 출력, 형태는 김김김(90점) 처럼
-  ```
+SELECT CONCAT(name, '(', score, '점)') AS info FROM dt_demo; -- 이름과 점수 합쳐서 출력, 형태는 김김김(90점) 처럼
+```
 
-- **UPPER(str)**  
+### **UPPER(str)**  
 
-  문자열을 모두 대문자로 변환  
+문자열을 모두 대문자로 변환  
 
-  ```sql
-  SELECT UPPER(nickname) AS 대문자닉네임 FROM dt_demo;
-  ```
+```sql
+SELECT UPPER(nickname) AS 대문자닉네임 FROM dt_demo;
+```
 
-- **LOWER(str)**  
+### **LOWER(str)**  
 
-  문자열을 모두 소문자로 변환
+문자열을 모두 소문자로 변환
 
-  ```sql
-  SELECT LOWER(nickname) AS 소문자닉네임 FROM dt_demo;
-  ```
+```sql
+SELECT LOWER(nickname) AS 소문자닉네임 FROM dt_demo;
+```
 
-- **SUBSTRING(str, pos, len) / LEFT,RIGHT(str,len)**  
+### **SUBSTRING(str, pos, len) / LEFT,RIGHT(str,len)**  
 
-  부분 문자열 추출  
+부분 문자열 추출  
 
-  ```sql
-  SELECT SUBSTRING('hello sql!', 2, 4);  -- 결과: 'ello'
+```sql
+SELECT SUBSTRING('hello sql!', 2, 4);  -- 결과: 'ello'
 
-  SELECT LEFT(description, 3) FROM dt_demo;  -- 설명의 앞 3글자만 추출
+SELECT LEFT(description, 3) FROM dt_demo;  -- 설명의 앞 3글자만 추출
 
-  SELECT RIGHT(description, 3) FROM dt_demo; -- 설명의 뒤 3글자만 추출
-  ```
+SELECT RIGHT(description, 3) FROM dt_demo; -- 설명의 뒤 3글자만 추출
+```
 
-- **REPLACE(str, old, new)**  
+### **REPLACE(str, old, new)**  
 
-  문자열 내 특정 부분을 다른 문자열로 치환  
+문자열 내 특정 부분을 다른 문자열로 치환  
 
-  ```sql
-  SELECT REPLACE('A@gmail.com', 'A', 'B');  -- 결과: 'B@gmail.com'
-  
-  SELECT REPLACE(description, '학생', '**') AS secret FROM dt_demo;  -- '학생'을 '**'로 대체
-  ```
+```sql
+SELECT REPLACE('A@gmail.com', 'A', 'B');  -- 결과: 'B@gmail.com'
 
-- **TRIM(str)**  
+SELECT REPLACE(description, '학생', '**') AS secret FROM dt_demo;  -- '학생'을 '**'로 대체
+```
 
-  문자열 앞뒤의 공백을 제거  
+### **TRIM(str)**  
 
-  ```sql
-  SELECT TRIM('   what??   ') AS trimmed;  -- 결과: 'what??'
-  ```
+문자열 앞뒤의 공백을 제거  
 
-- **LOCATE(substr, str)**  
+```sql
+SELECT TRIM('   what??   ') AS trimmed;  -- 결과: 'what??'
+```
 
-  특정 문자열이 전체 문자열 내에 위치한 시작 인덱스(1부터)를 반환  
+### **LOCATE(substr, str)**  
 
-  ```sql
-  SELECT LOCATE('@', 'username@gmail.com');  -- 결과: 9 ('@' 위치)
-  
-  SELECT SUBSTRING(description, 1, LOCATE('학생', description) - 1) AS 학생설명 FROM dt_demo; -- 첫번째 글자부터 '학생' 앞까지 설명 추출
-  ```
+특정 문자열이 전체 문자열 내에 위치한 시작 인덱스(1부터)를 반환  
+
+```sql
+SELECT LOCATE('@', 'username@gmail.com');  -- 결과: 9 ('@' 위치)
+
+SELECT SUBSTRING(description, 1, LOCATE('학생', description) - 1) AS 학생설명 FROM dt_demo; -- 첫번째 글자부터 '학생' 앞까지 설명 추출
+```
 
   
 ## 날짜/시간 함수
@@ -209,3 +209,77 @@ FROM sales;
 ```
 
 데이터를 전부 `,`로 구분해서 한 셀에 적어줌
+
+## Window 함수
+
+집에서 창문 너머로는 전체 주택가를 볼 수 있다.
+
+이처럼, 레코드 안의 데이터만 보는 게 아니라 레코드 밖의 정보를 창문 너머로 보듯이 보는 것이 Window 함수의 기본
+
+Window 함수의 공통점은 `OVER()`구문을 활용한다는 것이다.
+
+### 기본
+
+```sql
+-- 전체 평균값
+SELECT AVG(amount) FROM orders;
+-- 전체 데이터
+SELECT customer_id, amount FROM orders;
+```
+전체 평균값은 스칼라, 전체 데이터는 테이블이기 때문에 이 둘을 한 테이블에서 볼 방법은 없었다.
+
+어떻게든 보고 싶다면, CROSS JOIN을 이용해 강제로 모든 데이터 옆에 평균값을 붙여야 했다. 
+
+Window함수가 있으면, 한번에 이걸 편하게 할 수 있음
+
+```sql
+SELECT
+  customer_id,
+  amount,
+  AVG(amount) OVER()
+FROM orders
+```
+전체 데이터 옆에 평균값이 바로 붙게 되었다.
+
+다른 집계함수에도 적용 가능함.
+
+### **`ROW_NUMBER()`**
+
+순서대로 줄을 세우는 함수
+
+원래, 그냥 모든 데이터를 줄세우려면 `ORDER BY`를 사용하면 됐다.
+
+```sql
+SELECT * FROM orders ORDER BY amount LIMIT 20 OFFSET 20;
+```
+그런데, 정확하게 n번째 데이터를 찾고 싶을 때는 `LIMIT 1 OFFSET n-1`같은 복잡미묘한 방법을 사용해야 했다.
+
+```sql
+SELECT
+  *,
+  ROW_NUMBER() OVER (ORDER BY amount DESC)
+FROM orders;
+```
+와 같이, 데이터 옆에 이 데이터가 어떤 순서의 몇 번째인지를 붙여서 사용할 수 있다.
+
+### **`RANK() / DENSE_RANK()`**
+
+`ROW_NUMBER()`와 비슷하지만, 동점자 처리 방법이 다르다.
+
+```sql
+SELECT
+  ROW_NUMBER() OVER (ORDER BY amount DESC),
+  RANK() OVER (ORDER BY amount DESC),
+  DENSE_RANK() OVER (ORDER BY amount DESC)
+FROM orders;
+```
+이 쿼리를 돌리면,
+
+|함수|결과|동점자 처리 방싱|
+|---|---|---|
+|`ROW_NUMBER()`|1-2-3-4-5-6-7-8-9|동점자 무시하고 위에서부터 순서대로|
+|`RANK()`|1-1-1-1-5-5-7-8-8|동점자 숫자를 고려해서 동점자 처리|
+|`DENSE_RANK()`|1-1-1-1-2-2-3-4-4|동점자 숫자는 무시하고 동점자 처리|
+
+각각 사용처가 다르다.
+
