@@ -1,6 +1,6 @@
-# SQL 관계형 데이터베이스
+# 데이터베이스에서의 관계
 
-## 1. 1:1 관계 (One-to-One Relationship)
+## 1:1 관계 (One-to-One Relationship)
 
 ### 개념
 - 한 테이블의 레코드 하나가 다른 테이블의 레코드 하나와만 연결되는 관계
@@ -39,7 +39,7 @@ CREATE TABLE user_profiles (
 
 ---
 
-## 2. 1:N 관계 (One-to-Many Relationship)
+## 1:N 관계 (One-to-Many Relationship)
 
 ### 개념
 - 한 테이블의 레코드 하나가 다른 테이블의 여러 레코드와 연결되는 관계
@@ -76,7 +76,7 @@ CREATE TABLE employees (
 
 ---
 
-## 3. M:N 관계 (Many-to-Many Relationship)
+## M:N 관계 (Many-to-Many Relationship)
 
 ### 개념
 - 양쪽 테이블의 레코드들이 서로 다대다 관계를 가지는 형태
