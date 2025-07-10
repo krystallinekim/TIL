@@ -247,6 +247,8 @@ FROM orders
 
 **`OVER()` 안에 들어갈 수 있는 것들**
 
+- 안에 아무것도 없으면, 전체 데이터가 기준이 된다.
+
 - `ORDER BY`
   
   윈도우 함수를 어떤 기준으로 적용할 것인지 알려주는 것
@@ -271,6 +273,23 @@ FROM orders
   ```
   **한번에** 그룹에 대한 정보와 전체에 대한 정보를 같이 볼 수 있다.
 
+- `ROWS BETWEEN`
+
+  결과를 구할 행을 지정한다.
+
+  ```sql
+  FIRST_VALUE(name) OVER(
+    ORDER BY amount
+    ROWS BETWEEN 3 PRECEDING AND 4 FOLLOWING
+  )
+  ```
+  특정 행 기준으로 3행 전 ~ 4행 뒤까지의 데이터 중 가장 amount가 작은 값을 가진 이름을 가져온다.
+
+  기준 1에는 주로 `<n> PRECEDING`, 기준 2에는 `<n> FOLLOWING`이 들어간다.
+
+  n에 값을 주면 n행 전 데이터, UNBOUNDING을 주면 제한 없이 가장 끝 값을 기준으로 한다.
+
+  `CURRENT_ROW`를 쓰면 현재 행이 기준이 된다.
 
 ### **`ROW_NUMBER() OVER()`**
 
@@ -316,11 +335,82 @@ FROM orders;
 
 ### **`SUM() OVER()`**
 
-누적합계
+```sql
+SUM(일매출) OVER(ORDER BY order_date) AS 누적매출
+```
+일반적으로 `SUM()`은 전체 총합, 혹은 집계함수에서 카테고리별 총합을 보는 함수이다.
+
+윈도우 함수에서의 `SUM()`은 그 행까지의 **누적 합계**를 보는 함수이다.
+
+`PARTITION BY`를 이용하면, 특정 카테고리별 누적 합계도 볼 수 있음.
 
 ### **`AVG() OVER()`**
+```sql
+AVG(일매출) OVER(ORDER BY order_date) AS 누적평균매출
+```
+`AVG()`도 똑같이 그 행까지의 **누적 평균**을 보여준다.
 
-누적평균과 이동평균
+이 때, `OVER` 안에 `ROWS BETWEEN <n-1> PRECEDING AND CURRENT ROW`를 적용해 주면
+
+n일동안의 **이동평균**을 볼 수 있게 된다.
+
+모든 행에 대해 n-1일 전부터 현재 행까지 총 n일 간의 평균을 보게 된다는 뜻
+
+### **`LAG()/LEAD() OVER()`**
+
+`LAG()`와 `LEAD()`는 의미만 반대고, 사실상 같은 함수
+
+```sql
+LAG(월매출,1) OVER(ORDER BY 월) AS 전월매출
+```
+`LAG`는 특정 행 기준으로 n열만큼 이전 열 값을 가져오고, `LEAD` 는 반대로 n열 뒤 값을 가져온다.
+
+가장 잘 쓰는 곳은 **증감율**을 볼 때
+
+### **`NTILE()/PERCENT_RANK() OVER()`**
+
+이 두 함수는 전체 데이터 중 이 값이 몇 번쨰에 있는지 보는 함수이다.(윈도우 함수로 분류되는 이유)
+
+```sql
+NTILE(4) OVER(ORDER BY 총구매금액) AS 총구매금액_4분위
+```
+`NTILE(n)`은 전체 데이터를 조건 기준으로 n등분해 지금 행의 데이터가 몇 번째에 있는지를 반환한다. 
+
+순서는 먼저 나온 데이터가 1, 마지막에 나온 데이터가 n을 받는다.
+
+예시의 경우, 총구매금액 기준으로 4등분해 1분위는 가장 구매금액이 낮은 경우, 4분위가 가장 구매금액이 높은 데이터 기준임
+
+```sql
+PERCENT_RANK() OVER(ORDER BY price DESC) AS 가격순위
+```
+
+`PERCENT_RANK()`는 `NTILE()`보다 자유도가 더 높고, 자세하게 볼 수 있다.
+
+전체 데이터에 0부터 1 사이의 값을 할당하는데, 가장 먼저 나온 데이터에 0, 마지막 데이터에 1을 할당하고 그 사이는 0.2, 0.5, 0.99 등을 준다.
+
+데이터의 **백분위 순위**를 알 수 있다.
+
+원본 데이터가 수정되더라도 다시 백분위 순위를 수정해 줘 계속 최신화된 결과를 받아 볼 수 있음
 
 
+### **`FIRST_VALUE()/LAST_VALUE()`**
 
+처음/마지막 값을 가져온다.
+
+```sql
+FIRST_VALUE(product_name) OVER(
+  PARTITION BY 카테고리
+  ORDER BY price DESC
+  ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+)
+```
+
+주로 `PARTITION BY`와 같이 써서, 어느 구역에서의 최대/최소값, 가장 빠른/늦은 날짜 등을 구할 수 있다.
+
+FIRST와 LAST는 중간에 ORDER BY의 순서를 반대로 주면 똑같은 함수임
+
+ROWS BETWEEN으로 가져올 범위를 전체 데이터로 지정해 줘서 전체 데이터를 기준으로 하는 것이 좋다.
+
+PostgreSQL에서는 뒤의 `UNBOUND FOLLOWING`을 `CURRENT ROW`로 가져왔음
+
+###
