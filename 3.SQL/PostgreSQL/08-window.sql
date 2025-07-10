@@ -87,31 +87,3 @@ SELECT
 FROM july_sales
 ORDER BY 순위 LIMIT 3;
 
-
-
--- 각 지역에서 매출 1위 고객(ROW_NUMBER에서 값이 1인 사람) 뽑기 [지역, 고객이름, 총구매액]
-WITH 
-customer_amount AS (
-	SELECT
-		c.customer_name AS 고객명,
-		o.region AS 지역,
-		SUM(o.amount) AS 총구매액
-	FROM orders o
-	JOIN customers c ON o.customer_id = c.customer_id
-	GROUP BY o.customer_id, c.customer_name, o.region
-),
-ranking AS (
-SELECT
-	지역,
-	고객명,
-	총구매액,
-	RANK() OVER (PARTITION BY 지역 ORDER BY 총구매액 DESC) AS 순위
-FROM customer_amount
-)
-SELECT
-	지역,
-	고객명,
-	총구매액
-FROM ranking
-WHERE 순위 = 1
-ORDER BY 총구매액 DESC;
