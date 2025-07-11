@@ -48,5 +48,3 @@ SELECT
 	e.exist_cust
 FROM newcomers n
 FULL OUTER JOIN existing e ON n.year_month = e.year_month;
-
-

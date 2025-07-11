@@ -22,6 +22,6 @@ SELECT
 		ELSE 'Normal'
 	END AS customer_rank
 FROM customer_total
-ORDER BY customer_id
+ORDER BY customer_id;
 
 

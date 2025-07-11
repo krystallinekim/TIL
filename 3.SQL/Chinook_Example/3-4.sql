@@ -36,7 +36,7 @@ SELECT
 	ct.country,
 	ct.customer_total,
 	c2.customer_2buy,
-	c2.customer_2buy * 100 / ct.customer_total AS repeat_rate
+	(c2.customer_2buy * 100 / ct.customer_total)::TEXT || '%' AS repeat_rate
 FROM country_total_customers ct
 LEFT JOIN country_2times c2 ON ct.country = c2.country
-ORDER BY repeat_rate DESC, customer_total DESC
+ORDER BY repeat_rate DESC, customer_total DESC;
