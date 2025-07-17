@@ -159,9 +159,86 @@ for <임시변수> in <컨테이너>:
 
     시퀀싱 가능한 컨테이너에서 **순서를 지켜서** 하나씩 임시변수에 저장하고, 임시변수에 더이상 저장할 수 있는 값이 없을 때 반복문을 중단시킴
 
-    특히, range는 n번 돌리고 싶을 때 `for i in range(n)` 식으로 사용하는 경우가 많다.
+    특히, range는 n번 돌리고 싶을 때 `for _ in range(n)` 식으로 사용하는 경우가 많다.(`_`는 이 임시변수를 코드블럭에 사용하지 않겠다는 표시)
 
-- for는 시작할 때 최대 몇번 돌지가 정해지기 때문에, while처럼 조건이 맞을 때까지 계속 돌린다는 식으로 코드를 짤 수 없다.
+- 대신 for는 시작할 때 최대 몇번 돌지가 정해지기 때문에, while처럼 조건이 맞을 때까지 계속 돌린다는 식으로 코드를 짤 수 없다.
+
+
+#### 순회
+
+특히, str이나 list에서 순회를 돌릴 때 유용하게 사용할 수 있다.
+
+`while`처럼 idx값을 따로 설정할 필요 없이, 바로 원소를 꺼내서 작업할 수 있다.
+
+```py
+nums = [1, 2, 3, 4, 5]
+idx = 0
+
+while idx < len(nums):
+    nums[idx] *= 10
+    idx += 1
+
+print(nums)
+# >> [10, 20, 30, 40, 50]
+```
+`while`에서는, 인덱스를 통해 리스트의 원소에 접근 가능함
+```py
+nums = [1, 2, 3, 4, 5]
+
+for num in nums:
+    num *= 10
+
+print(nums)
+# >> [1, 2, 3, 4, 5]
+```
+
+그런데, `for`에서 리스트의 원소를 가지고 순회를 돌리면 원본 데이터에 접근이 불가능함
+
+위 코드에서 `num`은 임시변수라서 원본 데이터의 복사본이기 때문
+
+```py
+nums = [1, 2, 3, 4, 5]
+
+for i in range(len(nums)):
+    nums[i] *= 10  # for문으로 인덱스에 접근해서 수정할 수 있다
+
+print(nums)
+# >> [10, 20, 30, 40, 50]
+```
+
+`while`에서 했던 것 처럼, 인덱스를 통하면 원본 데이터에 바로 접근이 가능하다.
+
+딕셔너리도 하나씩 꺼내서 순회를 돌릴 수 있다. 딕셔너리가 그러라고 만든게 아니긴 함
+
+딕셔너리에서 순회를 돌리면 key만 나온다. value는 그 key를 통해 접근
+```py
+grades = {'john':  80, 'eric': 90}
+
+for key in grades:
+    print(key)
+# >> john eric
+
+for key in grades:
+    print(grades[key])
+# >> 80 90
+```
+`.items()`를 통해 key와 value에 한번에 접근이 가능하긴 하다.
+
+`.items()`가 리스트 안에 키와 밸류를 튜플로 묶어놓은 형태라는걸 기억하자
+
+```py
+grades = {'john':  80, 'eric': 90}
+
+for key, val in grades.items():
+    print(key, val)
+# >> john 90 eric 80
+
+for item in grades.items():
+    print(item)
+# >> ('john', 90) ('eric', 80)
+```
+
+
 
 ### 반복 제어
 
