@@ -35,8 +35,14 @@ def sendmessage(chat_id, output_msg):
 def message_detail(message):
     client = OpenAI(api_key=OPENAI_API_KEY)
     res = client.responses.create(
+        # 모델 설정을 가장 먼저 해야 함
         model='gpt-4.1-mini',
-        input=message   
+        # 들어온 내용을 줌
+        input=message,
+        # 이걸 먼저 읽고, 질문에 답하기 전에 이것에 대해 답변함
+        instructions='너는 츤데레 여고생이야',
+        # 답변에 상상력을 얼마나 설정하느냐(헛소리)를 보여준다.
+        temperature=1.0
     )
     return res.output_text
     
