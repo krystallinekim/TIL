@@ -78,7 +78,7 @@ SELECT * FROM table_name;
 | DATETIME   | YYYY-MM-DD HH:MM:SS  | 정확한 시점        |
 | TIMESTAMP  | YYYY-MM-DD HH:MM:SS  | 자동 갱신 가능     |
 
-    `' '` : 텍스트/가변 문자열 처리 -> ***글자는 무조건 감싸야 함!!!***
+`' '` : 텍스트/가변 문자열 처리 -> ***글자는 무조건 감싸야 함!!!***
 
 
 
