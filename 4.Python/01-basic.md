@@ -19,8 +19,7 @@
 ```py
 if True:
     print(True)
-else:
-    print(False)
+# >> True
 ```
 
 코드블럭 구분을 전부 들여쓰기로 하기 때문에, 들여쓰기를 잘못 쓰면 코드블럭이 깨진다. -> 에러가 난다
@@ -28,8 +27,6 @@ else:
 ```py
 if True:
 print(True)
-else:
-print(False)
 # IndentationError: unexpected indent
 ```
 
@@ -66,7 +63,6 @@ TF는 `참/거짓`으로도 해석할 수 있지만, `있는 것/없는 것`이�
 #### Int(정수)
 
 모든 정수는 int로 표현됨
-
 
 - 숫자의 길이
     보통 프로그래밍 언어에서는 숫자의 최대 길이가 존재한다. 메모리(4byte)에 저장할 수 있는 수에 한계가 있기 때문
