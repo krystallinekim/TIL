@@ -10,7 +10,7 @@ api에 대한 개념은 lotto.md와 09-requests.md 참조
 
 이 봇 토큰을 따로 변수로 저장해 주고, 텔레그램 공식 홈페이지에 있는 봇 api 사용설명서를 
 
-
+https://core.telegram.org/bots/api#getupdates
 
 
 
@@ -45,6 +45,7 @@ postman: api를 좀 더 편하게 지정할 수 있는 툴
 
 
 
+
 /docs
 fastapi 기본 제공, 모든 정보 제공
 
@@ -62,6 +63,9 @@ home
 
 -> 외부에서 들어온 요청을 ngrok 프로그램으로 쏴주고, ngrok에서 내 노트북 서버로 쏴주는 식
 
+텔레그램 api로 /setWebhook 기능을 이용, url을 ngrok 서버로 설정하면 외부외 연결이 가능하다
+
+
 
 ## .env 파일
 
@@ -77,4 +81,14 @@ gitignore 관리 -> https://www.toptal.com/developers/gitignore
 
 이제 중요 파일에서 비싼 키 같은걸 .env에 정리할 수 있다.
 
+pip install dotenv
+
+누가봐도 .env를 쓰기 위해 만든 모듈
+
 dotenv.loadenv() 에서 .env파일을 로딩 가능하고, os.getenv('')에서 필요한 키 값을 로드 가능함
+
+## LLM과 연결하기
+
+pip install openai
+
+openai 키를 .env에서 가져오고, 이걸 이용해 챗gpt를 챗봇 머리로 설정할 수 있다.
