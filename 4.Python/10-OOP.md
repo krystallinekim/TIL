@@ -68,22 +68,154 @@ Ex) 정수(int)는 클래스, `1`은 객체이고, `1`은 정수(int) 클래스�
 class Person:
     pass
 
-kim = Person()
-lee = Person()
+p1 = Person()
+p2 = Person()
 
 # 확인
-type(kim)
-# >> <class '__main__.Person'>
-isinstance(lee, Person)
+type(p1)
+# >> __main__.Person
+isinstance(p2, Person)
 # >> True
 ```
 
+### 인스턴스 속성(attribute)
 
+속성 부여
 
+```py
+class Person:
+    pass
+
+p1.name = 'kim'
+p1.age = 27
+
+print(p1.name, p1.age)
+# >> 'kim', 27
 ```
-# 속성 접근
-my_instance.my_attribute
 
-# 메서드 호출
-my_instance.my_method()
+딕셔너리의 키-밸류 관계와 비슷함
+
+### 인스턴스 메서드(method)
+
+클래스 정의 시 함수를 정의해 주면 그 클래스의 메서드를 설정할 수 있다.
+
+```py
+class Person:
+    def eat(self, food):
+        print(food)
 ```
+
+일반 함수와 같이 가변인자나 기본인자 등도 다 설정 가능하다.
+
+#### `self`
+
+주의할 점으로, 인스턴스 생성 후 메서드를 호출 시 자동으로 첫 인자로 인스턴스(my_instance)가 들어가진다.
+
+```py
+class Person:
+    def talk():
+        print('안녕')
+
+p1 = Person()
+p1.talk()
+# TypeError: Person.talk() takes 0 positional arguments but 1 was given
+```
+
+그래서 `p1.talk()` 안에 빈것처럼 보이지만, 실제로 먼저 p1이 첫번쨰 인자로 들어가는 것임
+
+그래서 항상 함수 첫번째 인자로 `self`를 설정해 줘야 한다. (권장사항)
+
+클래스의 메서드 중, 자기 자신 혹은 자기의 속성을 인자로 받아야 하는 메서드가 필요할 수 있기 때문임
+
+```py
+class Person:
+    def intro(self):
+        print(f'{self.name}, {self.age}')
+
+p1 = Person()
+p1.name = 'kim'
+p1.age = '27'
+
+p1.intro()
+# >> kim, 27
+```
+
+이 self는 인스턴스 각각을 의미한다고 생각하
+
+#### `__init__`
+
+인스턴스 객체가 생성될 때(namespace에 정의될 때) 자동으로 호출되는 함수
+
+생성될 때 바로 속성을 정의해버릴 수도 있다.
+
+```py
+class Person:
+    def __init__(self, name, age):
+        print('응애')
+        self.name = name
+        self.age = age
+
+p1.Person('kim',27)
+# >> 응애
+
+p1.name, p2.name
+# >> ('kim',27)
+```
+
+
+#### `__del__`
+
+인스턴스 객체가 소멸될 때 자동으로 호출되는 함수
+
+객체가 소멸된다는 것은 즉 아무도 이 객체의 이름을 기억하지 못할 때
+
+그래서 객체를 소멸시킬 땐 보통 `del` 키워드(변수 할당을 삭제하는 키워드)를 사용한다.
+
+```py
+class Person:
+    def __init__(self):
+        print('응애')
+
+    def __del__(self):
+        print('끄앙')
+
+p1 = Person()
+# >> 응애
+
+del p1
+# >> 끄앙
+```
+
+객체를 죽이는 다른 방법도 있다.
+
+변수에 다른 객체를 할당하면, 더이상 원래 객체를 가리키는 화살표가 없어 지워진 것과 마찬가지이기 때문
+
+```py
+p1 = 1
+# >> 끄앙
+```
+
+그래서 p1, p2에 같은 객체를 할당하고 p1을 지워버려도, 객체는 삭제되지 않는다.
+
+```py
+p1 = p2 = Person()
+# >> 응애
+
+del p1
+
+del p2
+# >> 끄앙
+```
+
+같은코드를 두번 실행해 버리면 원래 객체를 삭제하고 새로 할당하기 때문에, 생성/소멸이 같이 일어난다.
+
+```py
+p1 = person
+# >> 응애
+
+p1 = person
+# >> 응애
+#    으악
+```
+
+사실 속성 정의를 위해 잘 쓰이는 `__init__`에 비해, `__del__`은 잘 쓸일이 없다
