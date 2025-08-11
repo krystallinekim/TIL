@@ -218,4 +218,136 @@ p1 = person
 #    으악
 ```
 
-사실 속성 정의를 위해 잘 쓰이는 `__init__`에 비해, `__del__`은 잘 쓸일이 없다
+사실 속성 정의를 위해 잘 쓰이는 `__init__`에 비해, `__del__`은 잘 쓸일이 없음
+
+
+### 매직 메서드 (Magic Methods)
+
+특별한 일을 하기 위해 만들어진 메서드. `__xxx__` 형태이다
+
+직접 만든 클래스에서 여러 가지 동작이 가능
+
+메서드 | 설명
+---|---
+`__str__(self)` | `print()` 출력 시 내용 지정
+`__eq__(self, other)` | `==` 비교
+`__gt__(self, other)` | `>` 비교
+`__add__(self, other)` | `+` 연산 정의
+
+### 클래스 변수
+
+모든 인스턴스가 공유하게 되는 클래스의 속성(attribute)
+
+클래스 선언 내부에서 정의되어 인스턴스 어디서나 가져올 수 있다.
+
+```py
+class Circle:
+    pi = 3.14
+
+c1 = Circle()
+c2 = Circle()
+
+c1.pi, c2.pi
+# >> 3.14, 3.14
+Circle.pi
+# >> 3.14
+```
+
+## OOP의 핵심 개념
+
+### 추상화(Abstraction)
+
+여러 클래스에서 공통적으로 사용할 속성 및 메서드를 묶어 기본 클래스로 작성
+
+현실 세계를 프로그램 설계에 반영하는 데 사용
+
+예: Student, Teacher 같은 여러 클래스를 따로 만들지 않고, Person이라는 부모 클래스의 하위에 집어넣어 속성과 메서드를 상속
+
+### 상속(Inheritance)
+
+기존 클래스(부모)의 속성과 메서드를 자식 클래스에서 재사용
+```py
+class Person:
+    def __init__(self, name, age):
+        self.age = age
+        self.name = name
+        
+    def talk(self):
+        print(f'안녕하세요, {self.name}입니다.')
+
+class Student(Person):
+    def __init__(self, name, age, score):
+        super().__init__(name, age)
+        self.score = score
+```
+하위 클래스인 Student에서도 Person의 메서드인 `.talk`를 사용할 수 있다.
+
+#### `super()`
+
+부모 클래스와 자식 클래스 간의 코드 반복을 피할 때 사용함
+
+아예 부모 클래스의 메서드 전체를 그대로 사용할 수 있다.
+
+```py
+class Person:
+    def __init__(self, name, age, number, email):
+        self.name = name
+        self.age = age
+        self.number = number
+        self.email = email 
+        
+    def greeting(self):
+        print(f'안녕, {self.name}')
+      
+class Student(Person):
+    def __init__(self, name, age, number, email, student_id):
+        # 부모클래스의 init 실행.
+        super().__init__(name, age, number, email)
+        self.student_id = student_id
+```
+Student의 `__init__`에서 부모 클래스와 중복되는 부분을 뺄 수 있다.
+
+#### 다중 상속
+
+두 개 이상의 클래스를 상속받을 수도 있다.
+
+중복된 속성이나 메서드가 있을 경우, 먼저 상속받은 클래스에 따름
+
+
+### 다형성(Polymorphism)
+
+같은 이름의 메서드가 상황에 따라 다르게 동작함 - 메서드 오버라이딩(Method Overriding)
+
+자식 클래스에서 상속받은 메서드를 덮어쓸 수 있다.
+
+애초에 `__init__`을 정의하는 것부터가 덮어쓰는 것
+
+### 캡슐화(Encapsulation)
+
+객체의 일부 구현 내용에 대해 외부로부터의 액세스를 차단
+
+일반적인 메서드/속성을 호출 여부에 따라 3개로 나눌 수 있다.
+
+- Public Member
+
+    언더바 없이 시작하는 대부분의 메서드/속성들
+
+    하위 클래스에서 오버라이딩도 가능하고, 어디서나 호출 가능함
+
+- Protected Member
+
+    언더바 1개로 시작하는 메서드/속성들
+
+    부모 클래스 내부와 자식 클래스에서만 호출이 가능하다(국룰).
+
+    밖에서 호출이 되긴 하는데, 그렇게 사용하지 않음
+
+- Private Member
+
+    언더바 2개로 시작하는 메서드/속성들
+
+    사용된 클래스 내에서만 사용이 가능하다.
+
+    하위 클래스에서 상속 및 호출이 불가능하고, 당연히 외부에서 호출도 안됨
+
+
