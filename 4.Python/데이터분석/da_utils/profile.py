@@ -24,8 +24,8 @@ def get_data_profile(df: pd.DataFrame):
     else:
         print('⚠️')
         missing_sum = pd.DataFrame({
-            '결축수': missing_info,
-            '결측율(%)': m_pct,
+            '결측수': missing_info,
+            '결측률(%)': m_pct,
         }).round(2)
         missing_sum = missing_sum[missing_sum['결측수'] > 0]
         display(missing_sum)
