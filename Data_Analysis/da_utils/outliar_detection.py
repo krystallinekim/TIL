@@ -83,7 +83,6 @@ def outlier_detection(df: pd.DataFrame, chi_q=0.999, iso_contamination=0.1, fina
     # business_outliers = (
     #     (df['age'] >130) |
     #     (df['days_since_last_purchase'] < 0) |
-    #     (df['avg_order_value'] > 1000000) |
     #     (df['avg_order_value'] < 0)
     # )
     # print(f'  비즈니스 규칙 이상값: {business_outliers.sum()}개 ({business_outliers.mean() * 100:.1f}%)')
