@@ -11,44 +11,34 @@
 ### 클라이언트와 서버
 
 ```
-      클라이언트           --요청(Request)-->    서버  
-(사람, 컴퓨터, 소프트웨어) <--응답(response)-- (소프트웨어)
+      클라이언트          -- 요청(Request) -->           서버  
+(사람, PC, 앱, 브라우저)  <--응답(Response) --  (웹 서버, API 서버 등)
 ```
 
-클라이언트와 서버를 나누는 기준은, 대상이 요청을 했는지, 아니면 응답을 했는지로 나눌 수 있다.
+- **클라이언트(Client)**  
+  - 요청을 보내는 주체  
+  - 웹 브라우저(크롬, 엣지), 앱, 다른 서버 등  
+- **서버(Server)**  
+  - 요청을 받아 처리하고 응답하는 주체  
+  - 웹 서버, 데이터베이스 서버, API 서버 등
 
-클라이언트가 서버에게 무언가를 요청하고, 그에 따라 서버가 클라이언트에게 응답을 보내는 식
+> 같은 프로그램이라도 상황에 따라 클라이언트/서버 역할이 바뀔 수 있다.  
+> 예: 브라우저가 구글 서버에 요청할 땐 클라이언트지만, 브라우저가 내 컴퓨터에서 HTML을 보여줄 땐 서버처럼 작동하기도 한다.
 
-웹 세상에서는 모든 동작이 요청/응답 중 하나이기 때문에, 어떠한 행동의 주체는 모두 클라이언트 아니면 서버 둘 중 하나가 될 수 밖에 없다.
 
-내가 브라우저를 통해 구글에 파이썬에 대해 검색을 했다고 생각해 보자.
-1. 나는 브라우저에 검색하라고 요청했으므로 나는 클라이언트, 브라우저가 서버가 된다.
-1. 브라우저는 구글 서버에 파이썬에 대한 정보를 요청했으므로 클라이언트, 반대로 구글 서버는 서버가 됨
-1. 구글 서버는 구글 데이터베이스에 파이썬에 대한 정보를 달라고 할 것이기에 여기서는 구글 서버가 클라이언트가 된다.
+### URL (Uniform Resource Locator)
 
-이런 식으로, 어떠한 행동이 있다면 그에 따라 클라이언트와 서버가 결정되게 된다.
+URL은 인터넷 자원의 **위치(주소)**를 나타낸다.
 
-### URL
-
-URL은 `Uniform Resource Locator`의 약자로, 특정 정보의 위치를 알려주는 주소라고 생각할 수 있다.
-
-구글에 `python`이라고 검색하면, 주소창이 다음과 같이 바뀐다.(?와 &를 통해 정보를 구분할 수 있다.)
 ```
-https://www.google.com/search
-?
-q=python 
-&
-oq=python
-&gs_lcrp=EgZjaHJvbWUyDggAEEUYJxg5GIAEGIoFMgYIARBFGEEyBggCEEUYOzIGCAMQIxgnMg8IBBAAGBQYhwIYsQMYgAQyDAgFEAAYQxiABBiKBTIMCAYQABhDGIAEGIoFMgYIBxBFGDzSAQgzMzU2ajBqOagCALACAA
-&
-sourceid=chrome
-&
-ie=UTF-8
+프로토콜://호스트/경로?쿼리스트링
+https://www.google.com/search?q=python&hl=ko
 ```
 
-엄청 길지만, 결국 중요한건 내가 질문할 사이트(`https://www.google.com/search`), 내가 질문할 내용(`q=python`) 이 두개만 있다는 것을 볼 수 있다.
-
-실제로, 검색창에 이 두개만 작성해서 검색해도 같은 사이트가 나온다.
+- **프로토콜**: `https` → 데이터 전송 규칙  
+- **호스트**: `www.google.com` → 서버 주소  
+- **경로**: `/search` → 서버 내부에서 자원을 찾는 경로  
+- **쿼리스트링(Query String)**: `q=python&hl=ko` → 요청에 필요한 추가 데이터
 
 ### API
 
@@ -80,61 +70,93 @@ API는 `Application Programming Interface`을 의미한다.
 
 우리는 분명 브라우저의 주소창에 입력을 했지만, 실제로 응답한 것은 동행복권 서버가 되는 식으로, 브라우저와 동행복권 서버 간에 통신이 일어난 것이다.
 
-### Get과 Post
+### HTTP 메서드 - GET/POST
 
+HTTP 메서드는 "서버에 어떤 행동을 요청하는지"를 나타내는 방법이다.  
+그중 **GET**과 **POST**가 가장 많이 쓰인다.
 
+| 구분 | GET | POST |
+|------|-----|------|
+| **용도** | 데이터 조회 | 데이터 전송/저장 |
+| **데이터 위치** | URL 쿼리스트링 | HTTP 요청 본문(Body) |
+| **보안성** | 낮음 (주소창에 노출) | 높음 (본문에 숨김) |
+| **캐싱** | 가능 | 일반적으로 불가능 |
+| **제한** | URL 길이 제한 존재 | 상대적으로 제한 없음 |
+| **예시** | 검색, 뉴스 기사 보기 | 회원가입, 로그인, 글 작성 |
 
-## python에서의 request
+- GET → 식당에서 "메뉴판을 보여달라" (정보를 가져옴)  
+- POST → 식당에서 "이 음식 주문할게요" (데이터를 보냄)
 
-일반적으로 웹 어딘가에 요청을 하고싶다면, 가장 많이 이용되는 클라이언트는 우리의 웹 브라우저(크롬, 엣지 등)가 될 것이다.
+#### GET
 
-개발자들이 좀 더 편하게 요청을 하기 위해 만든 클라이언트가 `postman`으로, 조금 더 get
+```python
+import requests
 
+url = "https://jsonplaceholder.typicode.com/posts/1"
+res = requests.get(url)
 
-### 서버 만들기
+print("상태 코드:", res.status_code)
+print("응답 데이터:", res.json())
+```
 
-현재 파일 위치로 이동 후 main.py가 ls에 나오는 데까지 간다
-uvicorn, fastapi
+#### POST
+```python
+import requests
 
-uvicorn main:app --reload
-main - 프로그램 이름
-app - 변수명
-```py
+url = "https://jsonplaceholder.typicode.com/posts"
+data = {
+    "title": "Hello World",
+    "body": "This is a test post",
+    "userId": 1
+}
+res = requests.post(url, json=data)
+
+print("상태 코드:", res.status_code)
+print("응답 데이터:", res.json())
+```
+
+## 간단한 서버 만들기 (FastAPI)
+
+```python
 # main.py
 from fastapi import FastAPI
 
 app = FastAPI()
 
-@app.get('/hi')
-def hi():
-    return {'status':'ok'}
+@app.get("/hi")
+def say_hi():
+    return {"message": "Hello, FastAPI!"}
+
+@app.post("/echo")
+def echo(data: dict):
+    return {"you_sent": data}
 ```
+실행:
+```
+uvicorn main:app --reload
+```
+- `main` → 파일명 (main.py)  
+- `app` → FastAPI 인스턴스 이름
 
+---
 
-## 응답코드
+## HTTP 응답 코드 (Status Code)
 
-404 not found
+| 상태 코드 | 의미 | 설명 |
+|-----------|------|------|
+| **200 OK** | 성공 | 요청 정상 처리 |
+| **201 Created** | 생성됨 | POST 요청으로 새 자원이 만들어짐 |
+| **204 No Content** | 내용 없음 | 성공했지만 응답 본문이 없음 |
+| **301 Moved Permanently** | 영구 이동 | 요청한 자원이 다른 URL로 이동 |
+| **400 Bad Request** | 잘못된 요청 | 요청 형식 오류, 데이터 누락 |
+| **401 Unauthorized** | 인증 필요 | 로그인 필요 |
+| **403 Forbidden** | 접근 거부 | 권한 없음 |
+| **404 Not Found** | 찾을 수 없음 | 잘못된 URL |
+| **500 Internal Server Error** | 서버 오류 | 서버 내부 문제 |
+| **503 Service Unavailable** | 서비스 불가 | 서버 과부하, 점검 중 |
 
-200?
-ok
-잘 나왔을 때
-
-400도 봤음
-필요한 요청사항을 덜 썼을때
-bad requests
-
-얘네는 표처럼 4/04, 2/00, 4/00으로 읽어야 함
-앞자리가 더 중요하다
-
-1은 볼일없음
-2는 좋음
-3은 리다이렉트(볼일없음)
-4는 나쁨 - request가 잘못됨 - 클라이언트 잘못
-- 없는 url쓰기 등
-
-
-5도 나쁨임 - response가 잘못됨 - 서버 잘못, 우리가 할수 있는게 없다
-
-00은 그냥 -> 200은 그냥 좋음, 400은 그냥 나쁘다는것 -> 매우 무책임함
-01부터는 무언가 정보가 들어있다
-
+> - **1xx**: 정보성 - 볼 일 없음
+> - **2xx**: 성공
+> - **3xx**: 리다이렉션
+> - **4xx**: 클라이언트 오류 (요청 문제)
+> - **5xx**: 서버 오류 (응답 문제)
