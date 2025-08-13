@@ -1,94 +1,133 @@
-# 챗봇 만들기
+# 텔레그램과 OpenAI를 이용한 챗봇 만들기
 
-목표: 텔레그램에서 돌아가는 챗봇을 만든다
+## 1. 목표
 
-api에 대한 개념은 lotto.md와 09-requests.md 참조
-
-먼저, 텔레그램 봇을 만들어 보자.
-
-텔레그램 BotFather에게 /newbot(이거도 API)을 통해 새로운 봇을 만들고, 별명과 이름을 설정해 주면 나에게 봇 토큰을 준다.
-
-이 봇 토큰을 따로 변수로 저장해 주고, 텔레그램 공식 홈페이지에 있는 봇 api 사용설명서를 
-
-https://core.telegram.org/bots/api#getupdates
+- 텔레그램에서 동작하는 자동 응답 챗봇 제작
+- **FastAPI**로 서버 구성
+- **Telegram Bot API**로 메시지 송수신
+- **OpenAI API**로 대화 응답 생성
 
 
+## 2 텔레그램 봇 생성
+1. **Telegram**에서 `@BotFather` 검색
+2. `/newbot` 입력
+3. 봇의 이름과 사용자명 입력
+4. 발급받은 **봇 토큰** 저장 (API 호출 시 필요)
+
+- [Telegram Bot API 문서](https://core.telegram.org/bots/api) 참고 -> 개발에 필요한 모든 API가 적혀 있음
+
+## 3 개발 도구
+- **Postman**: API 요청을 테스트하고 저장·관리하는 툴
+- **Ngrok**: 로컬 서버를 외부에서 접근 가능하게 하는 터널링 서비스
+
+## 4. 챗봇 동작 흐름
+```
+사용자 (Telegram App)
+   ↓
+텔레그램 서버
+   ↓
+우리 서버(FastAPI + 챗봇 프로그램)
+   ↓
+OpenAI API
+   ↓
+응답 생성 → 텔레그램 서버 → 사용자
+```
+
+## 5. 환경 변수 관리
+
+- API 키나 토큰은 `.env`에 보관
+- `.gitignore`에 `.env` 추가해 GitHub에 올라가지 않게 함 - [gitignore 관리 사이트](https://www.toptal.com/developers/gitignore) 이용
+
+- `.env` 예시:
+
+    ```env
+    TELEGRAM_BOT_TOKEN = <텔레그램 봇 토큰>
+    OPENAI_API_KEY = <OpenAI 키>
+    ```
+- 로드:
+    ```python
+    from dotenv import load_dotenv
+    import os
+
+    load_dotenv()
+    BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+    OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+    ```
+
+## 6. Webhook 설정
+
+### 로컬 서버 외부 접근 문제
+- 노트북이나 개인 PC는 외부에서 직접 접근할 수 없음
+- 이를 해결하려면 **Ngrok**을 사용해 임시로 외부 접속 가능한 URL 생성
+
+### Ngrok 실행
+
+bash에서 직접 실행해야함
+```bash
+ngrok http 8000
+```
+
+1. Ngrok가 제공하는 `https://랜덤주소` 복사
+2. 텔레그램 Webhook 등록
+    
+    `https://api.telegram.org/bot<봇토큰>/setWebhook?url=https://랜덤주소/telegram`
+    
+
+## 7. 코드 (`main.py`)
+```python
+import os, random, requests
+from fastapi import FastAPI, Request
+from dotenv import load_dotenv
+from openai import OpenAI
+
+app = FastAPI()
+load_dotenv()
+
+BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
+def send_msg(chat_id, text):
+    url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage'
+    requests.get(url, {'chat_id': chat_id, 'text': text})
+
+def gpt_reply(msg):
+    client = OpenAI(api_key=OPENAI_API_KEY)
+    res = client.responses.create(model='gpt-4.1-mini',
+                                  input=msg,
+                                  instructions='너는 츤데레 여고생이야',
+                                  temperature=1.0)
+    return res.output_text
+
+@app.post('/telegram')
+async def telegram(req: Request):
+    data = await req.json()
+    chat_id = data['message']['chat']['id']
+    msg = data['message']['text']
+    send_msg(chat_id, gpt_reply(msg))
+    return {'status': 'ok'}
+```
 
 
-postman: api를 좀 더 편하게 지정할 수 있는 툴
+## 8. 실행
+```bash
+uvicorn main:app --reload
+```
+- FastAPI 서버 실행
+- Ngrok 실행 상태 유지
+- Webhook이 등록되어 있으면 텔레그램 대화창에서 자동 응답 가능
 
-만든 api를 저장/수정하기 편하다
+---
 
+## 9. API 흐름
 
+1. **사용자**가 텔레그램 앱에서 봇에게 메시지 전송
 
+1. 텔레그램 서버가 해당 메시지를 JSON으로 변환해 `/telegram` 엔드포인트로 POST 요청
 
+1. FastAPI 서버(내가 연 것)가 메시지를 받아 OpenAI API에 전달
 
+1. OpenAI API가 응답 생성
 
+1. 내 서버가 텔레그램 API의 `/sendMessage`를 호출해 사용자에게 응답 전송
 
-
-텔레그램 gui를 이용하는 일반사용자 -> 텔레그램 서버의 텔레그램 봇 -> 우리가 만든 서버에서 돌아갈 챗봇 프로그램
-
-
-
-
-사람 손으로 텔레그램 서버에 api를 보내면, 텔레그램 봇이 일반사용자에게 메시지를 보내는 것까진 성공
-
-근데 이게 챗봇이라 하기엔 챗-휴먼이라 조금 이상
-
-진짜 챗봇처럼 자동으로 돌아가게 하려면, 텔레그램 서버를 클라이언트로, 우리 노트북을 서버로 만들어서 우리가 데이터를 받으면 자동으로 반응이 오게끔 만들어 줘야함
-
-
-
-127.0.0.1 -> IP, localhost -> 상대적인 '나'라는 뜻
-
-누가 '나'라고 말하는지에 따라 그 대상이 달라지듯, 그냥 자기 각자 컴퓨터라는 뜻이다
-
-
-
-
-/docs
-fastapi 기본 제공, 모든 정보 제공
-
-/
-home
-
-/hi
-거기에 따른 대답
-
-
-
-노트북은 외부에서 들어오는 요청을 전부 차단
-
--> NGROK을 이용, 우회
-
--> 외부에서 들어온 요청을 ngrok 프로그램으로 쏴주고, ngrok에서 내 노트북 서버로 쏴주는 식
-
-텔레그램 api로 /setWebhook 기능을 이용, url을 ngrok 서버로 설정하면 외부외 연결이 가능하다
-
-
-
-## .env 파일
-
-api key 등 중요정보들을 모아놓는 파일
-
-이건 깃헙에 올라가거나 하면 큰일남
-
-git은 이걸 무시해야 함
-
-.gitignore에 넣어두자
-
-gitignore 관리 -> https://www.toptal.com/developers/gitignore
-
-이제 중요 파일에서 비싼 키 같은걸 .env에 정리할 수 있다.
-
-pip install dotenv
-
-누가봐도 .env를 쓰기 위해 만든 모듈
-
-dotenv.loadenv() 에서 .env파일을 로딩 가능하고, os.getenv('')에서 필요한 키 값을 로드 가능함
-
-## LLM과 연결하기
-
-pip install openai
-
-openai 키를 .env에서 가져오고, 이걸 이용해 챗gpt를 챗봇 머리로 설정할 수 있다.
+1. **사용자**는 챗봇 응답을 수신
