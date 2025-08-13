@@ -1,3 +1,5 @@
+# 범용 이상치 탐지 함수
+
 import numpy as np
 import pandas as pd
 from scipy.spatial import distance
@@ -5,12 +7,12 @@ from scipy.stats import chi2
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import IsolationForest
 
-# 범용 이상치 탐지 함수
-def outlier_detection(df: pd.DataFrame, chi_q=0.999, iso_contamination=0.1, final_threshold=2):
+def outlier_detection(df: pd.DataFrame, chi_q=0.999, iso_contamination='auto', final_threshold=2):
+    """ 범용 이상치 탐지 함수 """
     
-    """
-    범용 이상치 탐지 함수
-    """
+    if df.isna().values.any():
+        print('결측치 확인, 제거 후 다시 실행해주세요')
+        return
     
     print('=== 종합 이상값 탐지 ===')
     df_copy = df.copy()
