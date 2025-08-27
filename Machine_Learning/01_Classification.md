@@ -68,3 +68,13 @@ X_train_scaled = (X_train - mean) / std
 
 모든 기준이 동일하게 들어가야 의미가 있기 때문
 
+데이터가 클 경우, 간단하게 모듈로 스케일링도 가능함
+```py
+from sklearn.preprocessing import StandardScaler
+
+ss = StandardScaler()
+ss.fit(X_train)
+X_train_scaled = ss.transform(X_train)
+X_test_scaled = ss.transform(X_test)
+```
+sklearn답게 `fit_transform`이 있지만, 훈련 셋 기준으로 스케일링 해야 하기 때문에 훈련 셋 기준으로 fit하고 훈련셋과 테스트셋을 변환해줌
