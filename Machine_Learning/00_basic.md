@@ -128,3 +128,82 @@ titanic_noempty = titanic_encoded.copy()
 titanic_noempty['age'] = imputer.fit_transform(titanic_encoded)
 ```
 
+## 교차검증(Cross Validation)
+
+지금까지 모델을 평가할 때, 테스트 점수가 높고 낮음에 따라 모델을 선택해 왔었음.
+
+그런데, 테스트 점수를 이용해 모델을 평가한다면, 또 다른 형태의 과대적합이 아닐까? 하는 의심이 생긴다.
+
+테스트 점수는 최종적으로 모델을 검증하는 수단이지, 모델을 테스트 점수에 맞추면 안된다는 이야기
+
+데이터를 훈련/테스트로 나눠서 테스트 셋에 모델을 맞추는 것이 아니라, 훈련/검증/테스트 3가지로 나눠서 훈련/검증으로 모델링을 만들고, 테스트 데이터로 모델을 평가하자는 것
+
+### k-Fold 교차검증
+
+전체 데이터에서 테스트셋을 빼놓고, 나머지 데이터를 k개로 나눠서 일부는 훈련, 일부는 검증에 사용함
+
+k개로 나눠진 데이터중 훈련/검증에 사용되는 부분을 다르게 하면서 훈련-검증 과정을 반복함
+
+검증으로 빠졌던 데이터도 훈련에 이용할 수 있다는 점이 장점
+
+```py
+from sklearn.model_selection import cross_validate
+
+dt = DecisionTreeClassifier(random_state=42)
+dt.fit(X_train, y_train)
+
+scores = cross_validate(dt, X_train, y_train)
+print('평균 k-Fold점수:', np.mean(scores['test_score']))
+```
+이제 테스트 score가 아니라 평균 kfold 점수를 이용해서 모델을 평가하고, 가장 좋은 점수가 나온 경우에 test를 돌려서 최종적인 결론을 내면 된다
+
+### Grid Search
+
+사실 hyperparameter는 매우 많다 - 결정트리만 해도 `min_samples_split`, `max_depth`, `min_impurity_decrease` 등등등 선택 가능한 게 많다
+
+수많은 하이퍼 파라미터에 대해 하나하나 for문을 돌려가는건 말이 안됨 - **Grid Search**를 이용함
+
+1. 하이퍼파라미터 선택
+    ```py
+    from sklearn.model_selection import GridSearchCV
+
+    params = {
+        'min_impurity_decrease': np.arange(0.0001, 0.001, 0.0001),  
+        'max_depth': range(5, 21),  
+        'min_samples_split': range(2, 100, 10),  
+    }
+    # 선택할 모델(dtc) / param_grid: 돌려볼 파라미터들(params) / n_jobs: 사용할 최대 CPU 개수(-1: 모두)
+    gs = GridSearchCV(DecisionTreeClassifier(random_state=42), param_grid=params, n_jobs=-1)
+    ```
+
+    어떤 하이퍼파라미터를 쓸 지 정도는 직접 정해줘야 함
+
+2. 그리드서치 실행
+
+    ```py
+    gs.fit(X_train, y_train)
+    ```
+
+3. 최적 조합을 찾고, 객체에 저장함
+
+    ```py
+    print(gs.best_params_)
+    # >> {'max_depth': 14, 'min_impurity_decrease': np.float64(0.0004), 'min_samples_split': 12}
+    print(np.max(gs.cv_results_['mean_test_score']))
+    # >> 0.8683865773302731
+    ```
+
+    `.best_params_`로 가장 좋은 파라미터 조합을 뽑을 수 있다
+    
+    k-Fold는 gridsearch 안에서 진행해서 이미 평균 kFold 점수를 구함 - `.cv_results_`에서 볼 수 있다
+
+4. 최상의 매개변수에서, 테스트 세트를 활용해 최종 모델을 평가함
+
+    ```py
+    dt_best = gs.best_estimator_
+    print(f'Test score: {dt_best.score(X_test, y_test)}')
+    ```
+    `.best_estimator_` 안에 최종 모델이 저장됨
+
+    아껴놓은 테스트 데이터를 써서 모델이 얼마나 잘 만들어졌는지 평가하면 된다. 테스트 데이터는 지금까지 모델과 아무 관련이 없었음
+
