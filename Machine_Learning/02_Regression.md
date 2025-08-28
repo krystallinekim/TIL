@@ -4,26 +4,6 @@
 
 무언가를 기준으로 다음 값을 예측하겠다는 것
 
-## 과대적합, 과소적합
-
-```py
-model.score(X_train, y_train)  # 훈련 점수
-model.score(X_test, y_test)  # 테스트 점수
-```
-훈련 점수와 테스트 점수를 비교해서 적합 여부를 확인할 수 있다.
-
-테스트 점수와 훈련 점수가 비슷하게 높은 경우, 성공적으로 머신러닝을 돌린 것
-
-- 과대적합(Overfitting)
-
-  - 훈련 점수 >> 테스트 점수
-
-- 과소적합(Underfitting)
-
-  - 테스트 점수 >> 훈련 점수
-
-  - 전체적으로 점수가 낮음
-
 ## KNN Regression
 
 K-Nearest Neighbors, 가장 가까운 k개를 가지고 예측함
