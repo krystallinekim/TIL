@@ -13,17 +13,11 @@
 ```py
 from sklearn.model_selection import train_test_split
 
-X_train, X_test, y_train, y_test = train_test_split(X, y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
 ```
+기본적으로 랜덤하게 훈련 데이터 3 : 테스트 데이터 1로 나눠준다.
 
-기본적으로 랜덤하게 훈련 데이터 3 : 테스트 데이터 1로 나눠줌.
-
-```py
-kn.fit(X_train, y_train)
-kn.score(X_test, y_test)
-```
-훈련 데이터로 학습을 돌리고, 테스트 데이터로 평가하면 됨
-
+`random_state`로 랜덤성을 고정할 수 있다.
 
 ## 스케일링
 
@@ -62,7 +56,7 @@ model.score(X_test, y_test)  # 테스트 점수
 ```
 훈련 점수와 테스트 점수를 비교해서 적합 여부를 확인할 수 있다.
 
-테스트 점수와 훈련 점수가 비슷하게 높은 경우, 성공적으로 머신러닝을 돌린 것
+테스트 점수와 훈련 점수가 비슷하게 높을 경우, 성공적으로 머신러닝을 돌린 것
 
 - 과대적합(Overfitting)
 
@@ -74,5 +68,63 @@ model.score(X_test, y_test)  # 테스트 점수
 
   - 전체적으로 점수가 낮음
 
-## 결측치 처리
+## 데이터 전처리
+
+### 라벨 인코딩
+
+범주형 데이터를 카테고리별로 0, 1, 2처럼 숫자로 변환함
+
+(+) : 카테고리 숫자가 늘어나도 차원이 늘지 않음
+
+(-) : 0, 1, 2를 숫자로 인식하는 경우(KNN, 거리로 인식), 범주형 데이터에서 순서가 생겨버린다.
+
+```py
+from sklearn.preprocessing import LabelEncoder
+```
+
+### One-Hot Encoder
+
+범주형 데이터를 T/F로 이루어진 여러개의 컬럼으로 변환함
+
+(+) : 범주형 데이터를 0, 1, 2처럼 바꿔버리면 크기에 순서가 생겨서 해석에 문제가 생김
+
+(-) : 카테고리가 많아질수록 차원이 늘어남
+
+라벨 인코딩과 정확히 장/단점이 반대이다. 전체 컬럼의 숫자나 데이터 분석 방법 등을 보고, 적절한 것을 선택하면 됨
+
+- 판다스의 `get_dummies` 기능을 이용해 간단하게 처리할 수 있다.
+    ```py
+    titanic_encoded = pd.get_dummies(titanic, columns=['sex'])
+    ```
+    sex_male, sex_female 컬럼에 True/False가 저장되는 걸 볼 수 있음.
+
+    판다스 기능이기 때문에 자동으로 DataFrame으로 반환된다.
+
+- `sklearn`의 `OneHotEncoder` 모듈을 사용할 수도 있다.
+
+    ```py
+    from sklearn.preprocessing import OneHotEncoder
+
+    encoder = OneHotEncoder(sparse_output=False)
+    encoded = encoder.fit_transform(titanic[['sex']])
+
+    encoded_titanic = pd.DataFrame(encoded, columns=encoder.get_feature_names_out(['sex']))
+    titanic_encoded = pd.concat([titanic.drop(columns=['sex']), encoded_titanic], axis=1)
+    ```
+    0, 1로 저장됨. `sparse_output`을 써서 numpy 배열로 반환할 수 있다. (기본값은 `scipy.sparse.csr_matrix` 형태)
+
+    다른 sklearn 전처리를 연속적으로 사용하기엔 `OneHotEncoder`쪽이 유리하다
+
+### MICE
+
+자동으로 다른 특성들을 사용해서 결측치를 채워줌
+
+```py
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer
+
+imputer = IterativeImputer(random_state=42, max_iter=10)
+titanic_noempty = titanic_encoded.copy()
+titanic_noempty['age'] = imputer.fit_transform(titanic_encoded)
+```
 
