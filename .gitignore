@@ -222,3 +222,16 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,windows
+
+# CatBoost model files
+*.cbm
+*.bin
+*.cpp
+*.h
+*.json
+*.pkl
+
+# CatBoost output files
+catboost_info/
+predictions.tsv
+predictions.csv
