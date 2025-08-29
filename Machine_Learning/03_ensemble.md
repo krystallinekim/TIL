@@ -4,7 +4,7 @@
 
 정형 데이터 (Structured Data) 기준으로는 가장 뛰어난 성과를 내는 알고리즘
 
-대부분의 앙상블 학습은 트리 기반이다
+대부분의 앙상블 학습은 **트리** 기반이다
 
 ## 트리 구조
 
@@ -12,11 +12,9 @@
 
 트리 = 어디에서도 순회하지 않는 그래프 -> 특정 노드를 루트 노드로 정하면, 모든 노드를 부모-자식 관계로 표현할 수 있다.
 
-모든 트리에는 루트 노드 1개, 수많은 리프 노드가 있다.
+## Random Forest
 
-## Random Forest - 랜덤 포레스트
-
-### Decision Tree - 결정 트리(분류)
+### Decision Tree
 
 결정 트리는 트리 구조로 전체 데이터에 대해 스무고개를 돌려서 전체 데이터를 분류하는 게 목적인 분석 방법
 
@@ -58,24 +56,128 @@ $$
 
 결정 트리 구조를 여러개 돌려서 랜덤 '포레스트' 분석
 
-1. 결정트리를 랜덤하게 만들어 트리의 숲을 만듦
+1. 결정트리를 랜덤하게 만들어 트리로 숲을 만듦
 
 2. 각 결정트리의 예측을 종합해 최종 예측을 만듦
 
-- 과대적합(overfitting)에 안전!
+- 트리 하나를 이용했을 때보다 과대적합(overfitting)에 더 안전하다 
 
-데이터가 1000개면, 각 트리마다 1000개 데이터를 복원추출함. 이때 중복을 허용 (우연히 같은데이터만 1000개 가능)
+```py
+from sklearn.ensemble import RandomForestClassifier
 
-노드 분할시, 분류 / 회귀의 특성 선택방식이 다름(분류: 개수를 루트함, 회귀: 특성을 다 씀)
+rf = RandomForestClassifier(n_jobs=-1, random_state=42)
+rf.fit(X_train, y_train)
+print(rf.feature_importances_)
+# >> [0.23167441 0.50039841 0.26792718]
+```
+`.feature_importances_`는 각 피쳐별로 피쳐가 사용된 비율을 보여줌.
 
-기본값 100개의 트리를 만들어서
+결정트리와 똑같이 `max_depth`를 설정하지 않을 경우, 과대적합 위험이 있다.
 
-- 분류: 다수결 투표
+#### bootstrap sampling
 
-- 회귀: 100개의 평균
+데이터가 1000개면, 각 트리마다 1000개 데이터를 **복원추출**함. 이때 중복을 허용(같은 데이터가 뽑힐 수 있다)
 
+즉, 각 트리가 원본 데이터의 무작위 표본을 학습해 트리마다 분산이 달라진다는 것
 
+#### 분석 종류에 따른 특성 선택
+
+노드 분할시, 분류/회귀분석에 따라 특성 선택방식이 다름(선택도 가능함)
+
+- 분류: 전체 특성 중 루트(특성 개수)개의 특성을 선택함
+
+- 회귀: 모든 특성을 다 씀
+
+#### 결과 종합
+
+- 분류: 각 트리 예측 중 가장 많은 클래스를 최종 예측으로 선택
+
+- 회귀: 각 트리가 예측한 값의 평균
 
 ## Extra Tree
 
+- 랜덤 포레스트와 매우 유사함 - 랜덤성이 더 크다
+
+- 부트스트랩 샘플링(복원추출)을 사용하지 않고, 전체 훈련세트를 그대로 사용 / 특성도 무작위로 선택함
+
+- 노드 분할 시 최적 노드(불순도/정보이득)를 찾는게 아니라 무작위로 분할
+
+  - 성능이 낮아질 수 있지만, 많은 트리를 앙상블해서 과대적합을 막음
+
+**데이터 노이즈가 많은 경우 사용**
+
+- 데이터 노이즈: 패턴과 상관없는 불필요, 잘못된 신호 / 미묘하게 다른 값이라 이상치에도 잡히지 않는 데이터
+
+```py
+from sklearn.ensemble import ExtraTreesClassifier
+
+et = ExtraTreesClassifier(n_jobs=-1, random_state=42)
+et.fit(X_train, y_train)
+print('Test score:', et.score(X_test, y_test))
+# >> Test score: 0.8861538461538462
+```
+
 ## Gradient Boosting
+
+- 약한 모델(depth가 낮은 결정트리)을 여러개 차례대로 학습
+- 앞 모델에서 틀린 부분을 뒤 모델에서 보완 - Boosting(강화)
+- 오차를 줄이기 위해 경사하강법의 아이디어를 적용함 - Gradient Descent(경사하강법)
+
+1. 약한 첫번째 결정트리 학습 - 기본 예측값 생성
+
+2. 잔차(residual)를 계산: 답-예측
+
+3. 잔차를 예측할 새로운 트리 학습 / 예측값 업데이트
+
+4. 반복 - 오차가 줄어든다
+
+```py
+from sklearn.ensemble import GradientBoostingClassifier
+
+gb = GradientBoostingClassifier(random_state=42)
+gb.fit(X_train, y_train)
+print('train score:', np.mean(scores['train_score']))
+# >> train score: 0.8881086892152563
+print('test score :', np.mean(scores['test_score']))
+# >> test score: 0.8669230769230769
+print(gb.feature_importances_)
+# >> [0.11949946 0.74871836 0.13178218]
+```
+Extra tree나 Random Forest와 달리, 따로 파라미터를 설정 안했는데 Train-Test score가 비슷하게 나온다.
+
+### 장단점
+
+(+) 비선형/복잡한 데이터에서 예측이 뛰어나고, 과적합을 방지하기 위한 여러 규제도 있음
+  - 전용 별도 라이브러리(XGBoost, LightGBM, CatBoost 등) 존재 - 성능이 좋다
+
+(-) 학습 속도가 느림 
+  - 항상 순서대로 작동해야 해서 -> n_jobs가 없음(병렬화 불가능/동시에 작업 불가)
+
+(-) 하이퍼파라미터가 좀 많아서 튜닝이 필요
+
+(-) 데이터 노이즈에 민감한 편
+
+
+### 히스토그램 기반 GB
+
+
+히스토그램 = 데이터를 계급으로 나눈다
+
+- 입력 특성들을 256개 구간으로 나눔
+- 노드 분할 시 최적분할을 가장 빠르게 찾을 수 있다
+  - 특정 기준을 잡을 때, 미리 구간별로 계산을 조금 해놔서 구간 경계값을 기준으로 쓴다
+- 데이터 숫자가 매우 커져도 구간은 256개이므로, 데이터 숫자가 많아져도 계산이 빠름
+- 성능 좋은 GB 모델은 히스토그램 기반으로 돌리는 경우가 많다(XGBoost, LightGBM)
+- 자동으로 결측치도 채워줌
+
+
+```py
+from sklearn.ensemble import HistGradientBoostingClassifier
+
+hgb = HistGradientBoostingClassifier()
+hgb.fit(X_train, y_train)
+print('Test score:', hgb.score(X_test, y_test))
+# >> Test score: 0.8723076923076923
+```
+
+돌려보면 일반 GB에 비해 실행 시간이 매우 짧아진 것을 볼 수 있음
