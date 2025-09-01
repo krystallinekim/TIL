@@ -173,7 +173,11 @@ print('평균 k-Fold점수:', np.mean(scores['test_score']))
         'min_samples_split': range(2, 100, 10),  
     }
     # 선택할 모델(dtc) / param_grid: 돌려볼 파라미터들(params) / n_jobs: 사용할 최대 CPU 개수(-1: 모두)
-    gs = GridSearchCV(DecisionTreeClassifier(random_state=42), param_grid=params, n_jobs=-1)
+    gs = GridSearchCV(
+        DecisionTreeClassifier(random_state=42), 
+        param_grid=params, 
+        n_jobs=-1
+    )
     ```
 
     어떤 하이퍼파라미터를 쓸 지 정도는 직접 정해줘야 함
@@ -206,4 +210,34 @@ print('평균 k-Fold점수:', np.mean(scores['test_score']))
     `.best_estimator_` 안에 최종 모델이 저장됨
 
     아껴놓은 테스트 데이터를 써서 모델이 얼마나 잘 만들어졌는지 평가하면 된다. 테스트 데이터는 지금까지 모델과 아무 관련이 없었음
+
+### Randimized Search
+
+Grid Search는 모든 후보 하이퍼파라미터에 대해 조합을 탐색하기 때문에 연산량이 매우 커진다.
+
+RSCV는 지정된 범위에 대해 임의로 샘플링해 돌려 상대적으로 빠르고 효율적이 된다.
+
+이 때 파라미터 선정은 일반적으로 `scipy.stats`의 `uniform`, `randint`를 이용함
+
+```py
+from scipy.stats import uniform, randint
+params = {
+    'min_impurity_decrease': uniform(0.0001, 0.001),
+    'max_depth': randint(10, 50),
+    'min_samples_split': randint(2, 25),
+    'min_samples_leaf': randint(1, 25),
+}
+
+from sklearn.model_selection import RandomizedSearchCV
+gs = RandomizedSearchCV(
+    DecisionTreeClassifier(random_state=42),
+    param_distributions=params,
+    n_iter=1000,
+    n_jobs=-1,
+    random_state=42
+)
+
+gs.fit(X_train, y_train)
+```
+`uniform`, `randint`가 지정된 범위 안에서 임의로 실수/정수를 샘플링하고, 임의로 정해진 하이퍼파라미터 조합에 대해 각각 평가함
 
