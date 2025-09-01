@@ -1,49 +1,207 @@
 # 랭체인
 
-## LLM
+## 기초
 
-LLM(거대 언어 모델)을 기반으로 한 애플리케이션 개발은 더 이상 전문가만의 영역이 아닙니다. 이 글에서는 LLM의 기본 개념과, LLM 애플리케이션 개발을 돕는 강력한 도구인 LangChain 생태계에 대해 알기 쉽게 설명합니다.
+LLM powered application 제작을 위한 프레임워크
 
-### 정의
+**LLM** = 대형 언어 모델(Large Language Model), 수많은 텍스트 데이터를 학습하여 인간의 언어를 이해하고 생성할 수 있도록 만들어진 인공지능 모델
 
-거대 언어 모델, 즉 LLM(Large Language Model)은 수많은 텍스트 데이터를 학습하여 인간의 언어를 이해하고 생성할 수 있도록 만들어진 인공지능 모델입니다. 책, 기사, 웹사이트 등 인터넷의 방대한 정보를 학습하여 문맥을 파악하고, 질문에 답하거나, 글을 요약하고, 심지어 코드를 작성하는 능력까지 갖추게 되었습니다.
+LLM을 외부 데이터 소스, 다른 기능들과 쉽게 연결 가능하게 하기 위해 만들어졌다.
 
-우리가 흔히 접하는 OpenAI의 GPT 시리즈나 구글의 Gemini가 바로 이 LLM에 해당합니다. 개발자들은 보통 API라는 창구를 통해 이러한 LLM에게 요청을 보내고, 그 결과를 받아 자신의 애플리케이션에 활용합니다.
+- LangSmith
 
-## LangChain
+    LangChain으로 만든 애플리케이션을 디버깅, 테스트, 모니터링하기 위한 개발자용 플랫폼
 
-LLM 자체는 강력하지만, 단순히 대화만 하는 것을 넘어 실제 세상의 데이터와 상호작용하는 복잡한 애플리케이션을 만들기란 쉽지 않습니다. LangChain은 바로 이 지점에서 개발자를 돕기 위해 등장한 프레임워크이자 생태계입니다.
+    LLM에게 보낸 프롬프트부터 최종 답변까지 모든 단계를 추적하고 시각적으로 보여준다
 
-### LangChain
+- LangGraph
 
-*   **용도**: LLM을 외부 데이터 소스나 다른 기능들과 쉽게 연결하여 애플리케이션을 개발하기 위한 핵심 프레임워크입니다.
-*   **하는 일**: LLM을 데이터베이스, PDF 파일, 웹 검색 결과 등과 연결하는 과정을 표준화합니다. 개발자는 LangChain이 제공하는 '체인(Chain)'이나 '에이전트(Agent)' 같은 구성 요소를 조립하여, 특정 문서의 내용을 기반으로 답변하는 챗봇이나, 스스로 인터넷 검색을 하여 최신 정보를 알려주는 비서와 같은 복잡한 프로그램을 비교적 간단하게 만들 수 있습니다.
+    LLM 워크플로우를 그래프로 모델링/실행하는 라이브러리.
 
-### LangSmith
+    에이전트 시스템을 그래프(노드/엣지)형태로 정의하고 실행함
 
-*   **용도**: LangChain으로 만든 애플리케이션을 디버깅, 테스트, 모니터링하기 위한 개발자 플랫폼입니다.
-*   **하는 일**: LLM 애플리케이션은 내부 동작이 복잡하여 "왜 이런 답변을 했지?"를 파악하기 어렵습니다. LangSmith는 LLM에게 보낸 프롬프트부터 최종 답변까지 모든 단계를 추적하고 시각적으로 보여줍니다. 이를 통해 개발자는 애플리케이션의 오류를 쉽게 찾고, 성능을 평가하며, 사용자의 피드백을 관리하는 등 프로토타입을 실제 서비스 가능한 제품으로 만드는 데 필수적인 작업을 수행할 수 있습니다.
+## 연결
+```py
+from dotenv import load_dotenv
+load_dotenv()
+```
+미리 `.env` 파일에 사용할 LLM의 API 키를 저장해 놔야 한다.
 
-### LangGraph
+```py
+from langchain_openai import ChatOpenAI
 
-*   **용도**: 여러 단계의 추론과 작업이 필요한 복잡하고 상태를 가진 에이전트를 만들기 위한 라이브러리입니다.
-*   **하는 일**: 기존의 LangChain '체인'이 정해진 순서대로만 작동하는 반면, LangGraph는 순환적인 흐름을 만들 수 있습니다. 예를 들어, 에이전트가 어떤 도구를 사용한 결과가 만족스럽지 않을 때, 다시 다른 도구를 선택하여 시도하게 만드는 것과 같은 복잡한 로직을 구현할 수 있습니다. 각 단계를 '노드(Node)'로, 노드 간의 이동을 '엣지(Edge)'로 정의하여, 사람의 사고 과정과 유사하게 여러 번의 시도와 수정을 거치는 정교한 에이전트를 구축하는 데 사용됩니다.
+llm = ChatOpenAI(model='gpt-4.1-nano')
+```
+gpt 4.1 nano 모델을 사용하겠다고 선언하는 것
 
-
-
-토큰
-
-
-**Runnable** 매우 중요함. 자주 보임 - 돌릴 수 있다
--> invoke, batch, stream 등의 키 메서드를 쓸 수 있다는 것
-
-Serializable
-parsing
-
-## 프롬프트 템플릿
+Grok, Gemini 등의 다른 모델을 사용하고 싶으면 해당하는 랭체인 모듈을 깔아주면 된다.
 
 ## 체인
 
+langchain의 각 구성요소를 묶어서(Chaining) 한번에 실행(invoke) 할 수 있는 기능
+
+체인 기능을 이용해 단순한 질문답변이 아닌, 복잡한 워크플로우를 구성할 수 있다.
+
+- `a | b | c | ...`의 형태 -> 파이썬 문법이 아니라, 랭체인 문법(*LangChain Expression Language*, LCEL)
+
+- 기본적으로 프롬프트 - LLM - Parser 순으로 사용
+
+- 파이프 안에 다른게 계속 들어갈 수 있다.
+
+```py
+from langchain_core.output_parsers import StrOutputParser
+
+template = '<템플릿 내용>'
+prompt = PromptTemplate.from_template(template)
+chain = prompt | llm | StrOutputParser()  # 이게 체인
+chain.invoke({'<빈칸>': '<물어볼 것>'})
+# >> LLM이 생성한 답변
+```
+
+체인의 마지막에 `StrOutputParser()`를 묶으면 LLM이 생성한 답변을 **사람이** 보기 편하게 str로 바꿔 준다.
+
+### Runnable
+
+돌릴 수 있다를 의미하는 클래스. 자주 보이고 매우 중요함. 
+
+내부에 invoke, batch, stream 등의 키 메서드가 존재.
+
+체인 단계에서 사용되는 prompt, llm, parser 등은 모두 runnable을 구현한 객체이므로, 같은 방식으로 실행, 디버깅 등이 가능하다.
+
+### invoke
+
+입력 1개, 출력도 1개
+
+```py
+res = chain.invoke({'<빈칸>': '<물어볼 것>'})
+print(res)
+# >> LLM이 생성한 답변
+```
+대신, 전체 문자열을 다 받아서 한번에 리턴해준다
+
 ### stream
 
+invoke와 다르게, 출력을 생성되는 대로 순차적으로 전달함.
+```py
+for token in chain.stream({'<빈칸>': '<물어볼 것>'}):
+    print(token, end='^', flush=True)
+# >> LLM^이 ^ 생성^한^ 답^변^
+```
+llm이 생성한 답변을 토큰 단위로 저장도 할 수 있다.
+
+일반적으로 llm에서 답변 생성 시, 몇글자씩 생성해서 보여주는 것도 토큰 단위로 보여주는 것
+
 ### batch
+
+입력 여러개를 받아서 답변 여러개를 출력함.
+
+```py
+res = chain.batch([
+    {'<빈칸1>': '<물어볼것 1>'},
+    {'<빈칸2>': '<물어볼것 2>'},
+    {'<빈칸3>': '<물어볼것 3>'}
+])
+print(res)
+# >>[답변1, 답변2, 답변3]
+```
+
+## 프롬프트
+
+LLM에게 주는 입력(지시, 맥락, 기억)
+
+- 맥락: 내가 ~~했어 -> 현재 지시를 위해 제공하는 추가정보
+
+- 지시: ~~해줘
+
+- 기억: 지금까지 한 대화내용 / 메모리
+
+### 프롬프트 템플릿
+
+고정된 문자열과 변수를 조합해 프롬프트를 만드는 것
+
+고정된 문자열과 변수를 합쳐서 LLM에 들어갈 템플릿을 만들고, 변수에 들어갈 값을 합치면 프롬프트가 된다.
+
+```py
+from langchain_core.prompts import PromptTemplate
+
+template = '{변수}에 대한 문자열'
+prompt = PromptTemplate.from_template(template)
+```
+프롬프트를 만드는 방법은 매우 많음. 다른 코드를 써도 같은 동작을 하는 경우도 많다.
+
+```py
+prompt = PromptTemplate(
+    template=template,
+    input_variables=['변수'],
+    partial_variables={'부분변수': '값'}
+)
+```
+Partial Variable, 부분변수는 파이썬에서 매개변수의 기본값처럼, 값이 들어오지 않을 경우 기본값을 설정해줄 수 있다.
+
+Input Variable은 무조건 값이 들어가야함
+
+`prompt.format(변수1='값', 변수2='값')` 처럼 템플릿이 어떻게 될 지 미리보기도 가능하다.
+
+### `PromptTemplate()`
+
+1회성 템플릿을 생성함
+
+단순히 질문에 대한 답변만을 원한다면 충분한 기능을 할 수 있다.
+
+### `ChatPromptTemplate()`
+
+채팅을 주고받기 위한 템플릿을 생성함
+- 대화 목록을 LLM에 주입 가능
+- 채팅이기 때문에, 기본적으로 **role**과 **message**로 구성되어 있다.
+
+```py
+chat_template = ChatPromptTemplate.from_messages(
+    [
+        ('system', '너는 까칠한 AI 비서야. 이름은 {name}이야.'),
+        ('human', '안녕!'),
+        ('ai', '무엇을 도와드릴까요?'),
+        ('human', '{user_input}'),
+    ]
+)
+
+messages_str = chat_template.format(name='gaida', user_input='너의 이름은 뭐니?')
+messages_cls = chat_template.format_messages(name='gaida', user_input='너의 이름은 뭐니?')
+```
+만든 템플릿을 그냥 저장하는것과, `messages`로 저장하는 것 사이에는 매우 큰 차이가 생김
+
+- 그냥 저장하면 LLM은 인풋 하나에 한 덩이로 모든 대화 내용을 적게 된다.
+    - 대신 템플릿을 출력하면 사람이 보기 훨씬 편함
+
+- 메시지로 저장하면 AI가 이를 human과 AI의 대화 내역으로 인식하게 된다.
+    - 템플릿 출력 시 langchain class 형태로 보기 불편하다
+
+
+### Few Shot Prompting
+
+내가 원하는 답변을 설명하는 것이 아닌, 예시를 주고 답변을 유도하는 것
+
+- Zero Shot Prompting
+  - 예시 없이 질문만 던지는 것
+
+- One Shot Prompting
+  - 예시 1개 + 질문을 제공, 예시를 모방해 답변
+
+- **Few Shot Prompting**
+  - 예시 여러개 + 질문, 예시들의 패턴을 일반화 해서 답변
+
+당연히 예시가 늘어날수록 원하는 답의 형태가 나올 가능성이 높아진다.
+
+다만, 예시가 늘어날수록 프롬프트도 길어지고 복잡해짐
+
+## [랭체인 허브](https://smith.langchain.com/hub)
+
+다른 사용자들이 열심히 입력해 업로드한 프롬프트를 받아와서 사용 가능하다.
+
+```py
+from langchain import hub
+
+prompt = hub.pull('<프롬프트 이름>')
+print(prompt.template)
+```
+반대로, 내가 열심히 작성한 프롬프트를 랭체인 허브에 올리는 것도 가능함
+
