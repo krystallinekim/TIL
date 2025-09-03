@@ -235,3 +235,4 @@ $RECYCLE.BIN/
 catboost_info/
 predictions.tsv
 predictions.csv
+LLM_agent/data/Organic_Chemistry.pdf
