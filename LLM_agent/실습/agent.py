@@ -21,16 +21,21 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain.tools.retriever import create_retriever_tool
 
-# 출력파서
-from pydantic import BaseModel, Field
+# 출력
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
 import warnings
 
-warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings('ignore', category=DeprecationWarning)
 load_dotenv()
 
 # LLM
-llm = ChatOpenAI(model='gpt-4.1-nano', temperature=0)
+llm = ChatOpenAI(
+    model='gpt-4.1-nano', 
+    temperature=0,
+    streaming=True,
+    callbacks=[StreamingStdOutCallbackHandler()]
+)
 
 # 프롬프트
 system_message = f'''
@@ -45,6 +50,8 @@ rag_search 툴 안에는 사용자가 공부한 내용이 들어있어.
 공부한 내용과 관련이 있는데, rag_search로 관련도가 높은 정보를 찾지 못했다면, web_search를 사용해 답변을 생성해도 돼.
 
 만약 질문 내용이 공부한 내용과 관련이 없다면, web_search 툴을 사용해 관련 내용을 검색하고, 답변을 생성해.
+
+만약 web_search를 이용했다면, 웹 검색을 진행했다는 내용을 답변에 포함해야 해. 또, 어디서 검색했는지 출처를 마지막에 추가해 줘.
 
 질문 내용을 이해하지 못했다면, 그냥 질문을 이해하지 못했다고 말해.
 
@@ -75,29 +82,33 @@ web_search = TavilySearch(
 )
 
 # 사전처리
-def load_markdown(folder_path):
+folder_path = '../'
+vectorstore_path = './vectorstore'
+
+# 벡터스토어가 있으면 그대로 가져옴
+if os.path.exists(vectorstore_path) and os.listdir(vectorstore_path):
+    embedding = OpenAIEmbeddings()
+    vectorstore = Chroma(persist_directory=vectorstore_path, embedding_function=embedding)
+    
+# 없을경우 생성
+else:
     loader = DirectoryLoader(
-        folder_path,
+        '../../',
         glob='**/*.md',
-        loader_cls=lambda path: TextLoader(path, encoding="utf-8"),
+        loader_cls=lambda path: TextLoader(path, encoding='utf-8'),
         show_progress=False
     )
-    docs = loader.load()
-    return docs
+    documents = loader.load()
 
-folder_path = '../'
-documents = load_markdown(folder_path)
+    text_splitter = MarkdownTextSplitter(
+        chunk_size=1000,
+        chunk_overlap=200
+    )
+    split_docs = text_splitter.split_documents(documents)
 
-text_splitter = MarkdownTextSplitter(
-    chunk_size=1000,
-    chunk_overlap=200
-)
-
-split_docs = text_splitter.split_documents(documents)
-
-embedding = OpenAIEmbeddings()
-
-vectorstore = Chroma.from_documents(documents=split_docs, embedding=embedding)
+    embedding = OpenAIEmbeddings()
+    vectorstore = Chroma.from_documents(documents=split_docs, embedding=embedding, persist_directory=vectorstore_path)
+    vectorstore.persist()
 
 # RAG
 retriever = vectorstore.as_retriever()
@@ -121,17 +132,22 @@ agent_executor = AgentExecutor(
     agent=agent,
     tools=tools,
     memory=memory,
-    verbose=False    
+    verbose=False
 )
 
-if __name__ == "__main__":
-    print("챗봇 시작. 종료하려면 'exit' 입력")
+if __name__ == '__main__':
+    print('챗봇 시작. 도움말은 @help')
     
     while True:
-        user_input = input("\n질문을 입력하세요: ")
-        if user_input.lower() in ["exit", "quit"]:
+        user_input = input('\n입력:\n')
+        if user_input == '@quit':
+            print('\n챗봇을 종료합니다')
             break
-        
-        result = agent_executor.invoke({"input": user_input})
-        
-        print(result['output'])
+        elif user_input == '@clear':
+            memory.clear()
+            print('\n챗봇의 메모리를 삭제합니다')
+        elif user_input == '@help':
+            print('\n@quit: 종료\n@clear: 메모리 초기화')
+        else:
+            print('\n답변:')
+            result = agent_executor.invoke({'input': user_input})
