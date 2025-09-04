@@ -39,25 +39,25 @@ llm = ChatOpenAI(
 
 # 프롬프트
 system_message = f'''
-너는 웹 검색도 가능하고, 사용자가 공부한 내용도 검색할 수 있는 어시스턴트야.
+당신은 웹 검색도 가능하고, 사용자가 공부한 내용도 검색할 수 있는 어시스턴트입니다.
 
-사용자는 AI 기반 데이터 분석가 양성 과정에서 SQL, 파이썬, 머신러닝, LLM 등에 대해 공부했어.
+사용자는 AI 기반 데이터 분석가 양성 과정에서 SQL, 파이썬, 머신러닝, LLM 등에 대해 공부했습니다.
 
-rag_search 툴 안에는 사용자가 공부한 내용이 들어있어.
+1. 사용자가 질문한 내용이 공부한 내용과 관련이 있다면, 먼저 rag_search 툴을 사용해서 답변을 생성합니다.
 
-사용자가 질문한 내용이 공부한 내용과 관련이 있다면, 먼저 rag_search 툴을 사용해서 답변을 생성해.
+2. rag_search 결과가 관련도가 낮으면 해당 결과를 사용하지 않습니다. 관련도가 낮으면 무시하고 다음 단계로 진행합니다.
 
-공부한 내용과 관련이 있는데, rag_search로 관련도가 높은 정보를 찾지 못했다면, web_search를 사용해 답변을 생성해도 돼.
+3. 관련도가 낮은 rag_search 결과만 있거나 관련 내용이 전혀 없으면, web_search를 사용해서 답변을 생성할 수 있습니다.
 
-만약 질문 내용이 공부한 내용과 관련이 없다면, web_search 툴을 사용해 관련 내용을 검색하고, 답변을 생성해.
+4. 질문 내용이 공부한 내용과 관련이 없다면, web_search를 사용해서 관련 내용을 검색하고 답변을 생성합니다.
 
-만약 web_search를 이용했다면, 웹 검색을 진행했다는 내용을 답변에 포함해야 해. 또, 어디서 검색했는지 출처를 마지막에 추가해 줘.
+5. web_search를 이용한 경우, 웹 검색을 진행했다는 사실과 출처를 답변 마지막에 명시합니다.
 
-질문 내용을 이해하지 못했다면, 그냥 질문을 이해하지 못했다고 말해.
+6. 질문 내용을 이해하지 못했으면, 이해하지 못했다고 솔직하게 말합니다.
 
-만약 답을 모르겠다면, 그냥 답을 모르겠다고 말해.
+7. 답을 모르면, 그냥 모른다고 답합니다.
 
-가장 의미있는 결과들을 정리해서 질문에 답해줘.
+항상 가장 의미 있는 결과를 정리해서 요점만 한국어로 전달하고, 항상 존댓말을 사용합니다.
 
 '''
 
@@ -153,11 +153,11 @@ if __name__ == '__main__':
             print('\n입력이 비어 있습니다. 다시 입력해 주세요.')
             continue        
         
-        elif user_input in ['@quit', '@exit']:
+        elif user_input in ['@quit', '@q']:
             print('\n챗봇을 종료합니다')
             break
         
-        elif user_input == '@clear':
+        elif user_input in ['@clear', '@clr']:
             memory.clear()
             print('\n챗봇의 메모리를 삭제합니다')
         
@@ -176,12 +176,14 @@ if __name__ == '__main__':
             print('\n자료를 업데이트합니다.')
             
         elif user_input == '@help':
-            print('\n- @quit, @exit: 종료\n- @clear: 메모리 초기화\n- @history: 대화 기록\n- @update: 자료 업데이트')
+            print('\n=== 도움말 목록 ===')
+            print('- @quit, @q: 종료\n- @clear, @clr: 메모리 초기화\n- @history: 대화 기록\n- @update: 자료 업데이트')
             
         else:
             try:
                 print('\n답변:')
                 result = agent_executor.invoke({'input': user_input})
+                print('\n')
             except Exception as e:
                 print(f'오류 발생: {e}')
                 continue
