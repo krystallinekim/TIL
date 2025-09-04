@@ -85,13 +85,7 @@ web_search = TavilySearch(
 folder_path = '../'
 vectorstore_path = './vectorstore'
 
-# 벡터스토어가 있으면 그대로 가져옴
-if os.path.exists(vectorstore_path) and os.listdir(vectorstore_path):
-    embedding = OpenAIEmbeddings()
-    vectorstore = Chroma(persist_directory=vectorstore_path, embedding_function=embedding)
-    
-# 없을경우 생성
-else:
+def make_vectorstore():
     loader = DirectoryLoader(
         '../../',
         glob='**/*.md',
@@ -109,6 +103,18 @@ else:
     embedding = OpenAIEmbeddings()
     vectorstore = Chroma.from_documents(documents=split_docs, embedding=embedding, persist_directory=vectorstore_path)
     vectorstore.persist()
+    
+    return vectorstore
+
+# 벡터스토어가 있으면 그대로 가져옴
+if os.path.exists(vectorstore_path) and os.listdir(vectorstore_path):
+    embedding = OpenAIEmbeddings()
+    vectorstore = Chroma(persist_directory=vectorstore_path, embedding_function=embedding)
+    
+# 없을경우 생성
+else:
+    vectorstore = make_vectorstore()
+    
 
 # RAG
 retriever = vectorstore.as_retriever()
@@ -122,6 +128,7 @@ rag_tool = create_retriever_tool(
 # Tools 설정
 tools = [web_search, rag_tool]
 
+# agent 실행
 agent = create_openai_tools_agent(
     llm=llm,
     tools=tools,
@@ -135,19 +142,46 @@ agent_executor = AgentExecutor(
     verbose=False
 )
 
+# 챗봇 실행
 if __name__ == '__main__':
-    print('챗봇 시작. 도움말은 @help')
+    print('=== 챗봇을 시작합니다 === (@help)')
     
     while True:
         user_input = input('\n입력:\n')
-        if user_input == '@quit':
+        
+        if not user_input:
+            print('\n입력이 비어 있습니다. 다시 입력해 주세요.')
+            continue        
+        
+        elif user_input in ['@quit', '@exit']:
             print('\n챗봇을 종료합니다')
             break
+        
         elif user_input == '@clear':
             memory.clear()
             print('\n챗봇의 메모리를 삭제합니다')
+        
+        elif user_input == '@history':
+            chat_history = memory.load_memory_variables({}).get('chat_history', [])
+            if not chat_history:
+                print('\n대화 기록이 없습니다')
+            else:
+                print('\n=== 대화 기록 ===')
+                for i, msg in enumerate(chat_history, 1):
+                    role = msg.type
+                    print(f'{role}: {msg.content}\n')
+        
+        elif user_input == '@update':
+            vectorstore = make_vectorstore()
+            print('\n자료를 업데이트합니다.')
+            
         elif user_input == '@help':
-            print('\n@quit: 종료\n@clear: 메모리 초기화')
+            print('\n- @quit, @exit: 종료\n- @clear: 메모리 초기화\n- @history: 대화 기록\n- @update: 자료 업데이트')
+            
         else:
-            print('\n답변:')
-            result = agent_executor.invoke({'input': user_input})
+            try:
+                print('\n답변:')
+                result = agent_executor.invoke({'input': user_input})
+            except Exception as e:
+                print(f'오류 발생: {e}')
+                continue
