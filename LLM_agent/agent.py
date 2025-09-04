@@ -1,0 +1,137 @@
+# base
+import os
+from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
+
+# agent
+from langchain.agents import create_openai_tools_agent, AgentExecutor
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.runnables import RunnablePassthrough, RunnableLambda
+
+# memory
+from langchain.memory import ConversationBufferMemory
+
+# web search
+from langchain_tavily import TavilySearch
+
+# RAG
+from langchain_community.document_loaders import DirectoryLoader, TextLoader
+from langchain_text_splitters import MarkdownTextSplitter
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores import Chroma
+from langchain.tools.retriever import create_retriever_tool
+
+# 출력파서
+from pydantic import BaseModel, Field
+
+import warnings
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+load_dotenv()
+
+# LLM
+llm = ChatOpenAI(model='gpt-4.1-nano', temperature=0)
+
+# 프롬프트
+system_message = f'''
+너는 웹 검색도 가능하고, 사용자가 공부한 내용도 검색할 수 있는 어시스턴트야.
+
+사용자는 AI 기반 데이터 분석가 양성 과정에서 SQL, 파이썬, 머신러닝, LLM 등에 대해 공부했어.
+
+rag_search 툴 안에는 사용자가 공부한 내용이 들어있어.
+
+사용자가 질문한 내용이 공부한 내용과 관련이 있다면, 먼저 rag_search 툴을 사용해서 답변을 생성해.
+
+공부한 내용과 관련이 있는데, rag_search로 관련도가 높은 정보를 찾지 못했다면, web_search를 사용해 답변을 생성해도 돼.
+
+만약 질문 내용이 공부한 내용과 관련이 없다면, web_search 툴을 사용해 관련 내용을 검색하고, 답변을 생성해.
+
+질문 내용을 이해하지 못했다면, 그냥 질문을 이해하지 못했다고 말해.
+
+만약 답을 모르겠다면, 그냥 답을 모르겠다고 말해.
+
+가장 의미있는 결과들을 정리해서 질문에 답해줘.
+
+'''
+
+prompt = ChatPromptTemplate([
+    ('system', system_message),
+    MessagesPlaceholder(variable_name='chat_history'),
+    ('human', '{input}'),
+    MessagesPlaceholder(variable_name='agent_scratchpad')
+])
+
+# 메모리
+memory = ConversationBufferMemory(
+    return_messages=True,
+    memory_key='chat_history'
+)
+
+# 웹서치
+web_search = TavilySearch(
+    max_results=5,
+    topic='general',
+    search_depth='advanced'
+)
+
+# 사전처리
+def load_markdown(folder_path):
+    loader = DirectoryLoader(
+        folder_path,
+        glob='**/*.md',
+        loader_cls=lambda path: TextLoader(path, encoding="utf-8"),
+        show_progress=False
+    )
+    docs = loader.load()
+    return docs
+
+folder_path = '../'
+documents = load_markdown(folder_path)
+
+text_splitter = MarkdownTextSplitter(
+    chunk_size=1000,
+    chunk_overlap=200
+)
+
+split_docs = text_splitter.split_documents(documents)
+
+embedding = OpenAIEmbeddings()
+
+vectorstore = Chroma.from_documents(documents=split_docs, embedding=embedding)
+
+# RAG
+retriever = vectorstore.as_retriever()
+
+rag_tool = create_retriever_tool(
+    retriever,
+    name='md_search',
+    description='수업자료에서 관련된 내용을 검색합니다'
+)
+
+# Tools 설정
+tools = [web_search, rag_tool]
+
+agent = create_openai_tools_agent(
+    llm=llm,
+    tools=tools,
+    prompt=prompt
+)
+
+agent_executor = AgentExecutor(
+    agent=agent,
+    tools=tools,
+    memory=memory,
+    verbose=False    
+)
+
+if __name__ == "__main__":
+    print("챗봇 시작. 종료하려면 'exit' 입력")
+    
+    while True:
+        user_input = input("\n질문을 입력하세요: ")
+        if user_input.lower() in ["exit", "quit"]:
+            break
+        
+        result = agent_executor.invoke({"input": user_input})
+        
+        print(result['output'])
