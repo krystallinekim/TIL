@@ -1,5 +1,5 @@
 from langgraph.graph import START, END, StateGraph
-from classes import State
+from core.classes import State
 from node import query_analysis, write_sql, execute_sql, generate_answer, generate_normal
 from router import analysis_decide
 

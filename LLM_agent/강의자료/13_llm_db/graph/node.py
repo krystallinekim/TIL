@@ -1,5 +1,5 @@
-from classes import State, QueryAnalysis, QueryOutput
-from db import db, table_info
+from core.classes import State, QueryAnalysis, QueryOutput
+from core.db import db, table_info
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.tools.sql_database.tool import QuerySQLDatabaseTool
