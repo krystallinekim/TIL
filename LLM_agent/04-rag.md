@@ -110,7 +110,54 @@ RAG를 사용하기 위해서는 문서를 벡터 형태로 변환하여 데이�
     ```
     `Chroma`, `FAISS` 등 다양한 벡터 데이터베이스 형태가 있다.
 
+
 사전 처리 단계에서는 LLM이 관여하지 않는다. 기계적인 작업임
+
+#### **벡터스토어**
+
+필요에 따라 로컬 혹은 클라우드 기반 벡터스토어를 선택할 수 있다.
+
+- **로컬 벡터스토어**:
+  - **(+)**: 설정이 간편하고 빠름. 프로토타이핑에 적합.
+  - **(-)**: 데이터가 로컬 환경에 저장되므로, 애플리케이션이 종료되면 데이터가 사라짐(비영속적). 다른 환경과 공유하기 어려움.
+
+- **클라우드 기반 벡터스토어**:
+  - **(+)**: **영속성**과 **확장성**이 뛰어남. 데이터를 한 번만 업로드하면 여러 환경에서 동일한 데이터에 접근할 수 있으며, 대규모 데이터도 안정적으로 처리 가능
+  - **(-)**: 별도의 API 키와 설정이 필요하며, 비용이 발생할 수 있음.
+
+`Pinecone`과 같은 클라우드 벡터스토어를 사용하면 데이터를 영구적으로 저장하고 관리할 수 있다.
+
+```python
+from pinecone import Pinecone
+from langchain_openai import OpenAIEmbeddings
+from langchain_pinecone import PineconeVectorStore
+
+pc = Pinecone()
+index_name = 'my-rag-index' # Pinecone에서 미리 생성한 인덱스 이름
+embedding = OpenAIEmbeddings(model='text-embedding-3-small')
+```
+
+- 문서 임베딩 및 Pinecone에 저장
+
+    `from_documents`는 비용이 발생하며, 실행마다 데이터가 추가되므로 최초 1회만 실행해야 한다. 
+    
+    ```py
+    # 데이터 넣고 나면 주석처리하기
+    PineconeVectorStore.from_documents(
+        splitted_docs, 
+        index_name=index_name, 
+        embedding=embedding
+    )
+    ```
+- 이후 사용: 기존에 저장된 인덱스를 불러와 사용
+
+    실제 애플리케이션에서는 이 함수를 통해 벡터스토어에 연결
+    ```py
+    vectorstore = PineconeVectorStore.from_existing_index(
+        index_name=index_name, 
+        embedding=embedding
+    )
+    ```
 
 ### 검색 및 생성
 
