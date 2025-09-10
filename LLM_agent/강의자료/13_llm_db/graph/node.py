@@ -1,9 +1,9 @@
-from core.classes import State, QueryAnalysis, QueryOutput
-from core.db import db, table_info
+from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.tools.sql_database.tool import QuerySQLDatabaseTool
-from dotenv import load_dotenv
+from core.classes import State, QueryAnalysis, QueryOutput
+from core.db import db, table_info
 
 load_dotenv()
 
