@@ -1,6 +1,3 @@
-Whiteboard.ipynb
-
-
 # Created by https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,visualstudiocode,windows
 
@@ -228,11 +225,15 @@ $RECYCLE.BIN/
 *.bin
 *.cpp
 *.h
-*.json
 *.pkl
 
 # CatBoost output files
 catboost_info/
 predictions.tsv
 predictions.csv
+
+
+# User
 LLM_agent/data/Organic_Chemistry.pdf
+.langgraph_api/
+Whiteboard.ipynb
