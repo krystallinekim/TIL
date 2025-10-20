@@ -82,10 +82,79 @@ print(acc_nums)
 ```
 ## 함수와 재귀함수
 
+- 파이썬의 LEGB
 
+    `global`, `nonlocal` -> 함수 안에 함수를 넣어야 할 때, 변수 재할당 시 사용 -> 많이 헷갈림
 
+- set의 id 자르기
+    
+    이건 나중에 dfs같은데서 씀
 
+### 메모이제이션
 
+계산한 결과값을 캐싱해서 시간복잡도를 크게 개선
+
+### 이진탐색 알고리즘
+
+**정렬된** 배열에서 원하는 데이터를 찾아내는 알고리즘
+
+left, right, mid(l+r//2)
+
+원하는 데이터가 l-m / m-r 사이 어디에 있는지 보고, 나머지 반대를 날림
+
+이제는 m이 left, r은 그대로 -> 다시 mid를 구하고, 원하는 데이터와 비교하고, 나머지를 날림
+
+이걸 반복하다보면 계속 구간이 줄어들면서 검색, 언젠가 같아지면 결론
+
+선형탐색에서, $O(N)$ -> 10개의 데이터를 10번 보는것
+
+이진탐색에서는 10개의 데이터를 3번만 봐도 확인 가능함 -> $O(logN)$(엄밀히 말해서 $O(log_2N)$)
+
+- 일단 정렬된 결과에서만 사용 가능 -> 선형탐색에서는 $O(N)$, 정렬($O(NlogN)$) + 이진($O(logN)$)
+
+    -> 기본적으로 정렬된 것(시간, 높이, 길이, ...)이 존재함 -> 여기에 이진검색을 걸어버리면 된다.(나무자르기 문제같은거)
+
+재귀함수 스타일로 풀던가
+```py
+nums = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+def binary_search(low, high, target):
+    if low > high:                                      # 탐색 배열의 길이가 0보다 작아지면 탐색 종료(실패)
+        return '찾지 못함'
+
+    mid = (low + high) // 2                             # 배열의 가운데 수 집기
+
+    if target == nums[mid]:                             # 일치하면 탐색 종료(성공)
+        return mid
+    elif target < nums[mid]:                            # 오른쪽 절반 덜기
+        return binary_search(low, mid-1, target)
+    elif target > nums[mid]:                            # 왼쪽 절반 덜기
+        return binary_search(mid+1, high, target)
+
+print(binary_search(0, len(nums)-1, 7))
+```
+
+while 반복문으로 풀면 된다
+```py
+nums = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+def binary_search(low, high, target):
+
+    while low <= high:                  # 탐색 배열의 길이가 0보다 작아지면 탐색 종료(실패)
+        mid = (low + high) // 2         # 배열의 가운데 수 집기
+
+        if target == nums[mid]:         # 일치하면 탐색 종료(성공)
+            return mid
+        elif target < nums[mid]:        # 오른쪽 절반 덜기
+            high = mid-1
+        elif target > nums[mid]:        # 왼쪽 절반 덜기
+            low = mid+1
+
+    return '찾지 못함'
+
+print(binary_search(0, len(nums)-1, 7))
+
+```
 
 
 
