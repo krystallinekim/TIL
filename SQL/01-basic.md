@@ -232,9 +232,43 @@ SELECT * FROM table_name;
     ```sql
     DELETE FROM table_name WHERE condition;
     ```
+ 
+    `DELETE`는 데이터에서 행을 하나하나 삭제하는 반면, `TRUNCATE`는 테이블은 남겨놓되, 데이터 내용은 전부 삭제
 
-    `SELECT`, `UPDATE`, `DELETE` 뒤에는 항상 `WHERE condition`이 들어간다고 생각하면 됨
+    `UPDATE`, `DELETE` 뒤에는 항상 `WHERE {condition}`이 들어간다고 생각하면 된다. 없으면 테이블 내용 전부에 영향이 감
 
+    
+## TCL(Transaction Control Language)
+
+"예금 인출"이라는 작업단위에 카드 삽입 -> 메뉴 선택 -> 금액 확인 -> 통장 인출 -> 현금 출금
+
+모든 하위 작업이 완료되어야 하나의 작업이 끝남
+
+단, 한 작업에서 문제가 발생했을 때 나머지 작업이 취소될 수 있어야 한다.
+
+DB에서도 이걸 제어 가능한 구문들이 있다 - `COMMIT`, `ROLLBACK`
+
+`AUTOCOMMIT`: DB에 INSERT, UPDATE, DELETE 등을 진행할 때, 자동으로 DB에 저장되게 함.
+
+이게 켜져있으면 커밋, 롤백 둘다 먹히지 않는다. 
+
+```sql
+SET AUTOCOMMIT = 1;  -- 활성화
+SET AUTOCOMMIT = 0;  -- 비활성화 
+
+-- AUTOCOMMIT 확인
+SELECT @@AUTOCOMMIT;
+SHOW VARIABLES LIKE 'AUTOCOMMIT%';
+```
+꺼진 상태로 무언가 작업을 하면, 실제 DB에 반영된 게 아니기 때문에 다른 계정에서 확인하면 변화가 없다.
+
+`ROLLBACK`은 실행 취소 기능
+
+TCL에서 문제가 발생 시, 다시 원래 상태로 되돌리는 기능
+
+`COMMIT`은 현 상태를 DB에 저장하는 작업
+
+TCL에서 변화를 확정하는 기능임
 
 ## 참고사항
 
