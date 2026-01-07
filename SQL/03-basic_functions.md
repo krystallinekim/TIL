@@ -23,9 +23,15 @@ SELECT CONVERT(12345, CHAR);
 
 ## 문자열 함수
 
-### **CHAR_LENGTH(str)** 
+### 문자열 길이
 
 문자열의 길이를 반환 
+
+- `LENGTH(str)`: Byte 길이
+- `CHAR_LENGTH(str)`: 문자 개수
+- `BIT_LENGTH(str)`: bit 길이(Byte * 8)
+
+UTF-8에서, 영어는 한글자에 1Byte, 한글은 3Byte를 사용함
 
 ```sql
 SELECT CHAR_LENGTH('hello sql');  -- 결과: 9
@@ -33,45 +39,49 @@ SELECT CHAR_LENGTH('hello sql');  -- 결과: 9
 SELECT name, CHAR_LENGTH(name) AS 길이 FROM dt_demo; -- 이름과 각 이름의 길이
 ```
 
-### **CONCAT(str1, str2, ...)**  
+### 문자열 붙이기
 
 여러 문자열을 이어붙임 
 
+- `CONCAT(str1, str2, ...)`: 바로 붙여줌
+- `CONCAT_WS(sep, str1, str2, ...)`: 구분자(sep)을 이용해 str1, str2, ... 사이를 붙여준다.
+
 ```sql
-SELECT CONCAT('hello ', 'sql', ' !!');  -- 결과: 'hello sql !!'
+SELECT CONCAT_WS(' ', 'hello', 'sql', '!!');  -- 결과: 'hello sql !!'
 
 SELECT CONCAT(name, '(', score, '점)') AS info FROM dt_demo; -- 이름과 점수 합쳐서 출력, 형태는 김김김(90점) 처럼
 ```
 
-### **UPPER(str)**  
+### `UPPER(str)`/`LOWER(str)` 
 
-문자열을 모두 대문자로 변환  
+문자열을 모두 대문자/소문자로 변환  
 
 ```sql
 SELECT UPPER(nickname) AS 대문자닉네임 FROM dt_demo;
-```
-
-### **LOWER(str)**  
-
-문자열을 모두 소문자로 변환
-
-```sql
 SELECT LOWER(nickname) AS 소문자닉네임 FROM dt_demo;
 ```
 
-### **SUBSTRING(str, pos, len) / LEFT,RIGHT(str,len)**  
+### **`SUBSTRING(str, pos, len)` / `LEFT,RIGHT(str,len)`**  
 
-부분 문자열 추출  
+부분 문자열 추출
 
 ```sql
-SELECT SUBSTRING('hello sql!', 2, 4);  -- 결과: 'ello'
-
 SELECT LEFT(description, 3) FROM dt_demo;  -- 설명의 앞 3글자만 추출
 
 SELECT RIGHT(description, 3) FROM dt_demo; -- 설명의 뒤 3글자만 추출
+
+SELECT SUBSTRING('hello sql!', 2, 4);  -- 결과: 'ello'
 ```
 
-### **REPLACE(str, old, new)**  
+`SUBSTRING_INDEX(str, sep, cnt)`의 경우, sep 구분자가 cnt개 나왔을 때 부터 버림. cnt가 음수면 반대로 셈
+
+```sql
+SELECT SUBSTRING_INDEX('aaa_bbbb_cc_ddd_ee_ff_g', '_', 3);  -- 'aaa_bbbb_cc'
+SELECT SUBSTRING_INDEX('aaa_bbbb_cc_ddd_ee_ff_g', '_', -3);  -- 'ee_ff_g'
+```
+
+
+### **`REPLACE(str, old, new)`**  
 
 문자열 내 특정 부분을 다른 문자열로 치환  
 
@@ -81,15 +91,24 @@ SELECT REPLACE('A@gmail.com', 'A', 'B');  -- 결과: 'B@gmail.com'
 SELECT REPLACE(description, '학생', '**') AS secret FROM dt_demo;  -- '학생'을 '**'로 대체
 ```
 
-### **TRIM(str)**  
+### **`TRIM(str)`**  
 
-문자열 앞뒤의 공백을 제거  
+문자열 앞뒤의 공백을 제거. `LTRIM()`, `RTRIM()`은 왼쪽/오른쪽 공백만 제거함 
 
 ```sql
 SELECT TRIM('   what??   ') AS trimmed;  -- 결과: 'what??'
 ```
 
-### **LOCATE(substr, str)**  
+공백 말고, 반복된 문자열도 제거할 수 있음.
+```sql
+SELECT TRIM(BOTH 'z' FROM 'zzzzzznicknamezzzzzz');  -- 결과: 'nickname'
+```
+BOTH는 앞뒤, LEADING은 앞쪽만, TRAILING은 뒤쪽만.
+
+특정 문자열을 제거할 수 없을 때까지 돌린다.
+
+
+### **`LOCATE(substr, str)`**  
 
 특정 문자열이 전체 문자열 내에 위치한 시작 인덱스(1부터)를 반환  
 
@@ -195,6 +214,17 @@ FROM dt_demo;
   COALESCE는 a에 NULL이 될수도 있는 값을 넣고, 만약 NULL이면 b에 있는 값을, b도 NULL이면 c에 있는 값을 반환하는 식으로 쓰임
 
   IFNULL과 달리 조건을 여러 개 걸 수 있다.
+
+- `NVL`: `IFNULL`과 같음
+
+- `NVL2`: 첫번째 인자가 NULL이면 다음 인자를 반환. NULL이 아니면 첫번째 인자를 그대로 반환함
+
+  ```sql
+  SELECT NVL2(NULL, 100, 200), NVL2(300, 100, 200); 
+  -- 200, 100
+  ```
+
+- `NULLIF(a, b)`: a와 b가 같으면 NULL, 다르면 a를 반환함.
 
 ## 집계 함수 (Aggregate)
 
