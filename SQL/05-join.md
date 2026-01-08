@@ -93,6 +93,19 @@ JOIN을 통해 두 테이블을 customer_id를 기준으로 하나로 합치고,
     LEFT JOIN employees 상사 ON 직원.manager_id = 상사.emp_id;
     ```
 
+- `NON EQUAL JOIN`(비등가 조인): JOIN 조건에 등호를 사용하지 않는 JOIN
+
+    - BETWEEN, 부등호 등을 사용해서 JOIN -> 특정 구간을 기준으로도 JOIN할 수 있다.
+    ```sql
+    SELECT
+        e.emp_name AS `직원명`,
+        e.salary AS `급여`,
+        s.sal_level AS `급여등급`
+    FROM employee e
+    LEFT JOIN sal_grade s ON e.salary BETWEEN s.min_sal AND s.max_sal; -- 구간을 기준으로 JOIN
+    ```
+
+
 ## GROUP BY + JOIN
 
 항상 유형별로 데이터를 보고싶은 경우가 생기기 때문
