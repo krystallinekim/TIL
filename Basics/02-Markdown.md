@@ -67,7 +67,7 @@ SELECT * FROM users;
 
 ### 수식블럭 `$$`
 
-LaTex 문법 쓸일없음
+LaTex 문법
 
 $$
 \bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i
@@ -106,3 +106,13 @@ $$
 - [구글](https://google.com)
 - 이미지 삽입은 앞에 느낌표 사용
 - 구글에서 이미지 복사할 때는 썸네일 말고 한번 눌러서 이미지 주소 복사하기
+
+### 드롭다운
+
+html에 나오던 문서 접기
+
+<details><summary>드롭다운</summary>
+
+- 드롭다운 내용
+
+</details>
