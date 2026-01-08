@@ -182,14 +182,46 @@ SELECT emp_name, REPLACE(email, '@ismoon.or.kr', '@gmail.com') AS 'gmail' FROM e
 SELECT REPEAT('abc', 3), REVERSE('abc'), CONCAT('Maria', SPACE(10), 'DB');
 
 
+-- ------------------------------------------------------------------------------------------------------------
+-- 4. 수학 함수
+
+-- 소수점
+--        올림         내림       (소수점 이하) 반올림   소수점 이하 버림
+SELECT CEIL(3.546), FLOOR(3.546),    ROUND(3.546,2),    TRUNCATE(3.546, 2);  -- 소수점 아래 자리는 음수도 가능
+
+-- 계산
+SELECT MOD(5,2), 5 % 2, 5 MOD 2;
+SELECT POW(2, 2), SQRT(2);
+
+-- 기타
+SELECT RAND(42), RAND(42) * 100 + 1, FLOOR(RAND(42) * 100 + 1);  -- 0.0 ~ 0.999 -> 1 ~ 100
+
+-- ------------------------------------------------------------------------------------------------------------
+-- 5. 날짜 및 시간 함수
+
+-- 날짜/시간 계산
+-- ADD(덧셈)/SUB(뺄셈) + DATE(날짜)/TIME(시간)
+SELECT 
+    ADDDATE(CURDATE(), 20), -- DATE 기본은 일, TIME 기본은 초
+    ADDDATE(CURDATE(), INTERVAL 20 DAY),
+    ADDDATE(CURDATE(), INTERVAL 1 YEAR),
+    ADDTIME(NOW(), '1:1:1');  -- 문자열로 시간데이터 제공도 가능
+
+SELECT DATEDIFF(CURDATE(), '2026-01-01'), TIMEDIFF(CURTIME(), '12:50:00');  -- 날짜/시간 차이
+
+-- 실습: employee에서, 직원명, 입사일, 입사 후 3개월이 된 날짜 조회
+SELECT emp_name, hire_date, ADDDATE(hire_date, INTERVAL 3 MONTH) FROM employee WHERE ent_date IS NULL;
+
+-- 실습: employee에서 직원명, 입사일, 근무일수 조회
+SELECT emp_name, hire_date, DATEDIFF(NOW(), hire_date) FROM employee WHERE ent_date IS NULL;
 
 
+-- 변환
+SELECT DATE_FORMAT(NOW(), '%M %D(%W), %Y - %p%h:%i:%s');
 
+SELECT YEAR(NOW()), MONTH(NOW()), DAY(NOW()), DATE(NOW()),
+SELECT HOUR(NOW()), MINUTE(NOW()), SECOND(NOW()), TIME(NOW());  -- YEAR() ~ SECOND() 까지 정수형으로 데이터를 가져온다
 
+SELECT DAYOFWEEK(CURDATE()), MONTHNAME(CURDATE()), DAYOFYEAR(CURDATE()), LAST_DAY(CURDATE()), QUARTER(CURDATE());
 
-
-
-
-
-
-
+SELECT MAKEDATE(2026, 200), MAKETIME(20, 1, 2), PERIOD_ADD(202601, 10), PERIOD_DIFF(202501, 202612);  -- PERIOD는 정수값으로 나옴
