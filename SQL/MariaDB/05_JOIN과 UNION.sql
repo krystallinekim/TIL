@@ -126,11 +126,12 @@ GROUP BY d.dept_title;
 
 -- 4. 각 부서별 총 급여의 합이 1000만원 이상인 부서명, 급여의 합을 조회하세요.
 SELECT
-    d.dept_title  AS `부서명`,
+    d.dept_title AS `부서명`,
     SUM(e.salary) AS `급여합`
 FROM employee e
 JOIN department d ON e.dept_code = d.dept_id
-GROUP BY d.dept_title;
+GROUP BY d.dept_title
+HAVING `급여합` >= 10000000;
 
 
 -- 5. 해외영업팀에 근무하는 직원들의 직원명, 직급명, 부서 코드, 부서명을 조회하세요.
@@ -198,23 +199,32 @@ LEFT JOIN national n   ON l.national_code = n.national_code
 WHERE n.national_name IN ('한국', '일본');
 
 
+-- UNION(합집합)
+SELECT
+    emp_id AS `사번`,
+    emp_name AS `직원명`,
+    dept_code AS `부서코드`,
+    salary AS `급여`
+FROM employee 
+WHERE dept_code = 'D5'
 
--- UNION
-SELECT * FROM employee WHERE ent_date IS NOT NULL
+UNION -- ALL
 
-UNION
+SELECT 
+    emp_id AS `사번`,
+    emp_name AS `직원명`,
+    dept_code AS `부서코드`,
+    salary AS `급여`
+FROM employee 
+WHERE salary > 3000000;
 
-SELECT * FROM employee WHERE salary > 3000000;
+-- UNION을 안쓰는 이유: 그냥 조건에 OR을 붙이면 됨
+SELECT 
+    emp_id AS `사번`,
+    emp_name AS `직원명`,
+    dept_code AS `부서코드`,
+    salary AS `급여`
+FROM employee 
+WHERE dept_code = 'D5' OR salary > 3000000;
 
-
-
-
-
-
-
-
-
-
-
-
-
+-- UNION ALL은 가끔 씀(대체하기가 힘들어서)
