@@ -298,3 +298,11 @@ DROP CONSTRAINT `1`;
 ALTER TABLE member 
 DROP CONSTRAINT `CONSTRAINT_1`;
 
+
+-- 테이블 이름 변경
+RENAME TABLE usertbl_rename TO usertbl;
+
+
+-- 테이블 삭제
+DROP TABLE dept_copy;
+DROP TABLE member_grade, member;  -- 테이블도 참조되는 중이면 삭제 불가 -> 자식테이블부터 지우던가, 제약조건을 삭제

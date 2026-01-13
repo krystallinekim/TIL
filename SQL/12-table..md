@@ -206,6 +206,7 @@ CREATE TABLE member (
 ## 5. 테이블 삭제
 
 - 테이블을 삭제할 때는 `DROP TABLE` 구문을 사용한다.
+  - 테이블도 참조 중이라면 삭제가 불가능함 -> 제약조건을 삭제하던가, 자식테이블부터 삭제하면 된다.
     
     ```sql
     DROP TABLE member, member_grade;
