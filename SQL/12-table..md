@@ -18,7 +18,8 @@
       enroll_date DATE DEFAULT CURDATE()
     );
     ```
-    
+
+- 서브쿼리를 이용해서 기존 테이블의 데이터를 가져오는 것도 가능
 
 ## 3. 제약 조건
 
@@ -52,6 +53,7 @@ CREATE TABLE member (
     /*CONSTRAINT*/ PRIMARY KEY(mem_no, mem_id)
 );
 ```
+
 
 
 ### 3.2. UNIQUE 제약 조건
@@ -114,7 +116,8 @@ CREATE TABLE member (
 
 - CHECK 제약 조건은 열에 입력되는 데이터를 점검하는 기능을 한다.
 - CHECK 제약 조건을 설정한 후에는 제약 조건에 위배되는 값은 열에 입력되지 않는다.
-    
+- 역시 테이블 단위로 마지막에 CHECK 제약조건을 걸 수 있다.(CONSTRAINT로 이름 지정도 가능하다)
+
     ```sql
     CREATE TABLE member (
       mem_no INT PRIMARY KEY,
@@ -124,7 +127,6 @@ CREATE TABLE member (
       ...
     );
     ```
-    
 
 ## 4. 테이블 수정
 
@@ -134,28 +136,48 @@ CREATE TABLE member (
 ### 4.1. 열의 추가 / 수정 / 삭제
 
 - `ALTER`와 `ADD` 구문을 이용해서 열을 추가할 수 있다.
-- 열을 추가하면 기본적으로 가장 뒤에 추가가 되는데 열을 추가하면서 순서를 지정하려면 제일 뒤에 `FIRST` 또는 `AFTER 열 이름`을 지정하면 된다.
+  - 열을 추가하면 기본적으로 가장 뒤에 추가가 되는데 열을 추가하면서 순서를 지정하려면 제일 뒤에 `FIRST` 또는 `AFTER 열 이름`을 지정하면 된다.
     
     ```sql
-    ALTER TABLE member ADD age TINYINT DEFAULT 0 AFTER gender;
+    ALTER TABLE member 
+    ADD age TINYINT DEFAULT 0 
+    AFTER gender;
     ```
     
 - `ALTER`와 `MODIFY` 구문을 이용해서 열의 데이터 타입, DEFAULT 값을 변경할 수 있다.
-    
+  - 이미 데이터가 존재하는 열의 데이터 타입을 수정할 경우, 충돌이 일어나 변경이 안될 수도 있다.
+
     ```sql
-    ALTER TABLE member MODIFY gender CHAR(2) DEFAULT '남자' NOT NULL;
+    ALTER TABLE member 
+    MODIFY gender CHAR(2) 
+      DEFAULT '남자' 
+      NOT NULL;
     ```
     
 - `ALTER`와 `RENAME COLUMN` 구문을 이용해서 열의 이름을 변경할 수 있다.
     
     ```sql
-    ALTER TABLE member RENAME COLUMN mem_no TO memNo;
+    ALTER TABLE member 
+    RENAME COLUMN mem_no TO memNo;
     ```
     
-- `ALTER`와 `DROP COLUMN` 구문을 이용해서 열을 삭제할 수 있다.
-    
+- `MODIFY`와 `RENAME COLUMN`의 역할을 합친 `CHANGE COLUMN`구문도 있다.
+
     ```sql
-    ALTER TABLE member DROP COLUMN mem_no;
+    ALTER TABLE usertbl
+    CHANGE COLUMN u_name name VARCHAR(20) NOT NULL;
+    ```
+
+
+- `ALTER`와 `DROP COLUMN` 구문을 이용해서 열을 삭제할 수 있다.
+  - 열 안의 데이터도 전부 삭제됨
+  - 참조되는 열이 있다면 삭제 불가
+  - 테이블의 모든 열을 삭제하는것도 불가
+
+
+    ```sql
+    ALTER TABLE member 
+    DROP COLUMN mem_no;
     ```
     
 
@@ -164,13 +186,19 @@ CREATE TABLE member (
 - `ALTER`와 `ADD CONSTRAINT` 구문을 이용해서 제약조건을 추가할 수 있다.
     
     ```sql
-    ALTER TABLE member ADD CONSTRAINT PRIMARY KEY(mem_no);
+    ALTER TABLE member 
+    ADD CONSTRAINT PRIMARY KEY(mem_no);
+    
+    ALTER TABLE location
+    ADD CONSTRAINT FOREIGN KEY(national_code) REFERENCES national(national_code);
     ```
     
 - `ALTER`와 `DROP CONSTRAINT` 구문을 이용해서 제약조건을 삭제할 수 있다.
-    
+  - PK는 그냥 `PRIMARY KEY`라고 지칭할 수 있지만, 외래키나 제약조건들은 각각 이름을 선언해서 삭제해 주면 된다.  
+
     ```sql
-    ALTER TABLE member DROP CONSTRAINT PRIMARY KEY;
+    ALTER TABLE member 
+    DROP CONSTRAINT PRIMARY KEY;
     ```
     
 - 제약 조건의 수정은 불가능하기 때문에 삭제 후 다시 제약 조건을 추가해야 한다.

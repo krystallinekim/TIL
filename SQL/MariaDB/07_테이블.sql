@@ -71,7 +71,7 @@ CREATE TABLE member(
 
 
 -- -----------------------------------------------------------------------------------------
--- 3. 외래키
+-- 2-1. 외래키
 DROP TABLE IF EXISTS member_grade;
 CREATE TABLE member_grade (
   grade_code VARCHAR(10) PRIMARY KEY,
@@ -110,4 +110,191 @@ SELECT * FROM member;
 UPDATE member_grade SET grade_code = 'vvip' WHERE grade_code = 'vip';
 DELETE FROM member_grade WHERE grade_code = 'vvip';  
 
+-- -----------------------------------------------------------------------------------------
+-- 2-2. CHECK
+
+DROP TABLE IF EXISTS member;
+
+CREATE TABLE member (
+    mem_no INT AUTO_INCREMENT PRIMARY KEY,
+    mem_id VARCHAR(20) UNIQUE,
+    mem_pass VARCHAR(20) NOT NULL,
+    mem_name VARCHAR(10) NOT NULL,
+    gender CHAR(2) CHECK(gender IN ('M', 'F')),
+    age TINYINT,
+    grade_code VARCHAR(10) REFERENCES member_grade,
+    enroll_date DATE DEFAULT CURDATE(),
+    /*CONSTRAINT ck_member_age */CHECK(age >= 0)
+);
+
+INSERT INTO member (mem_id, mem_pass, mem_name, gender, age, grade_code)
+VALUES ('hong123', '0000', '홍길동', 'M', 20, 'vip');
+
+INSERT INTO member (mem_id, mem_pass, mem_name, gender, age, grade_code)
+VALUES ('lee123', '0000', '이몽룡', '남', 21, 'gold');
+
+INSERT INTO member (mem_id, mem_pass, mem_name, gender, age, grade_code)
+VALUES ('seong123', '0000', '성춘향', 'F', -22, 'normal');
+
+UPDATE member SET gender = 'aa' WHERE mem_no = 1;  -- 업데이트도 체크에 위배되면 불가
+
+
+-- -----------------------------------------------------------------------------------------
+-- 3. 테이블 수정
+
+-- 3-1. 열 추가/수정/삭제
+
+-- 추가: ADD
+ALTER TABLE usertbl 
+ADD homepage VARCHAR(30);
+
+
+ALTER TABLE usertbl 
+ADD age TINYINT 
+    DEFAULT 0 
+    -- FIRST; -- 제일 앞에
+    AFTER birthyear;
+
+-- 수정: MODIFY
+ALTER TABLE usertbl 
+MODIFY gender CHAR(2) 
+    DEFAULT 'M' 
+    NOT NULL 
+    CHECK(gender IN ('M', 'F'));
+
+ALTER TABLE usertbl
+MODIFY name CHAR(15)
+    NOT NULL;
+
+ALTER TABLE usertbl
+MODIFY name CHAR(1)
+    NOT NULL; -- Data truncated for column 'name', 이미 존재하는 데이터와 충돌됨
+
+ALTER TABLE usertbl
+MODIFY name INT
+    NOT NULL;  -- Truncated incorrect INTEGER value
+
+ALTER TABLE usertbl
+MODIFY homepage INT;  -- 이건 안에 데이터가 없어서 수정 가능함
+
+
+-- 열 이름 수정: RENAME COLUMN ~ TO ~
+ALTER TABLE usertbl 
+RENAME COLUMN name TO u_name;
+
+-- MODIFY + RENAME
+ALTER TABLE usertbl
+CHANGE COLUMN u_name name VARCHAR(20) NOT NULL;
+
+-- 열 삭제: DROP
+ALTER TABLE usertbl 
+DROP COLUMN gender;
+
+ALTER TABLE usertbl 
+DROP COLUMN userID;  -- buytbl에서 외래키라서, 참조되는 열이 있다면 삭제 불가 
+
+DROP TABLE IF EXISTS dept_copy;
+CREATE TABLE dept_copy(
+    SELECT *
+    FROM department
+);
+
+ALTER TABLE dept_copy 
+DROP COLUMN location_id;  -- 테이블의 모든 열을 삭제하는 것도 불가. 테이블에는 항상 한 개의 열은 있어야 함
+
+
+
+-- 3-2. 열 제약조건 추가/삭제(수정은 불가)
+DROP TABLE IF EXISTS member, member_grade;
+
+CREATE TABLE member_grade (
+  grade_code VARCHAR(10),
+  grade_name VARCHAR(10) NOT NULL
+);
+
+CREATE TABLE member (
+    mem_no INT,
+    mem_id VARCHAR(20) NOT NULL,
+    mem_pass VARCHAR(20) NOT NULL,
+    mem_name VARCHAR(10) NOT NULL,
+    enroll_date DATE DEFAULT CURDATE()
+);
+
+-- 제약조건 추가: ADD CONSTRAINT
+
+-- member_grade.grade_code + PK
+ALTER TABLE member_grade 
+ADD CONSTRAINT 
+    PRIMARY KEY(grade_code);
+
+-- member.mem_no + AUTO_INCREMENT PK
+ALTER TABLE member 
+ADD CONSTRAINT 
+    PRIMARY KEY(mem_no);
+
+ALTER TABLE member 
+MODIFY mem_no INT AUTO_INCREMENT;
+
+-- member.mem_id + UNIQUE
+ALTER TABLE member 
+ADD CONSTRAINT uq_member_mem_id UNIQUE(mem_id);
+
+-- member + grade_code + FK
+ALTER TABLE member 
+ADD COLUMN grade_code VARCHAR(10) AFTER mem_name;
+
+ALTER TABLE member 
+ADD CONSTRAINT FOREIGN KEY(grade_code) REFERENCES member_grade(grade_code);
+
+-- member + gender + CHECK
+ALTER TABLE member ADD COLUMN gender CHAR(2) CHECK(gender IN ('M', 'F'));
+
+-- member + age + CHECK
+ALTER TABLE member ADD COLUMN age TINYINT;
+ALTER TABLE member ADD CONSTRAINT CHECK(age >= 0);
+
+
+
+-- 실습
+-- employee.emp_no + UNIQUE
+ALTER TABLE employee ADD CONSTRAINT UNIQUE(emp_no);
+
+-- employee.dept_code, job_code + FK
+ALTER TABLE employee
+ADD CONSTRAINT FOREIGN KEY(dept_code) REFERENCES department(dept_id);
+
+ALTER TABLE employee
+ADD CONSTRAINT FOREIGN KEY(job_code) REFERENCES job(job_code);
+    
+-- department.location_id + FK
+ALTER TABLE department
+ADD CONSTRAINT FOREIGN KEY(location_id) REFERENCES location(local_code);
+
+-- location.national_code + FK
+ALTER TABLE location
+ADD CONSTRAINT FOREIGN KEY(national_code) REFERENCES national(national_code);
+
+-- 제약조건 삭제: DROP CONSTRAINT
+
+-- member_grade.grade_code + PK
+ALTER TABLE member_grade 
+DROP CONSTRAINT PRIMARY KEY;
+
+-- member - PK
+ALTER TABLE member 
+DROP CONSTRAINT PRIMARY KEY;
+
+ALTER TABLE member
+MODIFY mem_no INT;
+
+-- member - UNIQUE
+ALTER TABLE member 
+DROP CONSTRAINT uq_member_mem_id;
+
+-- member + grade_code + FK
+ALTER TABLE member 
+DROP CONSTRAINT `1`;
+
+ALTER TABLE member 
+DROP CONSTRAINT `CONSTRAINT_1`;
 
