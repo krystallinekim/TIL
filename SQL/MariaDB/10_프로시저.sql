@@ -110,6 +110,72 @@ CALL gradeProc(59);
 
 
 
+-- WHILE
+
+-- 1~10 합
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE sumProc()
+BEGIN
+    DECLARE i INT;
+    DECLARE `sum` INT;
+    
+    SET i = 1;
+    SET `sum` = 0;
+    
+    WHILE i <= 10 DO
+        SET `sum` = `sum` + i;
+        SET i = i + 1;
+            
+    END WHILE;
+    
+    SELECT CONCAT('1~10까지 합 = ',`sum`) AS `결과`;
+    
+    
+END $$
+DELIMITER ;
+
+CALL sumProc();
+
+
+-- 구구단
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE multProc(
+    IN num INT
+)
+BEGIN
+    DECLARE i INT;
+    DECLARE result VARCHAR(100);
+
+    SET i = 1;
+    SET result = '';
+    
+    WHILE i < 10 DO
+        SET result = CONCAT(result, num * i);
+        SET i = i + 1;
+    END WHILE;
+    
+    SELECT result;
+    
+END $$
+DELIMITER ; 
+
+CALL multProc(2);
 
 
 
+
+-- 예외처리
+DELIMITER $$
+CREATE PROCEDURE errorProc()
+BEGIN
+    DECLARE CONTINUE HANDLER FOR 1146 SELECT '테이블이 없어요ㅠㅠ' AS '메시지';
+    SELECT * FROM noTable;
+END $$
+DELIMITER ;
+
+CALL errorProc();
+
+
+
+-- 삭제
+DROP PROCEDURE userProc;
