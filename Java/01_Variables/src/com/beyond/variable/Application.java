@@ -26,8 +26,20 @@ public class Application {
         // 2-1. 클래스를 일일히 호출하는 방법
         // com.beyond.variable.practice.Variable variable = new com.beyond.variable.practice.Variable();
         // 2-2. import를 통해 생성한 클래스로 메소드를 호출
+        // 이 때 variable도 주소를 참조하는 참조변수
         Variable variable = new Variable();
-        variable.variableTest();
+
+        System.out.println();
+        System.out.println("기본 타입 자료형");
+        variable.primitiveDataType();
+
+        System.out.println();
+        System.out.println("참조 타입 자료형");
+        variable.referenceType();
+
+        System.out.println();
+        System.out.println("final");
+        variable.finalVariable();
 
 
 
