@@ -35,13 +35,11 @@ public class Application {
 
         System.out.println();
         System.out.println("참조 타입 자료형");
-        variable.referenceType();
+        variable.referenceDataType();
 
         System.out.println();
-        System.out.println("final");
-        variable.finalVariable();
-
-
+        System.out.println("typecasting");
+        variable.typeCasting();
 
     }
 
