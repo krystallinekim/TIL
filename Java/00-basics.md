@@ -47,12 +47,12 @@
     - 패키지는 클래스를 유일하게 만들어주는 식별자 역할을 한다.
     - 모든 클래스는 하나의 패키지에 속하며, 패키지가 선언되지 않는 클래스는 자동적으로 이름 없는 패키지(default)에 속하게 된다.
 
-2. import 문
+    ```java
+    package com.beyond.variable;
+    ```
 
-    - 클래스를 사용하기 위해 선언하는 구문으로 import 문을 사용하면 클래스를 사용할 때 패키지 명을 생략할 수 있다.
-    - java.lang 패키지의 클래스는 import 하지 않고 사용 가능하다.
 
-3. 클래스
+2. 클래스
 
     - 자바에서 모든 코드는 반드시 클래스 안에 존재해야 하며 서로 관련된 코드들을 그룹으로 나누어 별도의 클래스를 구성한다.
     - 클래스들이 모여 하나의 Java 프로그램을 구성한다.
@@ -64,11 +64,32 @@
             ...
         }
         ```
+
+3. import 문
+
+    - 클래스를 사용하기 위해 선언하는 구문으로 import 문을 사용하면 클래스를 사용할 때 패키지 명을 생략할 수 있다.
+    - java.lang 패키지의 클래스는 import 하지 않고 사용 가능하다.
+        
+    ```java
+    package com.beyond.variable;
+
+    import com.beyond.variable.practice.Variable;
+    
+    public class Application {
+        public static void main(String[] args) {
+            // 1. import 업이    
+            com.beyond.variable.practice.Variable variable = new com.beyond.variable.practice.Variable();
+            // 2. import를 써서 간단하게
+            Variable variable = new Variable();
+        }
+    }
+    ```
     
 
-5. 실행 메소드 (main 메소드)
+4. 실행 메소드 (main 메소드)
 
-    - 자바 프로그램 실행 시 java.exe에 의해 **가장 먼저** 호출된다.
+    - 자바 프로그램 실행 시 java.exe에 의해 **가장 먼저** 호출된다. 정확하게는 java가 메인메소드만 실행한다.
+    - 그래서 다른 클래스의 코드를 실행시키려면 메인 메소드 안에 넣어줘야 함
     - 모든 클래스가 main 메소드를 가지고 있어야 하는 것은 아니지만 하나의 Java 애플리케이션에는 main 메소드를 포함한 클래스가 반드시 하나는 있어야 한다.
     - 그냥 main 치고 엔터치면 알아서 만들어줌
         
@@ -97,6 +118,7 @@
 2. 출력 메소드
 
     - 변수, 문자, 숫자 논리 값을 모니터(콘솔)에 출력해 주는 메소드이다.
+    - sout까지 치면 자동완성해준다.
         
         ```java
             // () 안의 값을 모니터에 출력해 주는 메소드이다.
