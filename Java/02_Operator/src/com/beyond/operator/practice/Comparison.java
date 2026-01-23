@@ -23,14 +23,13 @@ public class Comparison {
 
     }
     public void method2() {
-        System.out.println("산술연산 + 비교연산");
-        // 1. 값을 입력받아 짝수인지 홀수인지 판단
+        System.out.println("값을 입력받아 짝수인지 홀수인지 판단");
         int num;
-
 
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("숫자 입력:");
+
         num = scanner.nextInt();
 
         if (num % 2 == 0) {
