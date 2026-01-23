@@ -4,7 +4,7 @@ public class Variable {
     // 메소드
     public void primitiveDataType(){
 
-        // 논리형 변수
+    // 논리형 변수
         System.out.println();
         System.out.println("boolean");
 
@@ -18,7 +18,7 @@ public class Variable {
 
         System.out.println(isTrue);  // 실제로 이걸 실행하려면 main메소드에서 메소드를 호출해야 함
 
-        // 정수형 변수
+    // 정수형 변수
 
         System.out.println();
         System.out.println("숫자형");
@@ -37,7 +37,7 @@ public class Variable {
         System.out.println(iNum);
         System.out.println(lNum);
 
-        // 실수형 변수
+    // 실수형 변수
         System.out.println();
         System.out.println("실수형");
 
@@ -51,7 +51,7 @@ public class Variable {
         System.out.println(dNum);
 
 
-        // 문자형
+    // 문자형
         System.out.println();
         System.out.println("문자형");
         // char ch;     // 2byte 유니코드 문자
@@ -65,7 +65,8 @@ public class Variable {
 
         System.out.println();
         System.out.println("final 변수");
-        // final 변수
+
+    // final 변수
         // 상속이 안되는 클래스 / 재정의 안되는 변수
         int age = 10;
         final int AGE = 10;  // 대소문자 구분함
@@ -83,7 +84,7 @@ public class Variable {
     }
 
     public void referenceDataType(){
-        // 문자열
+    // 문자열
         System.out.println("문자열");
 
         String name = "";  // String은 자료형이자 클래스
@@ -103,8 +104,8 @@ public class Variable {
     }
 
 
-    public void typeCasting(){
-        // 자동 형변환
+    public void typeCasting() {
+    // 자동 형변환
         System.out.println();
         System.out.println("자동 형변환");
 
@@ -144,11 +145,27 @@ public class Variable {
 
         // 리터럴로 넣으면 컴파일 단계에서 계산된 상태로 들어간다.
 
-        // 강제 형변환
+    // 강제 형변환
         System.out.println();
         System.out.println("강제 형변환");
 
-        System.out.println((char) iNum);
+        System.out.println((char) iNum);  // iNum = 10
 
+        double dNum = 4.4652356489751321546;
+        System.out.println(dNum);
+
+        float fNum = (float) dNum;  // 그냥 쓰면 에러
+        System.out.println(fNum);   // 다만 소수점 아래가 손실이 생김
+
+        int iNum2 = (int) dNum;
+        System.out.println(iNum2);
+
+        System.out.println((byte) 290);  // 34
+        // 290 = 100100010(2), 34 = 0100010(2) -> 이진수에서 표현할 수 있는 부분만 표현됨.
+
+        System.out.println((byte) 990);  // -34
+
+
+        System.out.println((int) (iNum + dNum));  // 두 수의 정수부분을 더한 경우를 계산할 때라던가 활용
     }
 }
