@@ -167,5 +167,6 @@ public class Variable {
 
 
         System.out.println((int) (iNum + dNum));  // 두 수의 정수부분을 더한 경우를 계산할 때라던가 활용
+
     }
 }
