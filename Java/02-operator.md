@@ -78,13 +78,20 @@
     ```
     
 - 문자형(char) 연산도 가능하지만, 문자형을 숫자형으로 바꿔서 계산하는 방식
+    ```java
+    char ch = 'A';
+
+    System.out.println((ch + 1));  // char -> int, 66
+    System.out.println((char) (ch + 1));  // 'B'
+    ```
+
 - 나눗셈에서, 0으로 나누기는 에러(`ArithmeticException: / by zero`)
     - 단, 실수형으로 나누면 에러 안남
         ```java
         System.out.println(5 / 0.0);  // Infinity
         System.out.println(5 % 0.0);  // NaN, Not a Number
         ```
-        
+
 ### 3.2. 문자열 연결 연산자
 
 - 문자열에서 + 연산자는 문자열을 서로 연결하는 연산자이다.
@@ -111,7 +118,9 @@
         System.out.println(true == false); // false
         System.out.println(true > false); // Syntax Error
     ```
-    
+
+- 부동소수점 때문에 소수점 아래 계산에는 케이스 별로 오차가 생김 (3 == 3.0, 0.1 != 0.1f)
+    - 실수 타입으로는 비교연산자 사용하면 안됨
 
 ### 3.4. 논리 연산자
 

@@ -8,7 +8,8 @@ public class Application {
 
 //        new InDecrease().method1();
 //        new Arithmetic().method1();
-        new Comparison().method1();
+//        new Comparison().method1();
+        new Comparison().method2();
 
     }
 }
