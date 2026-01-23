@@ -77,7 +77,14 @@
     System.out.println(10 % 3); // 1
     ```
     
-
+- 문자형(char) 연산도 가능하지만, 문자형을 숫자형으로 바꿔서 계산하는 방식
+- 나눗셈에서, 0으로 나누기는 에러(`ArithmeticException: / by zero`)
+    - 단, 실수형으로 나누면 에러 안남
+        ```java
+        System.out.println(5 / 0.0);  // Infinity
+        System.out.println(5 % 0.0);  // NaN, Not a Number
+        ```
+        
 ### 3.2. 문자열 연결 연산자
 
 - 문자열에서 + 연산자는 문자열을 서로 연결하는 연산자이다.
