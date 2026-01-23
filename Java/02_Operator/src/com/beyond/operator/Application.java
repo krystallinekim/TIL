@@ -1,6 +1,6 @@
 package com.beyond.operator;
 
-import com.beyond.operator.practice.Assignment;
+import com.beyond.operator.practice.Triple;
 
 public class Application {
     public static void main(String[] args) {
@@ -12,6 +12,7 @@ public class Application {
 //        new Comparison().method2();
 //        new Logical().method1();
 //        new Logical().method2();
-        new Assignment().method1();
+//        new Assignment().method1();
+        new Triple().method1();
     }
 }
