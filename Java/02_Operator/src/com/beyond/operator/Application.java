@@ -1,6 +1,6 @@
 package com.beyond.operator;
 
-import com.beyond.operator.practice.Comparison;
+import com.beyond.operator.practice.Logical;
 
 public class Application {
     public static void main(String[] args) {
@@ -9,7 +9,9 @@ public class Application {
 //        new InDecrease().method1();
 //        new Arithmetic().method1();
 //        new Comparison().method1();
-        new Comparison().method2();
+//        new Comparison().method2();
+//        new Logical().method1();
+        new Logical().method2();
 
     }
 }
