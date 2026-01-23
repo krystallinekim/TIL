@@ -2,7 +2,7 @@ package com.beyond.operator.practice;
 
 public class InDecrease {
     public void method1() {
-        System.out.println("Indecrease.method1\n");
+        System.out.println("증감연산\n");
         int num;
 
     // 전위 증감연산
