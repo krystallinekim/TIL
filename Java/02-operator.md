@@ -122,6 +122,34 @@
 - 부동소수점 때문에 소수점 아래 계산에는 케이스 별로 오차가 생김 (3 == 3.0, 0.1 != 0.1f)
     - 실수 타입으로는 비교연산자 사용하면 안됨
 
+- 문자열의 비교연산에서, 문자열은 heap 영역에 문자열을 넣고, stack영역에 주소를 저장하는 방식이다. 동등비교에서는 주소값을 비교하는 방식으로 나온다. 
+    ```java
+    String name = "홍길동";
+
+    System.out.println("홍길동" == "홍길동");               // true
+    System.out.println("홍길동" == name);                  // true
+    System.out.println("홍길동" == new String("홍길동"));   // false
+    ```
+    - 리터럴(`"홍길동"`)을 생성할 경우, heap 영역의 상수풀에 리터럴을 저장하게 된다. 여러번 사용할 경우, 저장된 리터럴 하나를 반복해서 사용하게 된다.
+    - 변수에 리터럴을 저장 시에는, 기존 주소값을 그대로 집어넣게 된다.
+        - 동등비교 시 같은 주소값을 비교하므로 true가 나온다.
+    - 리터럴이 아니라, `new String()`을 이용하면 heap 메모리의 새로운 공간에 내용을 저장하게 된다. 즉, 주소값이 바뀌게 된다
+        - 동등비교 시 다른 주소값을 비교하므로 false가 나온다.
+
+        ```java
+        String name = "홍길동"
+        System.out.println("홍길동".equals("홍길동"));               // true
+        System.out.println("홍길동".equals(new String("홍길동")));   // false
+        ```
+    - 그래서 문자열에서는 `.equals()` 메소드를 통해 문자값을 비교해서 동등비교를 하게 된다.
+
+
+    - 만약 null값과 비교할 경우, `null.equals()`는 에러가 난다.
+        ```java
+        System.out.println(name.equals("홍길동"));  // name이 null일 경우 에러남
+        System.out.println("홍길동".equals(name));  // name이 null이어도 에러는 나지 않음
+        System.out.println(Object.equals(name, "홍길동"));  // 가장 확실한 방법
+        ```
 ### 3.4. 논리 연산자
 
 - 일반적으로 수학에서는 `0 < num < 100` 처럼 사용함.
