@@ -1,6 +1,6 @@
 package com.beyond.control;
 
-import com.beyond.control.practice.Branch;
+import com.beyond.control.practice.LoopPractice;
 
 public class Application {
     public static void main(String[] args) {
@@ -25,7 +25,15 @@ public class Application {
 //        new While().method4();
 
 //        new Branch().method1();
-        new Branch().method2();
+//        new Branch().method2();
+
+//        new LoopPractice().practice1();
+//        new LoopPractice().practice2();
+//        new LoopPractice().practice3();
+        new LoopPractice().practice4();
+        new LoopPractice().practice5();
+        new LoopPractice().practice6();
+
     }
 
 
