@@ -15,6 +15,9 @@ public class Application {
 //        new Array().practice2();
 
 //        new TwoDimensionalArray().method1();
-        new TwoDimensionalArray().method2();
+//        new TwoDimensionalArray().method2();
+
+        new TwoDimensionalArray().practice1();
+        new TwoDimensionalArray().practice2();
     }
 }

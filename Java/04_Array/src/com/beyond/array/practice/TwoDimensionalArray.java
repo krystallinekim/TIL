@@ -65,4 +65,56 @@ public class TwoDimensionalArray {
             System.out.println();
         }
     }
+
+    /*
+     * 실습 문제 1
+     *
+     * 1부터 10사이의 랜덤값을 3행 3열의 2차원 배열에 대입하시오.
+     *
+     * 예시)
+     * 1 8 9
+     * 8 3 3
+     * 4 1 7
+     */
+    public void practice1() {
+        System.out.println("실습 문제 1");
+        int[][] iArray = new int[3][3];
+
+        for (int i = 0; i < iArray.length; i++) {
+            for (int j = 0; j < iArray[i].length; j++) {
+                iArray[i][j] = (int) (Math.random() * 10 + 1);
+                System.out.printf(" %2d", iArray[i][j]);
+            }
+            System.out.println();
+        }
+    }
+
+    /*
+     * 실습 문제 2
+     *
+     * 1부터 10사이의 랜덤값을 3행 3열의 2차원 배열에 대입하시오.
+     * 단, 랜덤 값에 중복을 제거해서 대입하시오.
+     *
+     * 예시)
+     * 1 8 9
+     * 6 4 5
+     * 2 7 3
+     */
+    public void practice2() {
+        System.out.println("실습 문제 2");
+        int[][] iArray = new int[3][3];
+
+
+
+        for (int i = 0; i < iArray.length; i++) {
+            for (int j = 0; j < iArray[i].length; j++) {
+                iArray[i][j] = (int) (Math.random() * 10 + 1);
+                System.out.printf(" %2d", iArray[i][j]);
+            }
+            System.out.println();
+
+        }
+    }
+
+}
 }
