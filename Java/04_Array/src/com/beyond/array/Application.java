@@ -9,6 +9,10 @@ public class Application {
 //        new Array().method1();
 //        new Array().method2();
 //        new Array().method3();
-        new Array().method4();
+//        new Array().method4();
+
+        new Array().practice1();
+        new Array().practice2();
+
     }
 }

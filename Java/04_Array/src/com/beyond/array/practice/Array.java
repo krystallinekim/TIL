@@ -114,11 +114,75 @@ public class Array {
 
         // 기본타입을 내림차순 정렬하기 위한 편법
         // 기본타입을 객체로 바꿔서 Collections.reverseOrder를 쓸 수 있게 바꿔줌
-        
+
         Integer[] integers = {2, 4 ,3, 1 ,5};
         Arrays.sort(integers, Collections.reverseOrder());
 
         System.out.println(Arrays.toString(integers));
+
+    }
+
+    /*
+     * 실습 문제 1
+     * 사용자가 입력하는 정수값으로 배열의 길이를 지정하여 배열을 생성하고
+     * 생성된 배열의 크기만큼 반복문을 실행하여 랜덤값을(1 ~ 100) 배열의 저장하고 출력한다.
+     *
+     * 예시)
+     * 정수값을 입력해 주세요. > 3
+     *
+     * numbers[0] : 77
+     * numbers[1] : 88
+     * numbers[2] : 6
+     */
+    public void practice1() {
+        System.out.println("\n실습 문제 1");
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("정수값을 입력해 주세요 > ");
+        int n = scanner.nextInt();
+
+        int[] iArray = new int[n];
+        for (int i = 0; i < iArray.length; i++) {
+            iArray[i] = (int) (Math.random() * 100 + 1);
+        }
+
+        System.out.println(Arrays.toString(iArray));
+
+    }
+
+    /*
+     * 실습 문제 2
+     *
+     * 사용자에게 3명의 키를 입력받아 배열에 저장하고
+     * 반복문을 통해 3명의 키의 총합, 평균값을 구하시오.
+     *
+     * 예시)
+     * 키 입력 > 180.0
+     * 키 입력 > 177.3
+     * 키 입력 > 168.2
+     *
+     * 총합 : 525.5
+     * 평균 : 175.2
+     */
+    public void practice2() {
+        System.out.println("\n실습 문제 2");
+        Scanner scanner = new Scanner(System.in);
+
+        double[] heights = new double[3];
+
+        for (int i = 0; i < heights.length; i++) {
+            System.out.print("키 입력 > ");
+            heights[i] = scanner.nextDouble();
+        }
+
+        double sum = 0;
+        for (double height : heights) {
+            sum += height;
+        }
+
+        System.out.printf("총합 : %.1f\n", sum);
+        System.out.printf("평균 : %.1f\n", sum / heights.length);
+
 
     }
 }
