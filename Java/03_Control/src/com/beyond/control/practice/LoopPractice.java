@@ -95,9 +95,15 @@ public class LoopPractice {
      */
     public void practice4() {
         System.out.println("실습 문제 4");
-        for (int i = 1; i <= 4; i++) {
-
-
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < i; j++) {
+                System.out.print('*');
+            }
+            System.out.print(i+1);
+            for (int j = 0; j < (3-i); j++) {
+                System.out.print('*');
+            }
+            System.out.println();
         }
     }
 
@@ -114,7 +120,12 @@ public class LoopPractice {
      */
     public void practice5() {
         System.out.println("실습 문제 5");
-
+        for (int i = 1; i <= 5; i++) {
+            for (int j = 1; j <= i ; j++) {
+                System.out.print('*');
+            }
+            System.out.println();
+        }
     }
 
     /*
@@ -139,40 +150,53 @@ public class LoopPractice {
     public void practice6() {
         System.out.println("실습 문제 6");
 
+        int num1;
+        int num2;
+        int res;
+        char ch;
+
         Scanner scanner = new Scanner(System.in);
+
+        System.out.print("정수1 > ");
+        num1 = scanner.nextInt();
 
         while (true) {
 
-            System.out.print("정수1 > ");
-            int num1 = scanner.nextInt();
+            System.out.print("연산자 > ");
+            ch = scanner.next().charAt(0);
 
             System.out.print("정수2 > ");
-            int num2 = scanner.nextInt();
-
-            System.out.print("연산자 > ");
-            char ch = scanner.next().charAt(0);
+            num2 = scanner.nextInt();
 
             switch (ch) {
                 case '+':
-                    System.out.printf("%d %c %d = %d\n", num1, ch, num2, num1 + num2);
+                    res = num1 + num2;
+                    System.out.printf("%d %c %d = %d\n", num1, ch, num2, res);
+                    num1 = res;
 
                     break;
                 case '-':
-                    System.out.printf("%d %c %d = %d\n", num1, ch, num2, num1 - num2);
+                    res = num1 - num2;
+                    System.out.printf("%d %c %d = %d\n", num1, ch, num2, res);
+                    num1 = res;
 
                     break;
                 case '*':
-                    System.out.printf("%d %c %d = %d\n", num1, ch, num2, num1 * num2);
+                    res = num1 * num2;
+                    System.out.printf("%d %c %d = %d\n", num1, ch, num2, res);
+                    num1 = res;
 
                     break;
                 case '/':
-                    System.out.printf("%d %c %d = %.3f\n", num1, ch, num2, (double) num1 / (double) num2);
+                    res = num1 / num2;
+                    System.out.printf("%d %c %d = %.3f\n", num1, ch, num2, res);
+                    num1 = res;
 
                     break;
-
                 default:
                     System.out.println("연산자가 잘못되었습니다.");
                     return;
+
             }
         }
 
