@@ -179,8 +179,8 @@
     
     ```java
     int[][] iArray;
-    double dArray[][];
-    byte[] bArray[];
+    double dArray[][];  // 각각 붙이는 것도 가능하긴 한데
+    byte[] bArray[];    // 가독성 떨어져서 잘 안씀
     ```
     
 
@@ -192,7 +192,7 @@
     
     ```java
     int[][] iArray;
-    double dArray[][] = new double[4][4];
+    double[][] dArray = new double[4][4];
     
     iArray = new int[4][4];
     ```
@@ -217,7 +217,8 @@
     
     ```java
     for(int i = 0; i < iArray.length; i++) {
-        for(int j = 0; j < iArray[i].length; j++) {
+        for(int j = 0; j < iArray[i].length; j++) {  // iArray[i]를 해야 열 길이가 다를 때 적용 가능
+
             iArray[i][j] = (j + 1) * 10;
     
             System.out.println(iArray[i][j]);
@@ -228,9 +229,19 @@
 
 #### 값 목록으로 2차원 배열 생성 및 초기화
 
-- 값 목록으로 2차원 배열을 생성하는 구문은 `new 자료형[][] {{값, 값, ... }, {값, 값, ... }} 또는 {{값, 값, ... }, {값, 값, ... }}`이다.
+- 값 목록으로 2차원 배열을 생성하는 구문은 `new 자료형[][] {{값, 값, ... }, {값, 값, ... }}`이다.
+    - 여기서도 생성하자마자 값 목록을 주면 `new 자료형[][]`는 생략 가능
     
     ```java
     int[][] iArray = new int[][] {{1, 2, 3, 4}, {5, 6, 7, 8}};
     double dArray[][] = {{1.1, 2.2, 3.3, 4.4}, {5.5, 6.6, 7.7, 8.8}};
+    ```
+
+- 가변배열: 이차원 배열에서, 안쪽 배열의 길이가 다른 배열
+    - 행의 길이만 정해져 있다면, 열의 길이는 뭐가 들어와도 상관없다
+    ```java
+    String[][] sArray = new String[3][];
+    sArray[0] = new String[] {"Linux"};
+    sArray[1] = new String[] {"MariaDB", "Java"};
+    sArray[2] = new String[] {"Spring", "HTML5", "CSS3"};
     ```

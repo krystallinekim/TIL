@@ -1,6 +1,6 @@
 package com.beyond.array;
 
-import com.beyond.array.practice.Array;
+import com.beyond.array.practice.TwoDimensionalArray;
 
 public class Application {
     public static void main(String[] args) {
@@ -11,8 +11,10 @@ public class Application {
 //        new Array().method3();
 //        new Array().method4();
 
-        new Array().practice1();
-        new Array().practice2();
+//        new Array().practice1();
+//        new Array().practice2();
 
+//        new TwoDimensionalArray().method1();
+        new TwoDimensionalArray().method2();
     }
 }
