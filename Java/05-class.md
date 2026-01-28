@@ -314,7 +314,7 @@
     - 객체로 전달하는 것은 주소값을 전달하는 것 = 메소드에서 수정한 내용이 메인 프레임의 객체에도 영향을 준다
     
     ```java
-    public void method5(User user, String id, String password, String name) {
+    public void method5(User user, String id, String password, String name)
         user.setId(id);
         user.setPassword(password);
         user.setName(name);
@@ -364,6 +364,9 @@
 
 - 메소드 오버로딩의 조건은 **매개변수의 타입, 개수, 순서** 중 하나 이상이 달라야 한다.
     - JVM이 메소드를 호출할 시점에, 매개변수가 다른 걸로 어떤 메소드를 호출해야 하는지 특정할 수 있다.
+
+- `println` 메소드가 다양한 타입에 대해 오버로딩되어 있어 다양한 타입을 받을 수 있다.
+
     ```java
     // 오버로딩의 대표적인 예시
     System.out.println(1);
@@ -378,7 +381,7 @@
 
 3. 반환형만 다르고 매개변수가 동일한 것도 메소드 오버로딩이 아니다.
     - 호출 시점에 구분할 수 없기 때문
-- `println` 메소드가 다양한 타입에 대해 오버로딩되어 있어 다양한 타입을 받을 수 있다.
+
     
 
 ### Getter와 Setter 메소드
@@ -416,4 +419,6 @@
 
 - 필드 타입이 boolean일 경우에는 Getter는 get으로 시작하지 않고 is로 시작하는 것이 관례이다.
 
-- Getter와 Setter는 필수가 아니고, 필요에 따라 만들면 됨
+- Getter와 Setter는 필수가 아니고, 필요에 따라 만들어야 한다.
+
+- 간단하게 Alt+Ins로 필요한 필드에 대해 Getter, Setter를 설정할 수도 있다.
