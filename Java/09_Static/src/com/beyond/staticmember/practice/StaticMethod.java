@@ -35,4 +35,6 @@ public class StaticMethod {
     private int sum(int a) {
         return num3 + a;
     };
+
+
 }

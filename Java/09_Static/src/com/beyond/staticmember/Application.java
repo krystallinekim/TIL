@@ -1,6 +1,7 @@
 package com.beyond.staticmember;
 
 import com.beyond.staticmember.practice.StaticField;
+import com.beyond.staticmember.practice.StaticFinalField;
 import com.beyond.staticmember.practice.StaticMethod;
 
 public class Application {
@@ -44,5 +45,21 @@ public class Application {
         StaticMethod.method3(18);  // method2(12) + i(18)
 
         System.out.println(StaticMethod.method4(4,5,15,25,30));
+        System.out.println();
+
+        // final 필드
+        StaticFinalField finalField = new StaticFinalField("Female");
+        System.out.println(finalField.getGender2());
+        System.out.println();
+
+        // 상수
+        System.out.println(StaticFinalField.MAX_LEVEL);
+        System.out.println(Math.PI);
+        System.out.println(Math.E);
+
+        // Math.PI = 3; final 필드에 변경 안됨
+
+        // 기타 상수들
+        System.out.printf("int의 범위: %d ~ %d", Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 }
