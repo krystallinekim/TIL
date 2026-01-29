@@ -24,5 +24,18 @@ public class Application {
 
         Week[] weekdays = Week.values();  // 열거 상수들을 배열에 저장해서 전달함
         System.out.println(Arrays.toString(weekdays));
+        System.out.println();
+
+        // 속성 추가
+        System.out.println(today.getFullName());
+        System.out.println(today.getShortName());
+        System.out.println(today.getValue());
+
+        today = Week.FRIDAY;
+
+        System.out.println(today.getFullName());
+        System.out.println(today.getShortName());
+        System.out.println(today.getValue());
+
     }
 }
