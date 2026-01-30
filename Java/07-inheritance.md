@@ -52,22 +52,39 @@
 
 - 자식 클래스의 객체를 생성하면 **부모 클래스의 생성자가 먼저 호출**되면서 부모 객체가 생성되고 자식 객체가 생성된다.
 
-- 자식 클래스의 생성자 안에서 `super()`를 통해서 부모 클래스의 생성자를 호출한다.(생략 가능)
+- 자식 클래스의 생성자 안에서 `super()`를 통해서 부모 클래스의 생성자를 호출한다.(생략 시 기본 부모의 생성자 사용)
     - `super()`는 자식 클래스의 생성자 첫 줄에 위치해야 한다. - 부모 객체가 먼저 생성되어야 하니까
-    - `this()`가 자기 자신을 호출하는 것처럼, `super()`가 부모 클래스를 호출하는 것 
+    - `this()`가 자기 자신을 호출하는 것처럼, `super()`로 부모 클래스를 호출하는 것 
+    
+    1. 매개 변수가 있는 생성자를 이용해 초기값을 전달할 수 있다. (가장 일반적인 방법)
 
+    2. 부모 객체를 기본생성자(`super()`)로 생성한 뒤, 부모의 setter 메소드를 이용해 초기값을 설정할 수도 있다.
+        - 부모 객체를 `super`로 부를 수도 있지만, `this`, 아니면 아예 생략해서 메소드만 사용할 수도 있음
+
+    3. 부모 필드가 `protected`일 경우, 부모 필드에 직접 접근해서 초기화할 수도 있다.
+    
     ```java
     // 부모 클래스
     public class Animal {
-        private String name;
-        private String kinds;
+        // 필드
+        protected String name;
+        protected String kinds;
+        protected int age;
         
+        // 생성자
         public Animal() {
         }
         
-        public Animal(String name, String kinds) {
+        public Animal(String name, String kinds, int age) {
             this.name = name;
             this.kinds = kinds;
+            this.age = age;
+        
+        // setter
+        public void setName(String name) {this.name = name;}
+        public void setKinds(String kinds) {this.kinds = kinds;}
+        public void setAge(String age) {this.age = age;}
+
         }
     }
     ```
@@ -82,35 +99,41 @@
         }
         
         public Dog(String name, String kinds, int weight) {
-            super(name, kinds);  // Animal(name, kinds) 생성자를 호출 -> 자식 객체의 name, kinds에 그 값을 초기값으로 설정
+            // 1. 매개변수로 초기화
+            super(name, kinds, age);  // Animal(name, kinds, age) 생성자를 호출 -> 자식 객체의 name, kinds, age에 그 값을 초기값으로 설정
         
+            // 2. 메소드를 이용해 초기화
+            super.setName(name);
+            this.setKinds(kinds);
+            setAge(age);
+
+            // 3. 부모의 필드에 직접 접근 (부모 필드가 protected일 경우)
+            this.name = name;
+            super.kinds = kinds;
+            super.age = age;
+
+            // 필드 추가 초기화
             this.weight = weight;
         }
     }
     ```
     
 
-## 5. 메소드 오버라이딩(Overriding)
+## 메소드 오버라이딩(Overriding)
 
-- 부모 클래스의 메소드를 자식 클래스에서 다시 재정의해서 사용하는 것을 메소드 오버라이딩이라 한다.
-- @Override 어노테이션을 붙여 준다. (생략 가능)
-- 자식 클래스에서 메소드 오버라이딩은 부모의 메소드와 동일한 선언부를 가져야 한다.
+- 부모 클래스의 메소드를 자식 클래스에서 다시 **재정의**해서 사용하는 것을 메소드 오버라이딩이라 한다.
+    - `@Override` 어노테이션을 붙여 준다. (생략 가능, 컴파일러에게 재정의된 메소드라고 알려주는 메타데이터)
+    - 자식 클래스에서 메소드 오버라이딩은 부모의 메소드와 동일한 선언부(접근제한자, 반환타입, 매개변수)를 가져야 한다.
+        - 매개변수가 다른건 오버라이딩(재정의)이 아니라 오버로딩(덮어쓰기)
+
 - 부모 클래스의 메소드가 private 접근 제한을 가지면 자식 클래스는 메소드를 오버라이딩 할 수 없다.
-    
+    - 오버라이딩 된 메소드는 부모 클래스의 메소드보다 좁은 범위의 접근제한자만 가질 수 있다.
+
     ```java
     // 부모 클래스
     public class Animal {
-        private String name;
-        private String kinds;
-        
-        public Animal() {
-        }
-        
-        public Animal(String name, String kinds) {
-            this.name = name;
-            this.kinds = kinds;
-        }
-        
+        ...
+
         public String bark() {
             return "짖는다.";
         }
@@ -120,17 +143,8 @@
     ```java
     // 자식 클래스
     public class Dog extends Animal {
-        private int weight;
-        
-        public Dog() {
-        }
-        
-        public Dog(String name, String kinds, int weight) {
-            super(name, kinds);
-        
-            this.weight = weight;
-        }
-        
+        ...
+
         @Override
         public String bark() {
             return "멍멍~ 짖는다.";
@@ -139,7 +153,7 @@
     ```
     
 - 자식 객체에서 오버라이딩된 메소드를 호출하면 부모 객체의 메소드가 아닌 오버라이딩된 자식 메소드가 호출된다.
-- 즉, 부모 객체의 메소드는 삭제되는 것이 아닌 오버라이딩된 메소드에 의해 가려지게 된다.
+    - 부모 객체의 메소드는 삭제되는 것이 아닌 오버라이딩된 메소드에 의해 가려지게 된다.(없어지는건 아님)
     
     ```java
     Dog dog = new Dog();
@@ -147,15 +161,11 @@
     System.out.println(dog.bark()); // "멍멍~ 짖는다." 출력
     ```
     
-- 자식 클래스 내부에서 오버라이딩된 부모 클래스의 메소드를 호출해야 하는 상황이 발생한다면 super를 통해서 부모 메소드를 호출할 수 있다.
+- 자식 클래스 내부에서 오버라이딩된 부모 클래스의 메소드를 호출해야 하는 상황이 발생한다면 `super`를 통해서 부모 메소드를 호출할 수 있다.
     
     ```java
     // 부모 클래스
     public class Animal {
-        private String name;
-        private String kinds;
-        
-        // 생성자 선언
         ...
         
         public String bark() {
@@ -167,13 +177,11 @@
     ```java
     // 자식 클래스
     public class Dog extends Animal {
-        private int weight;
-        
-        // 생성자 선언
         ...
+    
         @Override
         public String bark() {
-            return "멍멍~ " + super.bark();
+            return "멍멍~ " + super.bark();  // 멍멍~ 짖는다.
         }
     }
     ```
@@ -201,6 +209,7 @@
         }
     }
     ```
+
 # 다형성(Polymorphism)
 
 ## 1. 다형성(Polymorphism)

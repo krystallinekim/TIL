@@ -2,10 +2,10 @@ package com.beyond.inheritance.practice;
 
 // 공통으로 사용하던 필드, 메소드를 추출
 public class Product {
-    private String code;        // 제품코드
-    private String name;        // 제품명
-    private String brand;       // 브랜드
-    private int price;          // 가격
+    protected String code;        // 제품코드
+    protected String name;        // 제품명
+    protected String brand;       // 브랜드
+    protected int price;          // 가격
 
     public Product() {
         // super();  // 기본적으로 Object 클래스 상속
@@ -52,7 +52,7 @@ public class Product {
     }
 
     public String information() {
-        return String.format("=== Information ===\ncode: %s\nname: %s\nbrand: %s\nprice: %d\n",
+        return String.format("=== Information - Product ===\n- 제품코드 \t%s\n- 제품명 \t%s\n- 브랜드 \t%s\n- 가격 \t\t%d원\n",
                 this.code, this.name, this.brand, this.price);
     }
 }

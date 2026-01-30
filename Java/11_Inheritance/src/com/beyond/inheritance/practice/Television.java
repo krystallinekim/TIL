@@ -1,6 +1,6 @@
 package com.beyond.inheritance.practice;
 
-public class Television{
+public class Television extends Product {
     private String code;    // 제품코드
     private String name;    // 제품명
     private String brand;   // 브랜드
@@ -11,43 +11,8 @@ public class Television{
     }
 
     public Television(String code, String name, String brand, int price, int size) {
-        this.code = code;
-        this.name = name;
-        this.brand = brand;
-        this.price = price;
+        super(code, name, brand, price);
         this.size = size;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
     }
 
     public int getSize() {
@@ -58,9 +23,8 @@ public class Television{
         this.size = size;
     }
 
+    @Override
     public String information() {
-        return String.format("code: %s\nname: %s\nbrand: %s\nprice: %d\nsize(inch): %d\n",
-                this.code, this.name, this.brand, this.price, this.size);
+        return String.format("%s- 크기 \t\t%d인치\n", super.information(), this.size);
     }
-
 }
