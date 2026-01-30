@@ -24,9 +24,6 @@
 - 자바는 다중 상속을 지원하지 않는다.
     - 여러 클래스를 상속받을 수 없다
 
-- 모든 클래스는 Object 클래스의 후손이다.
-    - `public class Animal extends Object { ... }`
-
 - 부모 클래스에서 private 접근 제한을 갖는 필드와 메소드는 상속에서 제외된다.
     - private 접근제한자는 선언된 클래스에서만 쓸 수 있기 때문
     - default는 자식 클래스가 같은 패키지에 있을 때만 상속됨
@@ -185,39 +182,128 @@
         }
     }
     ```
-    
 
-## 6. final 클래스와 final 메소드
+
+## Object 클래스
+
+- 모든 클래스는 Object 클래스의 자손이다. `public class Animal [extends Object] { ... }`
+    - `Object` 클래스의 메소드를 전부 사용할 수 있다.
+
+### `.toString()`
+
+객체의 문자열 정보를 리턴하는 메소드
+
+- 기본적으로 Object 클래스에서는 `클래스명@해시코드`를 리턴한다.(해시코드는 자바에서 가상메모리의 주소)
+    - `com.beyond.inheritance.practice.Book@79fc0f2f`
+
+- 자식 클래스에서 원하는 유용한 문자열 정보를 리턴하도록 재정의할 수 있다. 
+    - `Alt+Ins`에서 `tostring()`을 선택하고, 필드를 고르면 `클래스명{필드='값'...}`처럼 재정의해준다.
+        ```java
+        @Override
+        public String toString() {
+            return "Book{" +
+                    "title='" + title + '\'' +
+                    ", author='" + author + '\'' +
+                    ", price=" + price +
+                    '}';
+        }
+        ```
+        ```java
+        Book book1 = new Book("자바의 정석", "남궁성", 36000);
+        
+        System.out.println(book1);  // Book{title='자바의 정석', author='남궁성', price=36000}
+        ```
+
+    - 객체의 데이터를 문자열로 만들어서 보기 편하게 해줌
+
+- 기본적으로 객체의 참조변수를 출력하면 내부적으로 `toString()` 내용을 출력한다.
+    - 클래스에서 `toString()`을 재정의하면, 재정의한 메소드가 실행된다.
+
+### `.equals()`
+
+매개값으로 전달받은 객체와 자신이 동일한 객체인지 확인하는 메소드
+
+- 동일한 객체라면 true, 그렇지 않다면 false를 리턴한다.
+
+- 기본적으로 `Object` 클래스에서는 주소값을 비교한다. 
+    - 참조변수에는 객체의 주소가 들어있는데, 객체를 만들 때 전부 `new`를 통해 만들었으므로 전부 주소가 다르다.
+        ```java
+        Book book1 = new Book("자바의 정석", "남궁성", 36000);
+        Book book2 = new Book("자바의 정석", "남궁성", 36000);
+        Book book3 = new Book("혼자 공부하는 자바", "신용권", 28000);
+
+        System.out.println(book1 == book2);         // false, 주소값 비교
+        System.out.println(book1.equals(book2));    // false, 주소값 비교
+        System.out.println(book1.equals(book3));    // false, 주소값 비교
+        ```
+
+- 자식 클래스에서 객체의 필드값들을 비교하도록 재정의할 수 있다.
+    - book1, book2는 서로 물리적으로 주소값이 달라 다른 객체지만, 필드값이 같아 의미적으로는 같은 객체라고 표현할 수 있다.
+        ```java
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;  // null이면 바로 false, 클래스가 달라도 false
+            Book book = (Book) o;  // 매개값으로 받은 객체를 형변환
+            return price == book.price && Objects.equals(title, book.title) && Objects.equals(author, book.author);  // 필드값이 같은지 확인, 다 같아야 true
+        }
+        ```
+        ```java
+        System.out.println(book1 == book2);         // false, 주소값 비교
+        System.out.println(book1.equals(book2));    // true, 필드값 비교
+        System.out.println(book1.equals(book3));    // true, 필드값 비교
+        ```
+
+### `.hashCode()`
+
+객체를 식별할 수 있는 하나의 정수값
+
+- 기본적으로 `Object` 클래스에서는 객체의 메모리 주소를 이용해서 해시값을 생성한다.
+  
+- 자식 클래스에서 객체가 가지는 필드의 값들이 같다면, 같은 해시코드를 리턴하도록 재정의
+    ```java
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, author, price);
+    }
+    ```
+    ```java
+    System.out.println(book1.hashCode());  // -1961489797
+    System.out.println(book2.hashCode());  // -1961489797
+    System.out.println(book3.hashCode());  // -1579165619
+    ```
+
+- `equals()`, `hashCode()`는 나중에 Set 구현 시 중복값 처리할 때 사용함
+
+
+## final 클래스와 final 메소드
 
 - final 키워드는 필드뿐만 아니라 클래스와 메소드 선언 시에 사용할 수 있다.
-- final 키워드를 클래스 선언에 붙이게 되면 이 클래스는 상속할 수 없는 클래스가 된다.
-    
-    ```java
-    // java.lang에서 제공하는 String 클래스
-    public final class String {
-        ...
-    }
-    ```
-    
-- final 키워드를 메소드 선언에 붙이게 되면 이 메소드는 재정의할 수 없는 메소드가 된다.
-    
-    ```java
-    // java.lang에서 제공하는 Object 클래스
-    public class Object {
-        public final void wait() {
+    - final 키워드를 클래스 선언에 붙이게 되면 이 클래스는 **상속할 수 없는 클래스**가 된다.
+        
+        ```java
+        // java.lang에서 제공하는 String 클래스
+        public final class String {
             ...
         }
-    }
-    ```
+        ```
+        
+    - final 키워드를 메소드 선언에 붙이게 되면 이 메소드는 **재정의할 수 없는 메소드**가 된다.
+        
+        ```java
+        // java.lang에서 제공하는 Object 클래스
+        public class Object {
+            public final void wait() {
+                ...
+            }
+        }
+        ```
 
-# 다형성(Polymorphism)
-
-## 1. 다형성(Polymorphism)
+## 다형성(Polymorphism)
 
 - 다형성은 같은 타입이지만 실행 결과가 다양한 객체를 이용할 수 있는 성질을 말한다.
 - 부모 클래스 타입의 참조 변수에 자식 객체들을 대입하여 다룰 수 있는 것이 다형성의 기본 개념이다.
 
-### 1.1. 업 캐스팅(Up Casting)
+### 업 캐스팅(Up Casting)
 
 - 업 캐스팅은 자식 타입의 객체가 부모 타입의 객체로 형 변환되는 것을 말한다.
 - 업 캐스팅은 자동으로 형 변환이 일어나기 때문에 부모 클래스 타입의 참조 변수가 모든 자식 객체들을 별도의 형 변환 없이 대입 받을 수 있다.
@@ -241,7 +327,7 @@
     ```
     
 
-### 1.2. 다운 캐스팅(Down Casting)
+### 다운 캐스팅(Down Casting)
 
 - 다운 캐스팅은 부모 타입의 객체가 자식 타입의 객체로 형 변환되는 것을 말한다.
 - 다운 캐스팅은 자동으로 형 변환이 일어나지 않기 때문에 형 변환 연산자를 사용해서 형 변환을 해야 한다.

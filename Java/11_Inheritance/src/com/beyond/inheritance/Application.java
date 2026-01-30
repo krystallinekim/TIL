@@ -1,5 +1,6 @@
 package com.beyond.inheritance;
 
+import com.beyond.inheritance.practice.Book;
 import com.beyond.inheritance.practice.Desktop;
 import com.beyond.inheritance.practice.SmartPhone;
 import com.beyond.inheritance.practice.Television;
@@ -37,5 +38,32 @@ public class Application {
         System.out.println(smartPhone1.information());
         System.out.println(smartPhone2.information());
         System.out.println(television1.information());
+
+
+        // Object 클래스의 메소드 오버라이딩
+        Book book1 = new Book("자바의 정석", "남궁성", 36000);
+        Book book2 = new Book("자바의 정석", "남궁성", 36000);
+        Book book3 = new Book("혼자 공부하는 자바", "신용권", 28000);
+
+        System.out.println(book1.information());
+        System.out.println(book2.information());
+        System.out.println(book3.information());
+
+
+        // 1, toString()
+        System.out.println(book1);
+        System.out.println(book2);
+        System.out.println(book3);
+        System.out.println();
+
+        // 2. equals()
+        System.out.println(book1 == book2);
+        System.out.println(book1.equals(book2));
+        System.out.println(book1.equals(book3));
+        System.out.println();
+
+        System.out.println(book1.hashCode());
+        System.out.println(book2.hashCode());
+        System.out.println(book3.hashCode());
     }
 }
