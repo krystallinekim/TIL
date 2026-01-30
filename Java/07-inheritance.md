@@ -346,7 +346,7 @@
 - 다운 캐스팅은 부모 타입의 객체가 자식 타입의 객체로 형 변환되는 것을 말한다.
     - 다운 캐스팅은 자동으로 형 변환이 일어나지 않기 때문에 **형 변환 연산자**를 사용해서 형 변환을 해야 한다.
     - 업캐스팅은 부모가 하나라서 어떤 데이터타입으로 바꾸고 싶은지 명시해주지 않아도 됨
-    - 자식 클래스의 멤버에 전부 접근할 수 있어진다.
+    - 자식 클래스의 멤버에 접근할 수 있어진다.
 
 - 역시 상속 관계에서만 일어날 수 있다.
 
@@ -354,39 +354,87 @@
     Animal animal = new Dog();
     Dog dog = (Dog) animal;  // 이 animal을 Dog타입(자식 클래스)로 되돌리는 것
     ```
-    
+
 - 부모 클래스 타입 참조 변수가 실제로 참조하는 객체를 확인하지 않고 강제 형 변환을 시도하면 `ClassCastException` 예외가 발생할 수 있다.
 
 - 객체가 어떤 클래스의 인스턴스인지 `instanceof` 연산자를 사용해서 확인할 수 있다.
+    - 배열에 다양한 클래스를 업캐스팅해서 넣어놨는데, 상황에 따라서 각 요소를 다운캐스팅해서 쓰고 싶을 때 사용
     
     ```java
-    // animal이 실제 참조하는 객체가 Dog 클래스로 생성된 객체이면 true 아니면 false
-    if(animal instanceof Dog) {
-        ...
-    // animal이 실제 참조하는 객체가 Cat 클래스로 생성된 객체이면 true 아니면 false
-    } else if (animal instanceof Cat){
-        ...
+    for (Product product : products) {
+        System.out.println(product);
+
+        // isinstanceof를 이용해 각 케이스별로 처리해준다
+        if (product instanceof Desktop) {
+            System.out.println(((Desktop) product).isAllInOne());
+        } else if (product instanceof SmartPhone) {
+            System.out.println(((SmartPhone) product).getMobileAgency());
+        } else if (product instanceof Television) {
+            System.out.println(((Television) product).getSize());
+        }
     }
     ```
+
+### 매개변수와 다형성
+
+- 다양한 클래스의 매개변수에 대해 하나의 동작을 하고 싶을 때, 오버로딩을 쓰면 문제를 해결은 할 수 있지만, 매개변수 종류마다 메소드를 하나씩 만들어 줘야 한다.
+    
+    ```java
+    // 메인
+    productInfo(new Desktop());     // Desktop 객체
+    productInfo(new SmartPhone());  // SmartPhone 객체
+    productInfo(new Television());  // Television 객체
+    ```
+    ```java
+    public static void productInfo(Desktop desktop){
+        System.out.println(desktop);
+    }
+
+    public static void productInfo(SmartPhone smartPhone){
+        System.out.println(smartPhone);
+    }
+
+    public static void productInfo(Television television){
+        System.out.println(television);
+    }
+    ```
+
+- 다형성을 이용해 다양한 클래스의 부모 클래스에 대해 메소드를 만들면 하나로 정리할 수 있다.
+    - 단, 다른 동작이 보고 싶다면 그냥 오버로딩하는게 맞다 
+    ```java
+    public static void productInfo(Product product){
+        System.out.println(product);
+    }
+    ```
+- `println()` 메소드의 경우, 기본타입에 대해서는 하나하나 메소드를 만들었지만, 클래스를 받을 때는 `Object` 하나로 퉁쳐놨음
+    - 모든 클래스는 `Object`의 자식 타입이므로 업캐스팅이 가능
+
     
 
-## 2. 추상 클래스(Abstract Class)
+## 추상 클래스(Abstract Class)
 
 - 클래스들의 공통적인 특성을 추출해서 선언한 클래스를 추상 클래스라고 한다.
-- 추상 클래스를 부모 타입으로, 객체로 생성될 실체 클래스가 자식 타입으로 구현되어 추상 클래스의 모든 특성을 물려받을 수 있다.
-- 추상 클래스는 공통되는 필드와 메소드를 추출해서 만들었기 때문에 객체를 직접 생성해서 사용할 수 없고 부모 클래스로만 사용된다.
 
-### 2.1. 추상 클래스 선언
+- 추상 클래스를 부모 타입으로, 객체로 생성될 실체 클래스가 자식 타입으로 구현되어 추상 클래스의 모든 특성을 물려받을 수 있다.
+
+- 추상 클래스는 공통되는 필드와 메소드를 추출해서 만들었기 때문에 **객체를 직접 생성해서 사용할 수 없고** 부모 클래스로만 사용된다.
+    - 객체를 만들면 에러난다
+
+### 추상 클래스 선언
 
 - 추상 클래스의 선언 구문은 `[접근 제한자] abstract class 클래스명 { ... }`이다.
+
 - 추상 클래스 내에 필드, 메소드, 생성자를 포함할 수 있다.
+
 - 추상 클래스는 객체로 생성이 안되지만 참조 변수의 타입으로는 사용이 가능하다.
-    
+    - 다형성을 적용하라는 얘기
+
     ```java
     public abstract class Animal {
         private String name;
-        private String kinds;
+        private String kinds;  // 공통 필드
         
+        // 생성자도 가질 수 있다(자식 클래스 객체를 만들면 부모 클래스 객체가 만들어지고, 이 때 사용될 생성자)
         public Animal() {
         }
         
@@ -394,7 +442,7 @@
             this.name = name;
             this.kinds = kinds;
         }
-        
+
         public String bark() {
             return "짖는다.";
         }
@@ -407,41 +455,31 @@
     ```
     
 
-### 2.2. 추상 메소드(Abstract Method)
+### 추상 메소드(Abstract Method)
 
 - 추상 클래스에 선언된 메소드가 자식 클래스마다 실행 내용이 달라야 하는 경우 추상 메소드를 선언할 수 있다.
-- 추상 메소드는 추상 클래스에서 선언할 수 있고 메소드의 선언부만 있는 메소드의 실행 내용인 중괄호({})가 없는 메소드이다.
-- 추상 클래스를 상속하는 자식 클래스는 반드시 추상 메소드를 오버라이딩 해야 한다.
-- 오버라이딩하지 않으면 컴파일 에러가 발생하는데 자식 클래스에서 내용을 채우도록 강제화한다.
+    - 추상 메소드는 추상 클래스에서 선언할 수 있고 메소드의 선언부만 있는 메소드의 **실행 내용인 중괄호({})가 없는 메소드**이다.
+
+- 추상 클래스를 상속하는 자식 클래스는 **반드시 추상 메소드를 오버라이딩** 해야 한다.
+    - 오버라이딩하지 않으면 컴파일 에러가 발생하는데 자식 클래스에서 내용을 채우도록 강제화한다.
+
 - 추상 메소드의 선언 구문은 `[접근 제한자] abstract 반환형 메소드명([매개변수]);`이다.
     
     ```java
     public abstract class Animal {
-        private String name;
-        private String kinds;
-        
-        public Animal() {
-        }
-        
-        public Animal(String name, String kinds) {
-            this.name = name;
-            this.kinds = kinds;
-        }
-        
+        ...
+
         // 추상 메소드 선언
-        public abstract String bark();
+        public abstract String bark();  // 메소드에 실행 내용이 없다
     }
     ```
     
     ```java
     // 자식 클래스
     public class Dog extends Animal {
-        private int weight;
-        
-        // 생성자 선언
         ...
         
-        // 추상 메소드는 반드시 오버라이딩 해야 한다.
+        // 추상 메소드는 자식 클래스에서 반드시 오버라이딩 해야 한다.
         @Override
         public String bark() {
             return "멍멍~ 짖는다.";
