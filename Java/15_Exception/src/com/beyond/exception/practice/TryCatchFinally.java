@@ -1,7 +1,7 @@
 package com.beyond.exception.practice;
 
 public class TryCatchFinally {
-    public void method1() {
+    public void method() {
 
         try {
             // 예외 발생 가능성이 있는 코드
