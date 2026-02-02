@@ -33,7 +33,8 @@
 
 ### CheckedException
 
-- `Exception` 클래스를 상속하고 있는 예외들을 `CheckedException`이라 한다.
+- `Exception` 클래스를 상속하고 있는 예외들
+    - `ClassNotFoundException`(없는 클래스 사용 시), `IOException`(인풋, 아웃풋 에러), `SQLException`(SQL 쿼리 이상), ...
 
 - 컴파일 시 예외 처리 코드가 있는지 검사하는 예외를 말한다.
 
@@ -44,12 +45,13 @@
 
 ### UnCheckedException
 
-- `RuntimeException` 클래스를 상속하고 있는 예외들을 `UnCheckedException`이라 한다.
-
+- `RuntimeException` 클래스를 상속하고 있는 예외들
+    - `NullPointerException`(참조변수가 null인데 사용할 경우), `IndexOutOfBoundsException`(배열의 인덱스 번호 오류), ...
+     
 - 컴파일 시 예외 처리 코드가 있는지 검사하지 않는 예외를 말한다.
 
-- `RuntimeException` 같은 경우엔 프로그램 실행할 때 문제가 발생되는 것이기 때문에 충분히 예측이 가능하기 때문에 조건문들을 통해서 충분히 처리가 가능하다.
-    - 예외처리코드가 필수가 아님
+- `RuntimeException` 같은 경우엔 프로그램 실행할 때 문제가 발생되는 것이기 때문에 충분히 예측이 가능하기 때문에 **조건문, 코드수정 등을 통해서 충분히 처리가 가능**하다.
+    - 예외처리코드를 사용할 필요가 없다
 
 ## 예외 처리
 
@@ -112,25 +114,32 @@
 
 ### throws
 
-- 메소드 내부에서 예외가 발생할 수 있는 코드를 작성할 때 try-catch 블록으로 예외를 처리하는 것이 기본이지만, throws 키워드를 통해서 메소드를 호출한 곳으로 예외를 떠넘길 수도 있다.
+- 메소드 내에서 예외가 발생할 수 있는 경우, 처리 방법은 2가지가 있다.
+    1. 메소드 내에서 `try-catch` 블록으로 예외를 처리 - 가장 기본적인 처리 방법임
+    2. throws 키워드를 통해서 메소드를 호출한 곳으로 예외를 떠넘길 수도 있다.
 
 - throws 키워드는 메소드 선언부 끝에 작성되어 메소드에서 처리하지 않는 예외를 호출한 곳으로 떠넘기는 역할을 한다.
+    - 호출한 곳이 메소드라면, `throws` 키워드로 다시 상위 메소드로 예외를 떠넘길 수 있다.
+    - 정상 종료를 위해선 상위 어딘가에서 **반드시** `try-catch`를 이용해 처리해줘야 한다.
+    - 메인 메소드까지 `throws`로 넘길 수도 있다. 메인은 JVM에서 그냥 `.printStackTrace()` 찍어서 보여주고 끝난다. 단, 프로그램 정상 종료는 안됨
 
+        ```java
+        // BufferedReader 클래스의 readLine() 메소드
+        public String readLine() throws IOException { // IOException이 발생할 수 있다는 의미.
+            ...
+        }
+        ```
+
+    - `throws`에 예외 클래스는 여러 개 설정할 수도 있다.
+        - 물론 `Exception`으로 한번에 처리할 수 있지만, 어떤 예외를 던질지 명확하지 않아 구체적으로 써주는게 좋다.
     
-    ```java
-    // BufferedReader 클래스의 readLine() 메소드
-    public String readLine() throws IOException { // IOException이 발생할 수 있다는 의미.
-        ...
-    }
-    ```
-    
-- throws가 붙어있는 메소드는 반드시 try 블록 내에서 호출되어야 한다.
 
-- 만약 throws가 붙어있는 메소드를 호출한 곳에서 처리하지 않으려면 throws 키워드로 다시 예외를 떠넘길 수 있다.
-
-### 3.3. 예외와 오버라이딩
+### 예외와 오버라이딩
 
 - 부모 클래스의 메소드를 자식 클래스에서 오버라이딩 시 메소드가 throws 하는 Exception과 같거나 하위 클래스이어야 한다.
+    - 그냥 같은걸 throw하는 것도 답임
+    - 하위 예외 클래스는 보통 더 구체적으로 예외를 알려주는 클래스이기 때문
+    - 상위 예외 클래스를 오버라이딩할 경우, 아예 다른 종류의 예외를 throw할 수도 있어 금지됨
     
     ```java
     public class Parent {
@@ -145,7 +154,7 @@
     
         // EOFException은 IOException의 하위 클래스이므로 오버라이딩이 가능하다.
         @Override
-        public void method() throws EOFException {
+        public void method() throws FileNotFoundException, EOFException, SocketException {
             ...
         }
     }
