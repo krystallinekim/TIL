@@ -126,6 +126,48 @@
     System.out.println(String.valueof(false));  // "false" 
     ```
 
+### `StringTokenizer(str, delimeter)` 클래스
+
+- 생성자로 전달받은 문자열(`str`)을 구분자(`delimeter`)를 이용해서 분리
+- 분리된 최소 단위를 **토큰**이라고 한다.
+
+    ```java
+    String str = "Linux,MariaDB,Java,Spring,HTML5,CSS3,Vue.js,Docker,Kubernates,Jenkins";
+
+    StringTokenizer st = new StringTokenizer(str, ",");
+    
+    // nextToken(): 토큰을 하나 꺼내서 리턴한다.
+    System.out.println(st.nextToken());  // Linux
+
+    // countTokens(): 남아있는 토큰 수를 리턴
+    System.out.println(st.countTokens());  // 9
+
+    // hasMoreTokens(): 토큰이 남아있다면 true, 없으면 false
+    System.out.println(st.hasMoreTokens());  // true
+
+    ```
+
+- `for`문, `while`문을 통해 출력할 수 있다.
+    ```java
+    // countTokens()가 남은 토큰의 숫자라서 인라인으로 넣으면 안됨
+    int l = st.countTokens();  
+    for (int i = 0; i < l ; i++) {
+        System.out.println(st.nextToken());
+    }
+    // 향상된 for문은 적용되지 않음
+
+    while (st.hasMoreTokens()) {
+        System.out.println(st.nextToken());
+    }
+
+    ```
+
+- 문자열을 나눌 때, `.split()`이랑 이거 중에 골라서 사용하면 된다. 결과가 배열로 나오느냐/토큰으로 나오느냐의 차이
+
+
+
+### `StringBuffer`
+
 ## Wrapper 클래스
 
 ## 날짜, 시간과 관련된 클래스
