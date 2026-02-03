@@ -253,7 +253,112 @@
 
 ## Wrapper 클래스
 
-- 기본 타입의 자료형을 객체로 바꿔서 넘겨주는 클래스
-- 
+- 기본 타입(int, bool, char, ...)의 자료형을 객체로 포장해 주는 클래스
+    - int -> Integer, bool -> Boolean, char -> Character, ...
+
+- 프로그램에 따라 기본타입을 객체로 취급해서 처리할 경우가 있는데, 이럴 때 사용한다.
+    - `Collection`은 객체를 저장하는데, 기본타입은 객체가 아니라 저장할 수가 없다.
+    - 어떤 메소드에서 `Object` 타입을 받아야 할 때 기본타입을 넣어주고 싶을 때 사용
+
+
+### Boxing
+
+- 기본 자료형을 Wrapper 클래스로 포장하는 것을 Boxing이라고 한다.
+    - 기본타입 데이터 -> Wrapper 타입 데이터
+
+- 객체로 나오기 때문에 클래스에서 제공하는 다양한 메소드들을 사용 가능하다.
+    - `.equals()`(값 비교), `.compareTo()`(비교 후 0/1 반환) 등
+
+1. Wrapper 클래스 객체를 직접 생성 (1.9버전부터 `@Deprecated`됨)
+    ```java
+    Integer i = new Integer(10);
+    Double d = new Double(3.14);
+    Character c = new Character('A');
+    ```
+
+    - Wrapper 클래스 객체인데, 값으로 주어진 값을 final field로 들고 있는 것
+
+2. Wrapper 클래스의 static 메소드를 통해 생성
+
+    ```java
+    Integer i2 = Integer.valueOf(10);
+    Double d2 = Double.valueOf("3.14");
+    Character c2 = Character.valueOf('A');
+    ```
+    - 매개값이 다른 타입이어도 알아서 형변환되서 들어간다.
+
+3. Auto Boxing (1.5버전 이후부터)
+
+    ```java
+    Integer i3 = 10;
+    Double d3 = 3.14;
+    Character c3 = 'A';
+    ```
+    - 대입연산자 왼쪽에는 Object 타입인 객체가 오고, 오른쪽에는 기본타입인 10, 3.14, 'A' 등이 오지만 대입이 정상적으로 일어난다.
+        - 단, 자동 형변환은 일어나지 않는다.
+    - 굳이 정적 메소드나 직접 생성 방식을 사용할 필요가 없다
+
+### Unboxing
+
+- 반대로, wrapper 클래스를 다시 기본 자료형으로 풀어주는 것을 Unboxing이라고 한다.
+
+1. Wrapper 객체의 메소드 이용
+
+    ```java
+    int num1 = i1.intValue();
+    double dnum1 = d1.doubleValue();
+    char ch1 = c1.charValue();
+    ```
+
+    - 값만 변수에 저장하기 때문에 동등비교(`==`)를 해도 같다고 나온다.
+
+2. Auto Unboxing
+    ```java
+    int num2 = i2;
+    double dnum2 = d2;
+    char ch2 = c2;
+    ```
+
+    - 역시 대입연산자 좌우가 타입이 다르지만, 자동으로 언박싱이 일어난다.
+
+### 문자열과 Wrapper 클래스
+- 기본 자료형과 문자열은 기본적으로 상호 변환이 불가
+    ```java
+    int num = "10";     // 에러
+    String str = 10;    // 에러
+    ```
+
+
+1. 문자열 -> 기본 자료형
+
+    ```java
+    int inum = Integer.parseInt("10");          // 10
+    double dnum = Double.parseDouble("3.14");   // 3.14
+    double dnum2 = Double.parseDouble("10");    // 10.0
+    ```
+
+    - `.parseXXX()`를 이용한다.
+    - static 메소드임
+    - 문자열은 문자열만 제거하면 원하는 데이터 타입이 나오게 만들어 줘야 한다.
+        - 다른 타입을 넣으면 에러(`NumberFormatException`)가 발생한다.
+        - 단, 자동 형변환이 되는 경우는 가능함
+
+2. 기본 자료형 -> 문자열
+
+    ```java
+        String str1 = String.valueOf(10);    // "10"
+        String str2 = String.valueOf(3.14);  // "3.14"
+    ```
+
+    - `String.valueOf()`을 이용한다.
+        - 역시 static 메소드
+        - 다양한 타입의 매개변수로 오버로딩 되어있음
+    
+    ```java
+    String str3 = Integer.valueOf(10).toString();
+    String str4 = Double.valueOf(3.14).toString();
+    ```
+    - Wrapper 클래스의 `.valueOf()`를 사용할 수도 있다.
+    - 일반적으로는 `String.valueOf()`를 이용하지만, Wrapper 클래스를 이용하고 있을 때는 `.toString()`을 이용해 언박싱할 수도 있는 것
 
 ## 날짜, 시간과 관련된 클래스
