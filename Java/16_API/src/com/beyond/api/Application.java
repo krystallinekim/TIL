@@ -1,6 +1,6 @@
 package com.beyond.api;
 
-import com.beyond.api.practice.WrapperClass;
+import com.beyond.api.practice.DateTime;
 
 // 기본 API(Application Programming Interface)
 // 운영체제, 서버, 프로그래밍 언어가 제공하는 기능을 제어할 수 있게 만든 인터페이스
@@ -9,17 +9,18 @@ public class Application {
     public static void main(String[] args) {
 
         // 문자열 클래스
-        System.out.println("문자열 클래스");
+        // System.out.println("문자열 클래스");
         // new StringAPI().method1();
         // new StringAPI().method2();
         // new StringAPI().method3();
 
         // Wrapper 클래스
-        System.out.println("Wrapper 클래스");
+        // System.out.println("Wrapper 클래스");
         // new WrapperClass().method1();
-        new WrapperClass().method2();
+        // new WrapperClass().method2();
 
         // 날짜, 시간과 관련된 클래스
-
+        // new DateTime().method1();
+        new DateTime().method2();
     }
 }

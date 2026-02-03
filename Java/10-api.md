@@ -362,3 +362,163 @@
     - 일반적으로는 `String.valueOf()`를 이용하지만, Wrapper 클래스를 이용하고 있을 때는 `.toString()`을 이용해 언박싱할 수도 있는 것
 
 ## 날짜, 시간과 관련된 클래스
+
+### `java.util.Date` 클래스
+
+- 날짜, 시간을 표현하는 클래스
+    - 객체 간에 날짜와 시간 정보를 주고받을 때 사용
+
+- 좀 많이 옛날에 사용하던 방식. 이제는 잘 사용하지 않는다
+
+#### 생성자
+
+1. 기본 생성자는 현재 날짜, 시간을 반환한다.
+    ```java
+    Date today = new Date();
+    System.out.println(today);  // Tue Feb 03 12:03:58 KST 2026
+    ```
+
+2. 생성자에 숫자(long) 하나를 넣으면, 1970년 1월 1일 00시(UTC) 기준으로 객체를 생성해 준다.
+    ```java
+    Date when = new Date(1000L);
+    System.out.println(when);  // Thu Jan 01 09:00:01 KST 1970
+    ```
+    - 숫자는 밀리초(ms) 단위
+
+3. int 3개를 넣으면 year, month, date 기준으로 나온다. (`@Depricated`됨)
+    ```java
+    Date when = new Date(2026, 2, 3);
+    System.out.println(when);  // Wed Mar 03 00:00:00 KST 3926
+    ```
+    - 근데 연도가 제대로 나오지는 않음. 
+    - 연도는 현대 연도에서 1900을 빼야하고, 월은 0~11 사이 값으로 적어야 한다.
+
+#### 메소드
+
+```java
+System.out.println(today.getTime());        // 1770088983812    // 시각을 밀리초 단위로 표현
+System.out.println(today.getYear());        // 126              // 연도에서 1900을 뺀 값(1900부터 셈)
+System.out.println(today.getYear() + 1900); // 2026             // 우리가 보는 연도
+System.out.println(today.getMonth());       // 1                // 달에서 1을 뺀 값(0부터 셈)
+System.out.println(today.getMonth() + 1);   // 2                // 우리가 보는 달
+System.out.println(today.getDate());        // 3                // 현재 날짜
+System.out.println(today.getHours());       // 12               // 시간정보
+System.out.println(today.getMinutes());     // 23               // 분정보
+System.out.println(today.getSeconds());     // 3                // 초정보
+```
+
+- 사용하기 좋진 않다.
+
+#### `SimpleDateFormat` 클래스
+
+```java
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd(E) HH:mm:ss");
+System.out.println(sdf.format(today));  // 2026-02-03(화) 12:30:14
+```
+
+- 주어진 날짜 데이터를 정해진 포맷으로 나타내 준다.
+    - 이때 포맷 문자를 이용함
+
+
+### `java.time` 패키지
+
+- Java 1.8부터 날짜, 시간을 나타내는 `time` 패키지를 제공하기 시작함
+
+- `java.util.Date`의 불편한 점들을 많이 개선해서 나옴
+
+- 생성자를 직접 호출할 수 없고, 제공되는 static 메소드를 이용해서 객체를 만들 수 있다.
+    - 생성자의 접근제한이 `private`으로 되어 있음
+
+#### `java.time.LocalDateTime`
+
+- 날짜, 시간 정보를 모두 저장 가능한 객체를 생성하는 클래스
+
+    ```java
+    // LocalDateTime now = new LocalDateTime();  // 생성자로 직접 생성 불가
+    LocalDateTime now = LocalDateTime.now();  // 제공되는 정적 메소드를 이용해서 만들어야 함
+    System.out.println(now);  // 2026-02-03T12:43:55.970445300
+    ```
+
+- `Date`와는 표기법이 다르다. 국제표준 날짜 시간 데이터 표기법(ISO 8601)을 따른다.
+
+- 나노초(ns)까지의 시간을 표기한다.
+
+- 자동으로 현재 위치의 시간대를 기준으로(Asia/Seoul) 맞춰주는데, `ZonedDateTime`과 `Zoneid.of`를 쓰면 다른 시간대에서의 현재시각을 알 수 있다.
+
+- 특정 시각 정보를 저장한 객체를 생성할 때는 `.of()`를 이용한다.
+
+    ```java
+    LocalDateTime when = LocalDateTime.of(2026, 2, 3, 15, 8, 30);
+    System.out.println(when);  // 2026-02-03T15:08:30
+    ```
+
+    - `Date` 때와는 다르게 연도에서 1900을 빼거나, 월에서 1을 뺄 필요가 없다. 좀 더 사용하기 편리함
+
+- `.parse()`를 이용해서 문자열을 시계열 데이터로 바꿀 수도 있다.
+
+    ````java
+    LocalDateTime when2 = LocalDateTime.parse("2025-12-31T12:30:11");
+    System.out.println(when2);  // 2025-12-31T12:30:11
+    ```
+
+- 날짜, 시간 정보를 출력할 때는 `.getXXX()`를 이용
+
+    ```java
+    System.out.println(now.getYear());          // 2026
+    System.out.println(now.getMonth());         // FEBRUARY (enum)
+    System.out.println(now.getMonthValue());    // 2
+    System.out.println(now.getDayOfYear());     // 34       // 현재 연도에서 몇번째 날짜인지
+    System.out.println(now.getDayOfMonth());    // 3        // 현재 월에서 몇번째 날짜인지
+    System.out.println(now.getDayOfWeek());     // TUESDAY (enum)
+    ```
+
+- 날짜, 시간을 조작할 때는 `.plusXXX()`, `.minusXXX()` 이용
+
+    ```java
+    System.out.println(now.minusYears(3));  // 2023-02-03T14:30:16.725853400
+    System.out.println(now.plusDays(10));   // 2023-02-03T14:30:16.725853400
+    System.out.println(now.plusYears(2).minusDays(3).plusMonths(4).minusWeeks(5));  // 2028-04-26T14:31:26.461321200
+    ```
+
+- 날짜, 시간을 비교할 때는 `.isAfter()`, `isBefore()` 이용함
+
+    ```java
+    System.out.println(now.isAfter(now.plusDays(3)));   // false
+    System.out.println(now.isEqual(now.plusDays(3)));   // false
+    System.out.println(now.isBefore(now.plusDays(3)));  // true
+    ```
+    - `Date`를 이용할 때보다 압도적으로 편리하다
+
+- 원하는 형태로 출력하고 싶을 때 `DateTimeFormatter`를 이용해 포매팅도 가능
+    ```java
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd(E) HH:mm:ss");
+    System.out.println(formatter.format(now));  // 2026-02-03(화) 15:09:07
+    System.out.println(now.format(formatter));  // 2026-02-03(화) 15:09:07
+    System.out.println(now.format(DateTimeFormatter.BASIC_ISO_DATE));  // 20260203
+    ```
+    - 표준 포맷으로 표기하는 것도 가능하다. 
+
+#### `java.time.LocalDate`, `java.time.LocalTime`
+
+- 각각 날짜/시간 정보만 저장 가능한 객체를 생성하는 클래스
+    ```java
+    // LocalDate
+    LocalDate today = LocalDate.now();
+    LocalDate today = LocalDate.of(2026, 2, 3);
+    LocalDate today = LocalDate.parse("2026-02-03");
+    System.out.println(today);  // 2026-02-03
+
+    // LocalTime
+    LocalTime today = LocalTime.now();
+    System.out.println(today);  // 14:43:31.456602600
+    ```
+
+- `LocalDateTime` 객체는 `LocalDate`, `LocalTime`로 변환이 가능하다.
+    - `.toLocalDate`, `.toLocalTime` 을 이용함
+
+    ```java
+    LocalDateTime now = LocalDateTime.now()
+    System.out.println(now);              // 2026-02-03T12:43:55.970445300
+    System.out.println(now.toLocalDate);  // 2026-02-03
+    System.out.println(now.toLocalTime);  // 12:43:55.970445300
+    ```
