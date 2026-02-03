@@ -14,14 +14,14 @@
     ```
 - 변경이 적고, 읽기가 많을 경우에 사용하는 것이 좋다.
 
-### `.length`
+### `.length()`
 
 - 원본 문자열의 길이를 `int`로 반환한다.
 
     ```java
     String str = "Hello";
 
-    System.out.println(str.length);  // 5
+    System.out.println(str.length());  // 5
     ```
 
 ### `.charAt(i)`
@@ -164,10 +164,96 @@
 
 - 문자열을 나눌 때, `.split()`이랑 이거 중에 골라서 사용하면 된다. 결과가 배열로 나오느냐/토큰으로 나오느냐의 차이
 
+## 가변 문자열 클래스
+
+- `StringBuffer`, `StrignBuilder` 2가지를 사용할 수 있다.
+
+- 둘의 차이는 다른건 없고, 동기화 차이
+    - `StringBuffer`는 멀티 스레드 환경에서 사용 권장
+    - `StrignBuilder`는 단일 스레드 환경에서 실행 권장
+
+- **가변 클래스**이다 (문자열을 생성하고 나서 변경이 가능함)
+    - 기본적으로 16개(수정 가능)의 문자를 저장 가능한 버퍼가 미리 생성되고, 문자가 저장됨에 따라서 **자동으로 증가**한다.
+    - 내부 버퍼에 문자열을 저장해 놓고, 그 안에서 추가/수정/삭제 작업이 가능하도록 설계됨
+
+- 생성자에 문자열, 버퍼 크기 등을 전달할 수 있다.
+    - 버퍼 크기를 전달하면 기본적으로 16개지만, 버퍼 공간을 더 늘리는 것도 가능하다.(딱히 의미는 없음)
+    - 버퍼 공간은 문자열 길이 +16개의 여유공간을 남겨놓고 계속 늘어난다.
+    - 문자열을 전달하면 객체에 기본 문자열이 저장됨
+
+- 문자열에 추가/수정/삭제 작업이 많은 경우에 `String` 대신 사용한다.
+
+    ```java
+    StringBuilder sb = new StringBuilder("안녕하세요");  // int capacity(버퍼 크기) / String str(문자열 내용)
+
+    System.out.println(sb);             // 안녕하세요, 문자열 내용
+    System.out.println(sb.length());    // 5, 문자열 길이
+    System.out.println(sb.capacity());  // 21, 버퍼 공간 크기
+    ```
+
+### `.append("...")`
+
+- 기본 문자열 뒤에 매개값으로 전달받은 문자열을 추가한다.
+
+    ```java
+    sb.append(" 저는 홍길동입니다.");
+    
+    System.out.println(sb);             // 안녕하세요 저는 홍길동입니다.
+    System.out.println(sb.length());    // 16
+    System.out.println(sb.capacity());  // 21
+    ```
+
+- `str += "더할 문자열"`과 같은 작업을 하지만, 작동 방식이 다르다.
+    - `String`을 이용하면 새로운 객체를 만들어서 덮어씌우는 것. 연산 이전/이후의 객체 주소가 다르다.
+        - 연결연산이 계속될 경우, 새로운 문자열 객체를 계속 생성해야 한다.
+        - 객체를 만드는 데도 계속 리소스가 소비된다.
+
+    - `StringBuffer`의 경우 기존 문자열 객체를 수정해 반환하기 때문에, 이전/이후의 객체 주소가 같다
+        - 연결연산을 많이 해도 버퍼 공간만 늘어나고, 객체는 새로 생성할 필요가 없다.
+
+### `.insert(offset, str)`
+
+- 기존 문자열에서 `offset` 위치부터 전달된 문자열(`str`)을 추가한다.
+
+    ```java
+    sb.insert(6, "!중간에추가된무언가긴문자열!");
+
+    System.out.println(sb);             // 안녕하세요 !중간에추가된무언가긴문자열!저는 홍길동입니다.
+    System.out.println(sb.length());    // 31
+    System.out.println(sb.capacity());  // 44
+    ```
 
 
-### `StringBuffer`
+### `.delete(start, end)`
+
+- 기존 문자열의 `start` 인덱스부터 `end`-1 인덱스까지 문자열을 삭제한다.
+
+    ```java
+    sb.delete(6, 21);
+
+    System.out.println(sb);             // 안녕하세요 저는 홍길동입니다.
+    System.out.println(sb.length());    // 16
+    System.out.println(sb.capacity());  // 44
+    ```
+
+- `.deleteCharAt(idx)`를 이용하면 특정 인덱스의 문자만 삭제하는 것도 가능하다.
+
+### 메소드 체이닝
+
+- 가변 문자열에서 사용하는 메소드 `append`, `insert`, `delete` 등은 리턴값이 `this`이다.
+- 해당 객체의 참조를 그대로 반환하기 때문에, 바로 이어서 다음 작업을 실행할 수 있다.
+    
+    ```java
+    sb = new StringBuilder("Java Programming");
+    sb.append(" API").delete(5,17).reverse();
+
+    System.out.println(sb);  // IPA avaJ
+    ```
+
 
 ## Wrapper 클래스
+
+- 기본 타입의 자료형을 객체로 바꿔서 넘겨주는 클래스
+- 
 
 ## 날짜, 시간과 관련된 클래스

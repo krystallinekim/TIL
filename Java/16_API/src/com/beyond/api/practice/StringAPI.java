@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class StringAPI {
+
     public void method1() {
         // String 클래스가 제공하는 메소드들
         String str = "Hello World";
@@ -82,7 +83,6 @@ public class StringAPI {
         System.out.println(value);
     }
 
-    }
     public void method2() {
         String str = "Linux,MariaDB,Java,Spring,HTML5,CSS3,Vue.js,Docker,Kubernates,Jenkins";
 
@@ -104,4 +104,53 @@ public class StringAPI {
         }
 
     }
+
+    public void method3() {
+
+        // StringBuilder
+        String str = "안녕하세요";
+        StringBuilder sb = new StringBuilder("안녕하세요");  // int capacity, 버퍼 크기
+
+
+        System.out.println(sb);             // null, 문자열 내용
+        System.out.println(sb.length());    // 5, 문자열 길이
+        System.out.println(sb.capacity());  // 21, 버퍼 공간 크기
+
+        System.out.println(System.identityHashCode(str));
+        System.out.println(System.identityHashCode(sb));
+
+        // 클래스가 제공하는 메소드들
+        // 1. append("...")
+
+        sb.append(" 저는 홍길동입니다.");
+        str += " 저는 홍길동입니다.";
+
+        System.out.println(sb);             // 안녕하세요 저는 홍길동입니다.
+        System.out.println(sb.length());    // 16
+        System.out.println(sb.capacity());  // 21
+        System.out.println(System.identityHashCode(str));
+        System.out.println(System.identityHashCode(sb));
+
+        // 2. insert(offset, str)
+
+        sb.insert(6, "!중간에추가된무언가긴문자열!");
+
+        System.out.println(sb);             // 안녕하세요 !중간에추가된무언가긴문자열!저는 홍길동입니다.
+        System.out.println(sb.length());    // 31
+        System.out.println(sb.capacity());  // 44
+
+        // 3. delete(start, end)
+        sb.delete(6, 21);
+        // sb.deleteCharAt(24);
+        System.out.println(sb);             // 안녕하세요 저는 홍길동입니다.
+        System.out.println(sb.length());    // 16
+        System.out.println(sb.capacity());  // 44
+
+        // 4. 메소드 체이닝
+        sb = new StringBuilder("Java Programming");
+        sb.append(" API").delete(5,17).reverse();
+
+        System.out.println(sb);
+    }
+
 }

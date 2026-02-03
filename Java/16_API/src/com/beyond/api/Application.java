@@ -9,8 +9,10 @@ public class Application {
     public static void main(String[] args) {
 
         // 문자열 클래스
+        System.out.println("문자열 클래스");
         // new StringAPI().method1();
-        new StringAPI().method2();
+        // new StringAPI().method2();
+        new StringAPI().method3();
         // Wrapper 클래스
 
         // 날짜, 시간과 관련된 클래스
