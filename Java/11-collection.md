@@ -1,5 +1,7 @@
 # 컬렉션(Collection)
 
+![java Collection Framework](https://hudi.blog/static/1bacac1babc556100455a8c64e7658da/ca1dc/2.png)
+
 - 컬렉션(컬렉션 프레임워크)은 자바에서 제공하는 자료구조를 담당하는 프레임워크로 `java.util` 패키지에 컬렉션과 관련된 인터페이스와 클래스들이 포함되어 있다.
 - 자료구조는 데이터를 효율적으로 이용하는 방법으로 데이터에 편리하게 접근하고, 효율적으로 사용하기 위해서 데이터를 저장하거나 조직하는 방법을 말한다.
 - 컬렉션을 사용하면 데이터의 추가, 삭제, 정렬 등의 처리가 간단하게 해결되어 자료구조적 알고리즘을 구현할 필요가 없다.
@@ -8,6 +10,7 @@
     - `Collection`은 `Iterable`의 자식 인터페이스로, `List`, `Queue`, `Set`으로 나뉜다. 
     - `Iterable`들은 전부 향상된 for문을 사용할 수 있음
     
+
 - **객체 데이터만 저장**한다.
     - 기본 타입의 데이터는 wrapper 클래스로 포장되어 들어감
 
@@ -393,73 +396,117 @@ System.out.println(set.size()); // 4
         );
         ```
 
-## 5. Map
+## Map
 
-- 키(key)와 값(value)으로 구성된 Entry 객체를 저장하는 구조를 가지고 있다.
-- 키(key)와 값(value) 모두 객체이다.
-    
-    
-- 키(key)는 중복 저장을 허용하지 않고 값(value)은 중복 저장이 가능하다.
-- Map 인터페이스의 주요 메소드는 아래와 같다.
+- 딕셔너리임
 
-    | 리턴 타입 | 메소드 | 설명 |
-    | --- | --- | --- |
-    | V | put(K key, V value) | 주어진 키와 값을 추가, 저장이 되면 값을 리턴한다. |
-    | boolean | containsKey(Object key) | 주어진 키가 있는지 확인하여 결과 리턴한다. |
-    | boolean | containsValue(Object value) | 주어진 값이 있는지 확인하여 결과 리턴한다. |
-    | Set<Map.Entry<K,V>> | entrySet() | 키와 값의 쌍으로 구성된 모든 Map.Entry 객체를 set에 담아서 리턴한다. |
-    | V | get(Object key) | 주어진 키의 값을 리턴한다. |
-    | boolean | isEmpty() | 컬렉션이 비어있는지 조사한다. |
-    | Set\<K> | keySet() | 모든 키를 Set 객체에 담아서 리턴한다. |
-    | int | size() | 저장된 키의 수를 리턴한다. |
-    | Collection\<V> | values() | 저장된 모든 값을 Collection에 담아서 리턴한다. |
-    | void | clear() | 모든 Map.Entry를 삭제한다. |
-    | V | remove(Object key) | 주어진 키와 일치하는 Map.Entry 삭제, 삭제가 되면 값을 리턴한다. |
+- 키(key)와 값(value)으로 구성된 객체를 저장하는 구조를 가진 인터페이스이다.
+    - 키(key)와 값(value) 모두 객체이다.
+    - 키(key)는 중복 저장을 허용하지 않고 값(value)은 중복 저장이 가능하다.
+    - 키와 값을 묶은 객체를 `Entry`라고 한다.
 
+- `Map`은 `Iterable` 종류가 아니다.
+    - 향상된 `for`문을 사용할 수 없고, 순회를 위해서는 `Set`으로 바꿔서 순회해야 한다.
+
+- `Map` 인터페이스를 구현하는 클래스에는 `HashMap`, `HashTable` 등이 있다.
+
+
+### Map 메소드
+
+| Return type           | Method                        | 설명                                                             |
+| --------------------- | ----------------------------- | ---------------------------------------------------------------- |
+| V                     | put(K key, V value)           | 주어진 키와 값을 추가, 저장이 되면 값을 리턴한다.                    |
+| boolean               | containsKey(Object key)       | 주어진 키가 있는지 확인하여 결과 리턴한다.                           |
+| boolean               | containsValue(Object value)   | 주어진 값이 있는지 확인하여 결과 리턴한다.                           |
+| Set<Map.Entry<K,V>>   | entrySet()                    | 키와 값의 쌍으로 구성된 모든 Map.Entry 객체를 set에 담아서 리턴한다.  |
+| V                     | get(Object key)               | 주어진 키의 값을 리턴한다.                                          |
+| boolean               | isEmpty()                     | 컬렉션이 비어있는지 조사한다.                                       |
+| Set\<K>               | keySet()                      | 모든 키를 Set 객체에 담아서 리턴한다.                               |
+| int                   | size()                        | 저장된 키의 수를 리턴한다.                                         |
+| Collection\<V>        | values()                      | 저장된 모든 값을 Collection에 담아서 리턴한다.                      |
+| void                  | clear()                       | 모든 Map.Entry를 삭제한다.                                         |
+| V                     | remove(Object key)            | 주어진 키와 일치하는 Map.Entry 삭제, 삭제가 되면 값을 리턴한다.       |
+
+#### `.put(key, value)`
+
+key, value 객체를 묶어서 Entry 객체로 저장하는 메소드
+
+```java
+Map<String, Snack> snackMap = new HashMap<>();
+snackMap.put("프링글스", new Snack("프링글스", "오리지널", 400));
+...
+
+System.out.println(snackMap);  // {프링글스=Snack{name='프링글스', flavor='오리지널', calories=400}, ...}
+System.out.println(snackMap.size()); 
+```
+
+- key는 주로 String으로 많이 쓴다. 
+
+키가 중복될 경우, 나중에 `put`된 Enstry로 덮어씌워진다.
+
+#### `.get(key)`
+
+`key`에 해당하는 값을 불러오는 메소드이다.
+```java
+System.out.println(snackMap.get("프링글스"));  // Snack{name='프링글스', flavor='오리지널', calories=400}
+```
+
+#### `.remove(key)`
+
+`key`에 해당하는 `Entry`를 삭제한다.
+
+
+삭제 시 값을 리턴한다.
+
+#### `.keySet()`
+
+Entry에서 키값만 받아서 Set으로 만들어 반환해 준다.
+
+```java
+Set<String > set = snackMap.keySet();
+
+for (String key : set) {
+    System.out.printf("key: %s, value: %s\n", key, snackMap.get(key));
+}
+```
+
+`.keySet()`을 이용하면 `Map`에서도 반복문을 돌릴 수 있어진다.
+
+#### `.entrySet()`
+
+`Map`의 `Entry` 객체를 `Set`에 담아서 반환한다.
+
+```java
+Set<Map.Entry<String, Snack>> entries = snackMap.entrySet();
+// Set에 Entry객체가 들어있고, Entry 는 키로 String, 값으로 Snack이 들어있다는 뜻
+
+for (Map.Entry<String, Snack> entry : entries) {
+    System.out.printf("key: %s, value: %s\n", entry.getKey(), entry.getValue());
+}
+```
+`Entry` 안에 key, value 모두 들어 있으므로 받아올 수 있다.
 
 ## 제네릭스
 
 - JDK 1.5부터 제공되는 기능이다.
+
 - 클래스와 인터페이스, 메소드 내부에서 다룰 데이터의 타입을 지정할 수 있다.
-- 타입 파라미터는 코드 작성 시 구체적인 타입으로 대체되어 다양한 코드를 생성하도록 도와준다.
-
-### 타입 파라미터
-
-- Type Parameter를 이용해 리스트에 들어갈 타입을 고정할 수 있다.
-    - 리스트의 요소 타입이 고정되면서 꺼낼 때도 항상 그 타입으로 나오기 때문에, 매번 다운캐스팅 할 필요가 없다.
-    - 생략 시 Object 타입으로 들어간다.
-
-    ```java
-    List<String> list = new ArrayList<String>();
-
-    list.add("apple");
-    list.add("banana");
-    // list.add(10);  // 에러
-    ```
-
-- 생성자쪽 타입 파라미터는 생략해도 타입 추론을 통해 알아서 맞춰준다.
-
-- 문법적으로, 클래스 타입만 설정할 수 있어 기본타입 데이터는 설정할 수 없다
-
-    ```java
-    // List<int> numbers = new ArrayList<>();  // 에러
-    List<Integer> numbers = new ArrayList<>();
-    numbers.add(Integer.valueOf(10));
-    numbers.add(9);  // AutoBoxing 적용
-    ```
-    - Wrapper 타입으로 설정하면 됨
-
+    - 아직 코드 작성 이전에, 타입이 지정될 자리를 맡아두는 역할
+    - 타입 파라미터는 나중에 코드 작성 시 구체적인 타입으로 대체되어 다양한 코드를 생성하도록 도와준다.
 
 ### 제네릭스의 장점
 
 - 실행 시 잘못된 타입 사용으로 발생할 수 있는 에러를 컴파일 시에 체크할 수 있다.
+
 - 컬렉션에 저장되는 요소의 타입을 제한하기 때문에 불필요한 형 변환을 제거할 수 있다.
     
     ```java
+    // 객체가 Object 타입으로 저장된다
     List list = new ArrayList();
     
     list.add("Hello");
     
+    // 다운캐스팅을 통해 문자열로 받을 수 있다.
     String str = (String) list.get(0);
     ```
     
@@ -475,40 +522,56 @@ System.out.println(set.size()); // 4
 ### 제네릭스 타입
 
 - 타입 파라미터를 가지는 클래스와 인터페이스를 제네릭스 타입이라고 한다.
+
 - 제네릭스 타입은 클래스 또는 인터페이스 이름 뒤에 "<>" 기호를 추가하고 사이에 타입 파라미터가 위치한다.
-- 타입 파라미터는 대문자 알파벳 한 글자로 작성한다.
-    
+
+- 타입 파라미터는 **대문자 알파벳 한 글자**로 작성한다.
+    - 아무 글자나 쓰는 게 아니라, 의미있는 문자로 사용한다.
+    - 요소(Elements) -> `E`, 키(Key) -> `K`, 값(Value) -> `V`, ...
+
     ```java
-      // java.util 패키지의 ArrayList 클래스
-      public class ArrayList<E> extends ... {
+    // java.util 패키지의 ArrayList 클래스
+    public class ArrayList<E> extends ... {
         ...
-      }
+    }
     
-      // java.util 패키지의 List 인터페이스
-      public interface List<E> extends Collection<E> {
+    // java.util 패키지의 List 인터페이스
+    public interface List<E> extends Collection<E> {
         ...
-      }
+    }
     ```
-    
-- 제네릭스 타입의 클래스를 객체로 생성할 때 구체적인 타입으로 변경된다.
+
+- 객체 생성 시점에, 제네릭스 타입 위치에 구체적인 타입을 명시하면 모든 자리에 그 타입으로 정해진다.    
+
 - jdk 1.7부터 중복 기술을 줄이기 위해 다이아몬드 연산자"<>"를 제공한다.
-- 컴파일러는 타입 파라미터 부분에 "<>" 연산자를 사용하면 타입 파라미터를 자동으로 설정한다.
+
+- 생성자의 타입 파라미터 부분에 "<>" 연산자만 사용하면 타입 파라미터를 자동으로 설정한다.(타입 추론)
+
     
     ```java
-    List<String> list = new ArrayList<>(); // 타입 추론
-    
+    List<String> list = new ArrayList<>(); // 타입 추론    
     ...
     ```
-    
+
+- 문법적으로, 제네릭스 타입에는 클래스 타입만 설정할 수 있어 기본타입 데이터는 설정할 수 없다
+
+    ```java
+    // List<int> numbers = new ArrayList<>();  // 에러
+    List<Integer> numbers = new ArrayList<>();
+    numbers.add(Integer.valueOf(10));
+    numbers.add(9);  // AutoBoxing 적용
+    ```
+    - Wrapper 타입으로 설정하면 됨
+
 
 #### 멀티 타입 파라미터
 
-- 제네릭스 타입은 두 개 이상의 멀티 타입 파라미터를 사용할 수 있는데, 이 경우 각 타입 파라미터를 콤마로 구분한다.
+- 제네릭스 타입은 두 개 이상의 멀티 타입 파라미터를 사용할 수도 있는데, 이 경우 각 타입 파라미터를 콤마로 구분한다.
     
     ```java
     // java.util 패키지의 Map 인터페이스
     public interface Map<K, V> {
-      ...
+        ...
     }
     ```
     
@@ -522,19 +585,20 @@ System.out.println(set.size()); // 4
 ### 제네릭스 타입과 상속
 
 - 제네릭스 타입도 부모 클래스가 될 수 있고 타입 파라미터는 자식 클래스에도 기술해야 한다.
+
 - 자식 클래스는 추가적으로 타입 파라미터를 가질 수 있다.
     
     ```java
     // java.util.function 패키지의 Function 인터페이스
     public interface Function<T, R> {
-      ...
+        ...
     }
     ```
     
     ```java
     // java.util.function 패키지의 UnaryOperator 인터페이스
     public interface UnaryOperator<T> extends Function<T, T> {
-      ...
+        ...
     }
     ```
     
@@ -542,41 +606,50 @@ System.out.println(set.size()); // 4
 ### 제네릭스 타입 제한
 
 - 타입 파라미터를 지정할 때 상속 및 구현 관계로 제한된 파라미터를 선언하려면 타입 파라미터 뒤에 extends 키워드를 붙이고 상위 타입을 명시하면 된다.
+
 - 인터페이스로 제한된 파라미터를 선언할 때 implements를 사용하지 않고 동일하게 extends를 사용한다.
     
     ```java
-      public <T extends 상위타입> 클래스명 {
+      public 클래스명<T extends 상위타입> {
         ...
       }
     ```
+    - T 타입은 원래 어떤 타입이 와도 상관 없지만, 특정 클래스를 상속하거나, 특정 인터페이스를 구현해야 하는 제한사항을 걸어줄 수 있다.
     
 
 ### 제네릭스 메소드
 
 - 제네릭스 메소드는 리턴 타입과 매개 타입으로 타입 파라미터를 갖는 메소드를 말한다.
+
 - 리턴 타입 앞에 "<>" 기호를 추가하고 타입 파라미터를 기술한다.
+
 - 제네릭스 메소드도 멀티 파라미터를 가질 수 있다.
+
 - 타입 파라미터를 기술한 이후에는 리턴 타입과 매개 타입에서 타입 파라미터를 사용하면 된다.
     
     ```java
     // java.util 패키지의 Collections 클래스
     public class Collections {
-      public static <T extends Comparable<? super T>> void sort(List<T> list) {
+        public static <T extends Comparable<? super T>> void sort(List<T> list) {
+            ...
+        }
+        public static <T> T max(Collection<? extends T> coll, Comparator<? super T> comp) {
+            ...
+        }
         ...
-      }
-      public static <T> T max(Collection<? extends T> coll, Comparator<? super T> comp) {
-        ...
-      }
-      ...
     }
     ```
-    
+
+
+- 메소드를 호출 시 타입 파라미터를 지정해서 호출할 수 있다.
+
     ```java
     List<String> list = Arrays.asList("이몽룡", "홍길동", "문인수");
     
     Collections.<String>sort(list);
     ```
     
+
 - 제네릭스 메소드를 호출할 때 타입 파라미터를 생략하면 매개값으로 구체적인 타입을 추론한다.
     
     ```java
@@ -588,8 +661,12 @@ System.out.println(set.size()); // 4
 
 ### 와일드카드(Wildcard)
 
-- 와일드카드 문자는 하나 이상의 다른 문자들을 대표적으로 상징하는 특수 문자(?)를 의미한다.
-- 타입 파라미터로 <?>는 모든 클래스나 인터페이스 타입이 올 수 있다.
-- 타입 파라미터로 <? extends T>는 T 타입이거나 T 타입을 상속하는 타입만 올 수 있다.
-- 타입 파라미터로 <? super T>는 T 타입이거나 T 타입의 부모 타입만 올 수 있다.
+와일드카드 문자는 하나 이상의 다른 문자들을 대표적으로 상징하는 특수 문자(`?`)를 의미한다.
 
+와일드카드는 제네릭스 타입에서는 사용할 수 없고, 제네릭스 메소드에서만 사용할 수 있다.
+
+- 타입 파라미터로 <?>는 모든 클래스나 인터페이스 타입이 올 수 있다.
+
+- 타입 파라미터로 <? extends T>는 T 타입이거나 T 타입을 상속하는 타입만 올 수 있다.
+
+- 타입 파라미터로 <? super T>는 T 타입이거나 T 타입의 부모 타입만 올 수 있다.
