@@ -455,8 +455,18 @@ System.out.println(snackMap.get("프링글스"));  // Snack{name='프링글스',
 
 `key`에 해당하는 `Entry`를 삭제한다.
 
+```java
+Snack snack = snackMap.remove("프링글스");
 
-삭제 시 값을 리턴한다.
+System.out.println(snack);  // Snack{name='프링글스', flavor='오리지널', calories=400}
+```
+
+- 삭제 시 값을 리턴한다.
+
+#### `.clear()`
+
+모든 Entry 객체를 삭제한다.
+
 
 #### `.keySet()`
 
