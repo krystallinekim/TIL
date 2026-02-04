@@ -23,20 +23,20 @@
 
 ### List 메소드
 
-| Return type   | Methods                           | Description |
-| ------------- | --------------------------------- | --- |
-| boolean       | add(E e)                          | 주어진 객체를 맨 끝에 추가한다. |
-| void          | add(int index, E element)         | 주어진 인덱스에 객체를 추가한다. |
-| boolean       | addAll(Collection<? extends E> c) | 주어진 Collection 타입 객체를 리스트에 추가한다. |
-| E             | set(int index, E element)         | 주어진 인덱스에 저장된 객체를 주어진 객체로 바꾼다. |
-| boolean       | contains(Object o)                | 주어진 객체가 저장되어 있는지를 확인한다. |
-| E             | get(int index)                    | 주어진 인덱스에 저장된 객체를 리턴한다. |
-| Iterator<E>   | iterator()                        | 저장된 객체를 한 번씩 가져오는 반복자 리턴한다. |
-| boolean       | isEmpty()                         | 컬렉션이 비어 있는지 조사한다. |
-| int           | size()                            | 저장되어 있는 전체 객체수를 리턴한다. |
-| void          | clear()                           | 저장된 모든 객체를 삭제한다. |
-| E             | remove(int index)                 | 주어진 인덱스에 저장된 객체를 삭제한다. |
-| boolean       | remove(Object o)                  | 주어진 객체를 삭제한다. |
+| Return type   | Methods                           | Description                                         |
+| ------------- | --------------------------------- | --------------------------------------------------- |
+| boolean       | add(E e)                          | 주어진 객체를 맨 끝에 추가한다.                       |
+| void          | add(int index, E element)         | 주어진 인덱스에 객체를 추가한다.                      |
+| boolean       | addAll(Collection<? extends E> c) | 주어진 Collection 타입 객체를 리스트에 추가한다.      |
+| E             | set(int index, E element)         | 주어진 인덱스에 저장된 객체를 주어진 객체로 바꾼다.    |
+| boolean       | contains(Object o)                | 주어진 객체가 저장되어 있는지를 확인한다.             |
+| E             | get(int index)                    | 주어진 인덱스에 저장된 객체를 리턴한다.               |
+| Iterator<E>   | iterator()                        | 저장된 객체를 한 번씩 가져오는 반복자 리턴한다.        |
+| boolean       | isEmpty()                         | 컬렉션이 비어 있는지 조사한다.                        |
+| int           | size()                            | 저장되어 있는 전체 객체수를 리턴한다.                  |
+| void          | clear()                           | 저장된 모든 객체를 삭제한다.                          |
+| E             | remove(int index)                 | 주어진 인덱스에 저장된 객체를 삭제한다.                |
+| boolean       | remove(Object o)                  | 주어진 객체를 삭제한다.                               |
 
 #### `.add()`
 
@@ -168,8 +168,8 @@ System.out.println(list.isEmpty());     // true
 
 - `String`, `int` 등의 java에서 제공하는 클래스로 정렬할 때와 달리, 직접 만든 클래스에는 정렬 기준이 없다.
 
-    | Interface  | Return | Method              | 설명 |
-    | ---------- | ------ | ------------------- | --- |
+    | Interface  | Return | Method              | 설명                                                                                             |
+    | ---------- | ------ | ------------------- | ------------------------------------------------------------------------------------------------ |
     | Comparable | int    | compareTo(T o)      | 자신과 인자로 주어진 객체를 비교하여 같으면 0, 자신이 크면 양수, 자신이 작으면 음수를 반환한다.         |
     | Comparator | int    | compare(T o1, T o2) | 두 개의 인자를 받아서 비교하여 같으면 0, 첫 번째 인자가 크면 양수, 두 번째 인자가 크면 음수를 반환한다. |
 
@@ -266,28 +266,69 @@ System.out.println(list.isEmpty());     // true
 
 ## Set
 
-- Set은 저장 **순서를 유지하지 않는** 구조를 가지고 있다.
+- Set은 저장 **순서를 유지하지 않는** 구조를 가진 인터페이스이다.
     - 인덱스도 없다
+    - `HashSet`, `LinkedHashSet`등의 클래스가 `Set`을 구현한다.
 
-- 중복되는 객체를 저장할 수 없고 null도 중복을 허용하지 않기 때문에 1개만 저장할 수 있다.    
+- 중복되는 객체를 저장할 수 없다 
+    - null도 중복을 허용하지 않기 때문에 1개만 저장할 수 있다.    
     
 - 인덱스로 관리하지 않기 때문에 인덱스를 매개 값으로 갖는 메소드가 없다.
+    - `for`문에서 인덱스로 순회하는 것이 아니라, 향상된 `for`문을 이용해 순회시킨다.
 
 - 전체 객체를 대상으로 한 번씩 반복해서 가져오는 반복자(Iterator)를 제공한다.
 
-### Set 인터페이스의 주요 메소드는 아래와 같다.
+### Set 메소드
+
+| Return type  | Method                            | 설명                                           |
+| ------------ | --------------------------------- | ---------------------------------------------- |
+| boolean      | add(E e)                          | 주어진 객체를 추가한다.                          |
+| boolean      | addAll(Collection<? extends E> c) | 주어진 Collection 타입 객체를 Set에 추가한다.     |
+| boolean      | contains(Object o)                | 주어진 객체가 저장되어 있는지를 확인한다.          |
+| Iterator\<E> | iterator()                        | 저장된 객체를 한 번씩 가져오는 반복자 리턴한다.     |
+| boolean      | isEmpty()                         | 컬렉션이 비어 있는지 조사한다.                     |
+| int          | size()                            | 저장되어 있는 전체 객체수를 리턴한다.               |
+| void         | clear()                           | 저장된 모든 객체를 삭제한다.                       |
+| boolean      | remove(Object o)                  | 주어진 객체를 삭제한다.                            |
+
+- `Collection` 인터페이스를 구현하기 때문에, `List` 메소드와 유사하다.
+
+#### `.add()`
+
+```java
+Set<String> set = new HashSet<>();
+
+set.add(null);
+set.add("반갑습니다");
+set.add(new String("반갑습니다"));
+set.add("여러분");
+set.add("안녕하세요");
+set.add("여러분");
+set.add(null);
+
+System.out.println(set);        // [null, 반갑습니다, 안녕하세요, 여러분]
+System.out.println(set.size()); // 4
+```
+
+- 중복된 값을 add해도 저장되지 않는다.
+
+- 저장된 순서도 저장되지 않는다.
+    - 엄밀히 말하면 저장된 해시값의 순서대로 출력된다.
+
+#### `Set`에 저장된 객체에 접근하는 방법
+
+1. 향상된 `for`문 활용
+
+    - 일반 for문은 인덱스가 없어서 사용할 수 없다.
     
+    ```java
+    for (String str: set) {
+        System.out.println(str);
+    }
+    ```
+
     
-    | 리턴 타입 | 메소드 | 설명 |
-    | --- | --- | --- |
-    | boolean | add(E e) | 주어진 객체를 추가한다. |
-    | boolean | addAll(Collection<? extends E> c) | 주어진 Collection 타입 객체를 Set에 추가한다. |
-    | boolean | contains(Object o) | 주어진 객체가 저장되어 있는지를 확인한다. |
-    | Iterator\<E> | iterator() | 저장된 객체를 한 번씩 가져오는 반복자 리턴한다. |
-    | boolean | isEmpty() | 컬렉션이 비어 있는지 조사한다. |
-    | int | size() | 저장되어 있는 전체 객체수를 리턴한다. |
-    | void | clear() | 저장된 모든 객체를 삭제한다. |
-    | boolean | remove(Object o) | 주어진 객체를 삭제한다. |
+
 
 ## 5. Map
 
