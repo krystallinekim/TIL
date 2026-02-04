@@ -23,20 +23,20 @@
 
 ### List 메소드
 
-| 리턴 타입 | 메소드 | 설명 |
-| --- | --- | --- |
-| boolean | add(E e) | 주어진 객체를 맨 끝에 추가한다. |
-| void | add(int index, E element) | 주어진 인덱스에 객체를 추가한다. |
-| boolean | addAll(Collection<? extends E> c) | 주어진 Collection 타입 객체를 리스트에 추가한다. |
-| E | set(int index, E element) | 주어진 인덱스에 저장된 객체를 주어진 객체로 바꾼다. |
-| boolean | contains(Object o) | 주어진 객체가 저장되어 있는지를 확인한다. |
-| E | get(int index) | 주어진 인덱스에 저장된 객체를 리턴한다. |
-| Iterator<E> | iterator() | 저장된 객체를 한 번씩 가져오는 반복자 리턴한다. |
-| boolean | isEmpty() | 컬렉션이 비어 있는지 조사한다. |
-| int | size() | 저장되어 있는 전체 객체수를 리턴한다. |
-| void | clear() | 저장된 모든 객체를 삭제한다. |
-| E | remove(int index) | 주어진 인덱스에 저장된 객체를 삭제한다. |
-| boolean | remove(Object o) | 주어진 객체를 삭제한다. |
+| Return type   | Methods                           | Description |
+| ------------- | --------------------------------- | --- |
+| boolean       | add(E e)                          | 주어진 객체를 맨 끝에 추가한다. |
+| void          | add(int index, E element)         | 주어진 인덱스에 객체를 추가한다. |
+| boolean       | addAll(Collection<? extends E> c) | 주어진 Collection 타입 객체를 리스트에 추가한다. |
+| E             | set(int index, E element)         | 주어진 인덱스에 저장된 객체를 주어진 객체로 바꾼다. |
+| boolean       | contains(Object o)                | 주어진 객체가 저장되어 있는지를 확인한다. |
+| E             | get(int index)                    | 주어진 인덱스에 저장된 객체를 리턴한다. |
+| Iterator<E>   | iterator()                        | 저장된 객체를 한 번씩 가져오는 반복자 리턴한다. |
+| boolean       | isEmpty()                         | 컬렉션이 비어 있는지 조사한다. |
+| int           | size()                            | 저장되어 있는 전체 객체수를 리턴한다. |
+| void          | clear()                           | 저장된 모든 객체를 삭제한다. |
+| E             | remove(int index)                 | 주어진 인덱스에 저장된 객체를 삭제한다. |
+| boolean       | remove(Object o)                  | 주어진 객체를 삭제한다. |
 
 #### `.add()`
 
@@ -130,29 +130,152 @@ System.out.println(list.isEmpty());     // true
 - 조건문, 반복문에서 많이 이용
 
 
+### 정렬
 
+일반적인 java에서 제공하는 클래스에 대해 정렬은 간단하게 구현 가능하다.
 
-## 3. Comparable, Comparator 인터페이스
+#### 오름차순
 
-- List를 정렬할 때 Collections.sort() 메소드를 사용하는데 이때 정렬 기준을 지정하기 위해 구현해야 하는 인터페이스이다.
-- Collections.sort()를 호출할 때 Comparable 인터페이스를 구현하고 있는 객체를 가지고 있는 리스트를 매개값으로 전달해야 한다.
-- 리스트의 객체가 Comparable 인터페이스를 구현하고 있지 않는다면 Collections.sort() 메소드의 두 번째 인자로 Comparator 인터페이스를 구현한 객체를 전달해야 한다.
+오름차순 정렬은 `Collections.sort()` 메소드를 사용한다.
+- `List.sort(null)`을 이용해도 같은 동작을 한다.
+
+    ```java
+    // numbers = [5, 3, 2, 4, 1]
+    Collections.sort(numbers);  // [1, 2, 3, 4, 5]
+
+    numbers.sort(null);         // [1, 2, 3, 4, 5]
+    ```
+
+#### 내림차순
+
+내림차순 정렬은 오름차순 정렬 후 `Collections.reverse()`를 이용해 역순으로 뒤집을 수 있다.
+- `Collections.sort()`에서 리스트 외에 역순 Comparator(`Collections.reverseOrder()`)를 두 번째 매개값으로 줘도 됨
+- `List.sort()` 뒤에 같은 Comparator를 줘도 내림차순으로 정렬된다.
+
+    ```java
+    // numbers = [5, 3, 2, 4, 1]
+    Collections.sort(numbers);      // [1, 2, 3, 4, 5]
+    Collections.reverse(numbers);   // [5, 4, 3, 2, 1]
+
+    Collections.sort(numbers, Collections.reverseOrder());  // [5, 4, 3, 2, 1]
+
+    numbers.sort(Collections.reverseOrder());  // [5, 4, 3, 2, 1]
+    ```
+
+### `Comparable`, `Comparator` 인터페이스
+
+- List 정렬 시, 특정 기준으로 정렬하고 싶을 경우 일반적으로는 `Collections.sort()` 메소드를 구현한다.
+
+- `String`, `int` 등의 java에서 제공하는 클래스로 정렬할 때와 달리, 직접 만든 클래스에는 정렬 기준이 없다.
+
+    | Interface  | Return | Method              | 설명 |
+    | ---------- | ------ | ------------------- | --- |
+    | Comparable | int    | compareTo(T o)      | 자신과 인자로 주어진 객체를 비교하여 같으면 0, 자신이 크면 양수, 자신이 작으면 음수를 반환한다.         |
+    | Comparator | int    | compare(T o1, T o2) | 두 개의 인자를 받아서 비교하여 같으면 0, 첫 번째 인자가 크면 양수, 두 번째 인자가 크면 음수를 반환한다. |
+
+    - `.compare()`, `.compareTo()` 메소드는 정수를 반환한다. 이 정수를 기준으로 정렬함
+
+#### `Comparable`
+
+- 클래스 자체에서 `Comparable` 인터페이스를 구현하도록 설정할 수 있다.
+
+    ```java
+    public class Music implements Comparable<Music> {
+        ...
+
+        @Override
+        public int compareTo(Music music) {
+            //오름차순 정렬
+            return this.ranking - music.ranking;  // 자기 랭킹보다 크면 양수, 작으면 음수 -> 양수가 나오면 뒤로 간다
+        }
+    }
+    ```
+
+- 이 인터페이스 구현 시 `.compareTo()` 메소드를 오버라이드 해야 한다.
+    - 메소드에서 반환되는 값을 가지고 정렬 기준을 잡음
     
-    
-    | 인터페이스 | 리턴 타입 | 메소드 | 설명 |
-    | --- | --- | --- | --- |
-    | Comparable | int | compareTo(T o) | 자신과 인자로 주어진 객체를 비교하여 같으면 0, 자신이 크면 양수, 자신이 작으면 음수를 반환한다. |
-    | Comparator | int | compare(T o1, T o2) | 두 개의 인자를 받아서 비교하여 같으면 0, 첫 번째 인자가 크면 양수, 두 번째 인자가 크면 음수를 반환한다. |
+    - 자신과 인자로 주어진 객체를 비교하여 같으면 0, 자신이 크면 양수, 자신이 작으면 음수를 반환한다.
+        - 값은 중요하지 않고, 양수/음수/0 구분만 중요함
+        - return값이 양수일 경우 정렬 시 뒤로 가고, 음수일 경우 정렬 시 앞으로 온다.
 
-## 4. Set
+    - `Comparable` 뒤에 타입 파라미터를 설정 시 오버라이드된 `compareTo` 메소드에서도 그 타입 파라미터를 따라가게 된다.
 
-- Set은 저장 순서를 유지하지 않는 구조를 가지고 있다.
-- 중복되는 객체를 저장할 수 없고 null도 중복을 허용하지 않기 때문에 1개만 저장할 수 있다.
+- `Collections.sort()`를 호출할 때 `Comparable` 인터페이스를 구현하고 있는 객체를 가지고 있는 리스트를 매개값으로 전달하면 정렬이 된다.
+    ```java
+    List<Music> musicList = new ArrayList<>();
+    ...
+    Collections.sort(musicList);  // musiclist의 랭킹 기준으로 오름차순 정렬된다.
+    ```
+
+#### `Comparator`
+
+- 리스트의 객체가 `Comparable` 인터페이스를 구현하고 있지 않거나, 다른 `Comparable`과 다른 기준으로 정렬하고 싶은 경우 사용한다.
     
+- 정렬 기준을 지정하기 위해 `Comparator` 인터페이스를 구현해야 한다.
+    ```java
+    public class ArtistAscending implements Comparator<Music>{
+
+        @Override
+        public int compare(Music music1, Music music2) {
+            // 기존 String의 compareTo() 메소드를 사용
+            return music1.getArtist().compareTo(music2.getArtist());  
+        }
+    }
+    ```
+    - 새로운 비교용 클래스를 생성해서 사용한다.
+
+- `Comparator` 인터페이스를 구현하려면 `.compare()` 메소드를 만들면 된다.
+    - `Comparator` 인터페이스의 `.compare()` 메소드는 인자를 2개 받아 정수를 리턴한다.
+    - 두 개의 인자를 받아서 비교하여 같으면 0, 첫 번째 인자가 크면 양수, 작으면 음수를 반환한다.
+    - 양수인 경우 첫 번째 인자를 뒤로, 음수인 경우 앞으로 정렬한다.    
+
+- `Collections.sort()` 메소드의 두 번째 인자로 `Comparator` 인터페이스를 구현한 객체를 전달해야 한다.
+    ```java
+    List<Music> musicList = new ArrayList<>();
+    ...
+    // musiclist의 아티스트 기준으로 오름차순 정렬된다.
+    Collections.sort(musicList, new ArtistAscending());  
+    ```
+    - 새로운 정렬기준 객체를 만들어서 전달
+
+- 정렬기준을 만들 때마다 새로운 클래스를 만들기는 힘들기 때문에, 다른 방법을 이용할 수 있다.
+    1. 익명 구현 객체
+        ```java
+        Collections.sort(musicList, new Comparator<Music>() {
+
+            @Override
+            public int compare(Music music1, Music music2) {
+                return music1.getTitle().compareTo(music2.getTitle());
+            }
+        });
+        ```
+        - 인터페이스는 추상 메소드 때문에 객체로 생성할 수 없지만, 그자리에서 바로 오버라이드를 통해 일회용으로 추상 메소드를 재정의함
+            - 실제 컴파일 될 때는 익명의 클래스가 하나 생긴다
+
+        - 람다식이 생기고 나서부터는 지금 이 방식은 잘 사용하지 않는다.
+
+    2. 람다식(JDK 1.8부터) - 익명 구현 객체를 만드는 더 쉬운 방법
+        ```java
+        Collections.sort(musicList, (music1, music2) ->
+            music1.getTitle().compareTo(music2.getTitle())
+        );
+        ```
+        - 익명 구현 개체 구현하던 방식을 더 간단하게 표현한 것
+        - 익명 클래스를 만들지도 않는다.
+
+
+## Set
+
+- Set은 저장 **순서를 유지하지 않는** 구조를 가지고 있다.
+    - 인덱스도 없다
+
+- 중복되는 객체를 저장할 수 없고 null도 중복을 허용하지 않기 때문에 1개만 저장할 수 있다.    
     
 - 인덱스로 관리하지 않기 때문에 인덱스를 매개 값으로 갖는 메소드가 없다.
+
 - 전체 객체를 대상으로 한 번씩 반복해서 가져오는 반복자(Iterator)를 제공한다.
-- Set 인터페이스의 주요 메소드는 아래와 같다.
+
+### Set 인터페이스의 주요 메소드는 아래와 같다.
     
     
     | 리턴 타입 | 메소드 | 설명 |
@@ -190,8 +313,11 @@ System.out.println(list.isEmpty());     // true
     | V | remove(Object key) | 주어진 키와 일치하는 Map.Entry 삭제, 삭제가 되면 값을 리턴한다. |
 
 
-## 제네릭스 타입
+## 제네릭스
 
+- JDK 1.5부터 제공되는 기능이다.
+- 클래스와 인터페이스, 메소드 내부에서 다룰 데이터의 타입을 지정할 수 있다.
+- 타입 파라미터는 코드 작성 시 구체적인 타입으로 대체되어 다양한 코드를 생성하도록 도와준다.
 
 ### 타입 파라미터
 
@@ -218,3 +344,148 @@ System.out.println(list.isEmpty());     // true
     numbers.add(9);  // AutoBoxing 적용
     ```
     - Wrapper 타입으로 설정하면 됨
+
+
+### 제네릭스의 장점
+
+- 실행 시 잘못된 타입 사용으로 발생할 수 있는 에러를 컴파일 시에 체크할 수 있다.
+- 컬렉션에 저장되는 요소의 타입을 제한하기 때문에 불필요한 형 변환을 제거할 수 있다.
+    
+    ```java
+    List list = new ArrayList();
+    
+    list.add("Hello");
+    
+    String str = (String) list.get(0);
+    ```
+    
+    ```java
+    List<String> list = new ArrayList<String>();
+    
+    list.add("Hello");
+    
+    String str = list.get(0);
+    ```
+    
+
+### 제네릭스 타입
+
+- 타입 파라미터를 가지는 클래스와 인터페이스를 제네릭스 타입이라고 한다.
+- 제네릭스 타입은 클래스 또는 인터페이스 이름 뒤에 "<>" 기호를 추가하고 사이에 타입 파라미터가 위치한다.
+- 타입 파라미터는 대문자 알파벳 한 글자로 작성한다.
+    
+    ```java
+      // java.util 패키지의 ArrayList 클래스
+      public class ArrayList<E> extends ... {
+        ...
+      }
+    
+      // java.util 패키지의 List 인터페이스
+      public interface List<E> extends Collection<E> {
+        ...
+      }
+    ```
+    
+- 제네릭스 타입의 클래스를 객체로 생성할 때 구체적인 타입으로 변경된다.
+- jdk 1.7부터 중복 기술을 줄이기 위해 다이아몬드 연산자"<>"를 제공한다.
+- 컴파일러는 타입 파라미터 부분에 "<>" 연산자를 사용하면 타입 파라미터를 자동으로 설정한다.
+    
+    ```java
+    List<String> list = new ArrayList<>(); // 타입 추론
+    
+    ...
+    ```
+    
+
+#### 멀티 타입 파라미터
+
+- 제네릭스 타입은 두 개 이상의 멀티 타입 파라미터를 사용할 수 있는데, 이 경우 각 타입 파라미터를 콤마로 구분한다.
+    
+    ```java
+    // java.util 패키지의 Map 인터페이스
+    public interface Map<K, V> {
+      ...
+    }
+    ```
+    
+    ```java
+    Map<String, Integer> map = new HashMap<>();
+    
+    ...
+    ```
+    
+
+### 제네릭스 타입과 상속
+
+- 제네릭스 타입도 부모 클래스가 될 수 있고 타입 파라미터는 자식 클래스에도 기술해야 한다.
+- 자식 클래스는 추가적으로 타입 파라미터를 가질 수 있다.
+    
+    ```java
+    // java.util.function 패키지의 Function 인터페이스
+    public interface Function<T, R> {
+      ...
+    }
+    ```
+    
+    ```java
+    // java.util.function 패키지의 UnaryOperator 인터페이스
+    public interface UnaryOperator<T> extends Function<T, T> {
+      ...
+    }
+    ```
+    
+
+### 제네릭스 타입 제한
+
+- 타입 파라미터를 지정할 때 상속 및 구현 관계로 제한된 파라미터를 선언하려면 타입 파라미터 뒤에 extends 키워드를 붙이고 상위 타입을 명시하면 된다.
+- 인터페이스로 제한된 파라미터를 선언할 때 implements를 사용하지 않고 동일하게 extends를 사용한다.
+    
+    ```java
+      public <T extends 상위타입> 클래스명 {
+        ...
+      }
+    ```
+    
+
+### 제네릭스 메소드
+
+- 제네릭스 메소드는 리턴 타입과 매개 타입으로 타입 파라미터를 갖는 메소드를 말한다.
+- 리턴 타입 앞에 "<>" 기호를 추가하고 타입 파라미터를 기술한다.
+- 제네릭스 메소드도 멀티 파라미터를 가질 수 있다.
+- 타입 파라미터를 기술한 이후에는 리턴 타입과 매개 타입에서 타입 파라미터를 사용하면 된다.
+    
+    ```java
+    // java.util 패키지의 Collections 클래스
+    public class Collections {
+      public static <T extends Comparable<? super T>> void sort(List<T> list) {
+        ...
+      }
+      public static <T> T max(Collection<? extends T> coll, Comparator<? super T> comp) {
+        ...
+      }
+      ...
+    }
+    ```
+    
+    ```java
+    List<String> list = Arrays.asList("이몽룡", "홍길동", "문인수");
+    
+    Collections.<String>sort(list);
+    ```
+    
+- 제네릭스 메소드를 호출할 때 타입 파라미터를 생략하면 매개값으로 구체적인 타입을 추론한다.
+    
+    ```java
+    List<String> list = Arrays.asList("이몽룡", "홍길동", "문인수");
+    
+    Collections.sort(list); // 타입 추론
+    ```
+    
+
+### 와일드카드(Wildcard)
+
+- 와일드카드 문자는 하나 이상의 다른 문자들을 대표적으로 상징하는 특수 문자(?)를 의미한다.
+- 타입 파라미터로 <?>는 모든 클래스나 인터페이스 타입이 올 수 있다.
+- 타입 파라미터로 <? extends T>는 T 타입이거나 T 타입을 상속하는 타입만 올 수 있다.
+- 타입 파라미터로 <? super T>는 T 타입이거나 T 타입의 부모 타입만 올 수 있다.
+
