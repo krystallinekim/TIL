@@ -1,5 +1,7 @@
 package com.beyond.set.practice;
 
+import java.util.Objects;
+
 public class Music implements Comparable<Music> {
     private String title;
     private String artist;
@@ -30,6 +32,18 @@ public class Music implements Comparable<Music> {
                 ", artist='" + artist + '\'' +
                 ", ranking=" + ranking +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Music music = (Music) o;
+        return ranking == music.ranking && Objects.equals(title, music.title) && Objects.equals(artist, music.artist);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, artist, ranking);
     }
 
     @Override

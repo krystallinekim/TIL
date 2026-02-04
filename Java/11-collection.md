@@ -268,7 +268,8 @@ System.out.println(list.isEmpty());     // true
 
 - Set은 저장 **순서를 유지하지 않는** 구조를 가진 인터페이스이다.
     - 인덱스도 없다
-    - `HashSet`, `LinkedHashSet`등의 클래스가 `Set`을 구현한다.
+    - `HashSet`, `LinkedHashSet`, `TreeSet`등의 클래스가 `Set`을 구현한다.
+        - `LinkedHashSet`은 저장한 순서는 유지해 준다.  
 
 - 중복되는 객체를 저장할 수 없다 
     - null도 중복을 허용하지 않기 때문에 1개만 저장할 수 있다.    
@@ -312,23 +313,85 @@ System.out.println(set.size()); // 4
 
 - 중복된 값을 add해도 저장되지 않는다.
 
-- 저장된 순서도 저장되지 않는다.
+- 저장된 순서도 저장되지 않는다.(일반 `HashSet`의 경우)
     - 엄밀히 말하면 저장된 해시값의 순서대로 출력된다.
 
-#### `Set`에 저장된 객체에 접근하는 방법
+### `Set`에 저장된 객체에 접근하는 방법
 
 1. 향상된 `for`문 활용
 
     - 일반 for문은 인덱스가 없어서 사용할 수 없다.
-    
+        
+        ```java
+        for (String str: set) {
+            System.out.println(str);
+        }
+        ```
+
+    - 이 방식을 개선해서 람다식, 메서드 참조 등으로 접근할 수도 있다.
+        ```java
+        // 람다식
+        set.forEach(s -> System.out.println(s));
+
+        // 메서드 참조 활용
+        set.forEach(System.out::println);
+        ```
+
+2. `Iterator` 반복자를 사용하는 방법
+
+    - `Iterator`는 해당 Collection의 모든 객체에 한번씩 순회하면서 접근하는 반복자이다.
+        ```java
+        Iterator<String> iterator = set.iterator();
+
+        while (iterator.hasNext()) {  // iterator.hasNext(): iterator를 돌리면서 다음 요소가 있는지 확인(boolean)
+            System.out.println(iterator.next());  // iterator.next(): 다음 요소로 넘어가는 메소드
+        }
+        ```
+    - 요즘은 잘 쓰지 않고, 향상된 for문을 사용한다.
+
+### `Set`의 중복 확인
+
+객체의 `.equals()`와 `.hashCode()`를 이용해서 두 객체가 같은지, 다르지를 파악한다.
+
+- `String`, `Integer` 등의 java 지원 클래스에서는 이미 값 기준으로 비교하도록 설정되어 두 객체를 구분한다.
+- 직접 클래스를 만들었을 경우, 기본값은 각 객체의 주소를 기준으로 객체를 비교하기 때문에, 같은 값이지만 다른 객체로 인식한다.
+- 클래스에서 `.hashCode()`, `.equals()`를 재정의해서 값을 기준으로 비교하도록 설정해야 한다.
+
+### `TreeSet`
+
+- 이진트리(자식 노드가 최대 2개)를 이용하는 Set의 일종
+
     ```java
-    for (String str: set) {
-        System.out.println(str);
-    }
-    ```
+    TreeSet<String> set = new TreeSet<>();
 
+    set.add("바");
+    set.add("가");
+    set.add("나");
+    set.add("사");
+    set.add("다");
+    set.add("가");  // 중복
+    set.add("마");
+    set.add("사");  // 중복
+    set.add("라");
+    set.add("마");  // 중복
+
+    System.out.println(set);            // [가, 나, 다, 라, 마, 바, 사]
+    System.out.println(set.size());     // 7
     
+    // Treeset 클래스에서 제공하는 메소드
+    System.out.println(set.first());    // 가
+    System.out.println(set.last());     // 사
+    ```
+- 자료가 저장될 때부터 정렬되면서 들어간다. 검색하는데 시간복잡도도 낮아서 빨리 된다.
+    - `null`을 `Treeset`에 저장하려 하면 에러가 난다. 정렬을 할 수 없기 때문
 
+- 직접 만든 클래스의 경우, `Comparable` 인터페이스를 구현하지 않으면(정렬 기준이 없으면) TreeSet을 이용할 수 없다.
+    - 직접 `Comparator` 기준을 새로 만들어서 구현할 수도 있음. 어쨌든 정렬 기준이 필요하다
+        ```java
+        TreeSet<Music> musicSet = new TreeSet<>(
+            (o1, o2) -> o1.getTitle().compareTo(o2.getTitle())
+        );
+        ```
 
 ## 5. Map
 
