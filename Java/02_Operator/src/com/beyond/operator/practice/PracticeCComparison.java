@@ -2,7 +2,7 @@ package com.beyond.operator.practice;
 
 import java.util.Scanner;
 
-public class Comparison {
+public class PracticeCComparison {
     public void method1() {
         System.out.println("비교 연산자");
         int num1 = 10;

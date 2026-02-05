@@ -1,6 +1,6 @@
 package com.beyond.control.practice;
 
-public class Branch {
+public class PracticeEBranch {
     public void method1() {
         System.out.println("1부터 랜덤 값(1~10 사이)까지의 합계를 반복문을 통해 출력, 단 랜덤값이 5가 나오면 종료");
 

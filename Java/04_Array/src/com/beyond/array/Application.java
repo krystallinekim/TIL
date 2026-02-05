@@ -1,23 +1,23 @@
 package com.beyond.array;
 
-import com.beyond.array.practice.TwoDimensionalArray;
+import com.beyond.array.practice.PracticeBTwoDimensionalArray;
 
 public class Application {
     public static void main(String[] args) {
         System.out.println("Array");
 
-//        new Array().method1();
-//        new Array().method2();
-//        new Array().method3();
-//        new Array().method4();
+//        new PracticeAArray().method1();
+//        new PracticeAArray().method2();
+//        new PracticeAArray().method3();
+//        new PracticeAArray().method4();
+//
+//        new PracticeAArray().practice1();
+//        new PracticeAArray().practice2();
+//
+//        new PracticeBTwoDimensionalArray().method1();
+//        new PracticeBTwoDimensionalArray().method2();
 
-//        new Array().practice1();
-//        new Array().practice2();
-
-//        new TwoDimensionalArray().method1();
-//        new TwoDimensionalArray().method2();
-
-        new TwoDimensionalArray().practice1();
-        new TwoDimensionalArray().practice2();
+        new PracticeBTwoDimensionalArray().practice1();
+        new PracticeBTwoDimensionalArray().practice2();
     }
 }

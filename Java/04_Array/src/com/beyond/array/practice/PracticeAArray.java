@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
 
-public class Array {
+public class PracticeAArray {
     public void method1() {
         System.out.println("배열의 선언, 생성 및 초기화");
 

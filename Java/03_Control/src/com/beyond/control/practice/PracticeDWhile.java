@@ -2,7 +2,7 @@ package com.beyond.control.practice;
 
 import java.util.Scanner;
 
-public class While {
+public class PracticeDWhile {
     public void method1() {
         System.out.println("1부터 랜덤 값(1~10 사이)까지의 합계를 출력");
 

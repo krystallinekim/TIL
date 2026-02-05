@@ -1,6 +1,6 @@
 package com.beyond.operator.practice;
 
-public class Assignment {
+public class PracticeEAssignment {
     public void method1() {
         System.out.println("복합 대입 연산자");
         int num = 10;

@@ -1,6 +1,6 @@
 package com.beyond.variable.practice;
 
-public class ConsoleOutput {
+public class PracticeBConsoleOutput {
     public void valuePrint() {
 
         // Sytstem.out.

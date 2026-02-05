@@ -1,38 +1,38 @@
 package com.beyond.control;
 
-import com.beyond.control.practice.LoopPractice;
+import com.beyond.control.practice.PracticeFLoop;
 
 public class Application {
     public static void main(String[] args) {
         System.out.println("main\n");
+//
+//        new PracticeAIf().method1();
+//        new PracticeAIf().method2();
+//        new PracticeAIf().method3();
+//        new PracticeAIf().practice1();
+//
+//        new PracticeBSwitch().method1();
+//        new PracticeBSwitch().method2();
+//        new PracticeBSwitch().practice1();
+//
+//        new PracticeCFor().method1();
+//        new PracticeCFor().method2();
+//        new PracticeCFor().practice1();
+//
+//        new PracticeDWhile().method1();
+//        new PracticeDWhile().method2();
+//        new PracticeDWhile().method3();
+//        new PracticeDWhile().method4();
+//
+//        new PracticeEBranch().method1();
+//        new PracticeEBranch().method2();
 
-//        new If().method1();
-//        new If().method2();
-//        new If().method3();
-//        new If().practice1();
-
-//        new Switch().method1();
-//        new Switch().method2();
-//        new Switch().practice1();
-
-//        new For().method1();
-//        new For().method2();
-//        new For().practice1();
-
-//        new While().method1();
-//        new While().method2();
-//        new While().method3();
-//        new While().method4();
-
-//        new Branch().method1();
-//        new Branch().method2();
-
-//        new LoopPractice().practice1();
-//        new LoopPractice().practice2();
-//        new LoopPractice().practice3();
-        new LoopPractice().practice4();
-        new LoopPractice().practice5();
-//        new LoopPractice().practice6();
+        new PracticeFLoop().practice1();
+        new PracticeFLoop().practice2();
+        new PracticeFLoop().practice3();
+        new PracticeFLoop().practice4();
+        new PracticeFLoop().practice5();
+        new PracticeFLoop().practice6();
 
     }
 

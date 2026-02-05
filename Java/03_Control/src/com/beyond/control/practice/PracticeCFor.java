@@ -1,6 +1,6 @@
 package com.beyond.control.practice;
 
-public class For {
+public class PracticeCFor {
     public void method1() {
         System.out.println("1부터 10까지의 정수의 합계");
 

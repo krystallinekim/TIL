@@ -1,6 +1,6 @@
 package com.beyond.operator.practice;
 
-public class Arithmetic {
+public class PracticeBArithmetic {
     public void method1() {
         System.out.println("Arithmetic.method1");
 

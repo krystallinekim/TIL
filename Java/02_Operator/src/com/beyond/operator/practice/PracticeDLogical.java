@@ -2,7 +2,7 @@ package com.beyond.operator.practice;
 
 import java.util.Scanner;
 
-public class Logical {
+public class PracticeDLogical {
     public void method1() {
         System.out.println("정수값을 입력받아 1부터 100 사이의 정수인지 확인");
         int num;

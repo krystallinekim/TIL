@@ -2,7 +2,7 @@ package com.beyond.variable.practice;
 
 import java.util.Scanner;
 
-public class ConsoleInput {
+public class PracticeCConsoleInput {
     public void keyboardInput(){
         int age;
         String name;

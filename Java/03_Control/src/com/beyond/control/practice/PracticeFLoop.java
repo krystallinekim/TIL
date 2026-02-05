@@ -2,7 +2,7 @@ package com.beyond.control.practice;
 
 import java.util.Scanner;
 
-public class LoopPractice {
+public class PracticeFLoop {
 
     /*
      * 실습 문제 1

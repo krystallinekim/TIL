@@ -1,6 +1,6 @@
 package com.beyond.array.practice;
 
-public class TwoDimensionalArray {
+public class PracticeBTwoDimensionalArray {
     // 2차원 배열의 선언, 생성 및 초기화 (new 연산자)
     public void method1() {
         System.out.println("new를 이용한 2차원 배열");

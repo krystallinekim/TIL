@@ -2,7 +2,7 @@ package com.beyond.operator.practice;
 
 import java.util.Scanner;
 
-public class Triple {
+public class PracticeFTriple {
     public void method1() {
         // 삼항연산자
         System.out.println("사용자에게 입력받은 정수가 양수인지 음수인지 판단하기");

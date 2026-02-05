@@ -1,6 +1,6 @@
 package com.beyond.variable.practice;
 
-public class Variable {
+public class PracticeAVariable {
     // 메소드
     public void primitiveDataType(){
 

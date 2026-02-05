@@ -1,20 +1,20 @@
 package com.beyond.operator;
 
-import com.beyond.operator.practice.OperationPractice;
+import com.beyond.operator.practice.PracticeGOperationPractice;
 
 public class Application {
     public static void main(String[] args) {
         System.out.println("main\n");
 
-//        new InDecrease().method1();
-//        new Arithmetic().method1();
-//        new Comparison().method1();
-//        new Comparison().method2();
-//        new Logical().method1();
-//        new Logical().method2();
-//        new Assignment().method1();
-//        new Triple().method1();
-        OperationPractice practice = new OperationPractice();
+//        new PracticeAInDecrease().method1();
+//        new PracticeBArithmetic().method1();
+//        new PracticeCComparison().method1();
+//        new PracticeCComparison().method2();
+//        new PracticeDLogical().method1();
+//        new PracticeDLogical().method2();
+//        new PracticeEAssignment().method1();
+//        new PracticeFTriple().method1();
+        PracticeGOperationPractice practice = new PracticeGOperationPractice();
 //        practice.practice1();
 //        practice.practice2();
 //        practice.practice3();

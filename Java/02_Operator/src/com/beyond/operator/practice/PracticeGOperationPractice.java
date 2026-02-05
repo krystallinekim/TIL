@@ -2,7 +2,7 @@ package com.beyond.operator.practice;
 
 import java.util.Scanner;
 
-public class OperationPractice {
+public class PracticeGOperationPractice {
     /*
      * 실습 문제 1
      * 사용자가 입력한 문자 값이 알파벳 대문자인지 확인하기

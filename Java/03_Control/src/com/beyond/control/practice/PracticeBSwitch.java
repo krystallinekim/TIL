@@ -2,7 +2,7 @@ package com.beyond.control.practice;
 
 import java.util.Scanner;
 
-public class Switch {
+public class PracticeBSwitch {
 
     public void method1() {
         System.out.println("과일 이름을 입력받고 가격을 출력");

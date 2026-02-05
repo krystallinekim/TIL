@@ -2,7 +2,7 @@ package com.beyond.control.practice;
 
 import java.util.Scanner;
 
-public class If {
+public class PracticeAIf {
     public void method1() {
         System.out.println("사용자에게 정수를 입력받고, 홀수인지 짝수인지 구분");
 

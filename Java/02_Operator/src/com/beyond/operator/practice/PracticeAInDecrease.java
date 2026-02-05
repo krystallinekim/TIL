@@ -1,6 +1,6 @@
 package com.beyond.operator.practice;
 
-public class InDecrease {
+public class PracticeAInDecrease {
     public void method1() {
         System.out.println("증감연산\n");
         int num;
