@@ -1,8 +1,8 @@
 package com.beyond.lambda.practice;
 
-import com.beyond.lambda.functional.FunctionalA;
-import com.beyond.lambda.functional.FunctionalB;
-import com.beyond.lambda.functional.FunctionalC;
+import com.beyond.lambda.practice.functional.FunctionalA;
+import com.beyond.lambda.practice.functional.FunctionalB;
+import com.beyond.lambda.practice.functional.FunctionalC;
 
 public class PracticeAFunctionalInterface {
     public void method1() {
