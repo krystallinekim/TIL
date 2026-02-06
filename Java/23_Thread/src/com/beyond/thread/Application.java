@@ -14,14 +14,14 @@ public class Application {
         LoopThread loopThread = new LoopThread();
 
         loopThread.setName("A Thread");
-        loopThread.start();
+        loopThread.setPriority(1);
         // loopThread.run();  // 이러면 메인 스레드가 가서 작업 스레드를 실행하고 돌아옴
 
         // 2. Runnable 인터페이스 구현
         Thread runnableThread = new Thread(new LoopRunnable());  // Runnable을 구현한 객체를 전달하면 된다.
 
         runnableThread.setName("B Thread");
-        runnableThread.start();
+        runnableThread.setPriority(3);
 
         // 3. 익명 구현 개체로 Runnable 인터페이스를 구현
         Thread anonymousThread = new Thread(new Runnable() {
@@ -35,7 +35,7 @@ public class Application {
         });
 
         anonymousThread.setName("C Thread");
-        anonymousThread.start();
+        anonymousThread.setPriority(Thread.NORM_PRIORITY);
 
         // 4. 람다식으로 Runnable 인터페이스와 구현 객체를 생성
         Thread lambdaThread = new Thread(() -> {
@@ -47,11 +47,16 @@ public class Application {
 
         lambdaThread.setName("D Thread");
         lambdaThread.setDaemon(true);
-        lambdaThread.start();
+        lambdaThread.setPriority(10);
 
-        for (int i = 1; i <= 100; i++) {
-            System.out.printf("%s[%d]\n", Thread.currentThread().getName(), i);
-        }
+        // for (int i = 1; i <= 100; i++) {
+        //     System.out.printf("%s[%d]\n", Thread.currentThread().getName(), i);
+        // }
+
+        loopThread.start();
+        anonymousThread.start();
+        runnableThread.start();
+        lambdaThread.start();
 
         loopThread.join();
         runnableThread.join();
