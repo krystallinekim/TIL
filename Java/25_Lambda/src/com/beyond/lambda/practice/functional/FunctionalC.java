@@ -1,4 +1,4 @@
-package com.beyond.lambda.functional;
+package com.beyond.lambda.practice.functional;
 
 @FunctionalInterface
 public interface FunctionalC {

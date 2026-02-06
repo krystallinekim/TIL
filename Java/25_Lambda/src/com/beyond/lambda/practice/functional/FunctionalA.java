@@ -1,4 +1,4 @@
-package com.beyond.lambda.functional;
+package com.beyond.lambda.practice.functional;
 
 // 어노테이션이 있으면 확실하게 선언하는 용도
 // 추상 메소드가 2개부터는 에러를 띄워준다.
