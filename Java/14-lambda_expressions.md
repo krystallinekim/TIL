@@ -345,48 +345,46 @@ public interface Predicate<T> {
 - `java.util.stream` 패키지에 존재하고 `BaseStream` 인터페이스를 부모로 해서 자식 인터페이스들이 상속 관계를 이루고 있다.
     
     ```java
-    public interface BaseStream<T, S extends BaseStream<T, S>> extends AutoCloseable {
-        ...
-    }
+    public interface BaseStream<T, S extends BaseStream<T, S>> extends AutoCloseable { ... }
     
     // 객체 타입을 요소로 갖는 스트림
-    public interface Stream<T> extends BaseStream<T, Stream<T>> {
-        ...
-    }
+    public interface Stream<T> extends BaseStream<T, Stream<T>> { ... }
     
     // 이 밑 3개는 기본 타입을 요소로 갖는 스트림
-    public interface IntStream extends BaseStream<Integer, IntStream> {
-        ...
-    }
+    public interface IntStream extends BaseStream<Integer, IntStream> { ... }
     
-    public interface LongStream extends BaseStream<Long, LongStream> {
-        ...
-    }
+    public interface LongStream extends BaseStream<Long, LongStream> { ... }
     
-    public interface DoubleStream extends BaseStream<Double, DoubleStream> {
-        ...
-    }
+    public interface DoubleStream extends BaseStream<Double, DoubleStream> { ... }
     ```
     
-- `IntStream`, `LongStream`의 `range()`, `rangeClosed()` 메소드를 이용해서 숫자 범위로 스트림을 생성할 수 있다.
+
+1. `IntStream`, `LongStream`의 `range()`, `rangeClosed()` 메소드를 이용해서 숫자 범위로 스트림을 생성할 수 있다.
     
     ```java
     // 1~9까지의 숫자로 스트림을 만듦
     IntStream stream = IntStream.range(1, 10);  // 테스트용으로 주로 사용
+    System.out.println(stream.sum());  // 45, 스트림의 합
     ```
     
-- `Arrays.stream(배열)` 메소드를 이용해서 배열로부터 스트림을 생성할 수 있다.
+
+2. `Arrays.stream(배열)` 메소드를 이용해서 배열로부터 스트림을 생성할 수 있다.
     
     ```java
     String[] names = {"임꺽정", "홍길동", "이몽룡"};
     
     Stream<String> stream = Arrays.stream(names);  // [임꺽정, 홍길동, 이몽룡]
+
+    Stream<String> stream = Stream.of(names);
     ```
+    - `Stream.of()` 정적 메소드를 이용해도 생성할 수 있다.
     
-- 컬렉션의 stream() 메소드를 이용해서 컬렉션으로부터 스트림을 생성할 수 있다.
+
+3. `Collections` 인터페이스의 `stream()` 메소드를 이용해서 컬렉션(리스트, 셋 등)으로부터 스트림을 생성할 수 있다.
+    - `Map` 계열은 스트림을 생성할 수 없다.
     
     ```java
-    List<String> names = Arrays.asList("임꺽정", "홍길동", "이몽룡");
+    List<String> names = Arrays.asList("임꺽정", "홍길동", "이몽룡");  // Arrays.asList() 는 수정, 삭제 불가한 리스트임
     
     Stream<String> stream = names.stream();
     ```
@@ -394,7 +392,8 @@ public interface Predicate<T> {
 
 ### 중간 처리 메소드
 
-- 스트림은 데이터의 필터링, 정렬, 매핑 등의 처리를 할 수 있는 중간 처리 메소드를 제공한다.
+스트림은 데이터의 필터링, 정렬, 매핑 등의 처리를 할 수 있는 중간 처리 메소드를 제공한다.
+
 - 리턴 타입이 스트림이라면 중간 처리 메소드이다.
     
     ```java
@@ -404,11 +403,14 @@ public interface Predicate<T> {
           .filter(value -> value % 2 == 0) // 중간 처리 메소드
           .forEach(value -> System.out.println(value)); // 최종 처리 메소드
     ```
-    
+
+- `.parallel()`: 스트림 처리를 스레드로 만들어서 병렬처리
+- `.distinct()`: 스트림 중 중복 개체를 제외하고 반환
 
 ### 최종 처리 메소드
 
-- 스트림은 데이터의 집계, 수집, 반복 처리 등의 처리를 할 수 있는 최종 처리 메소드를 제공한다.
+스트림은 데이터의 집계, 수집, 반복 처리 등의 처리를 할 수 있는 최종 처리 메소드를 제공한다.
+
 - 리턴 타입이 기본 타입이거나 Optional 타입이라면 최종 처리 메소드이다.
     
     ```java
@@ -417,3 +419,6 @@ public interface Predicate<T> {
     
     sum = Arrays.stream(array).sum(); // 최종 처리 메소드
     ```
+
+- `.sum()`: 스트림의 원소의 합
+- `.forEach(...)`: 스트림의 각 원소에 대해 다음 작업을 진행함
