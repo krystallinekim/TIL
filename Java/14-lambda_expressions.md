@@ -257,64 +257,104 @@ public interface Predicate<T> {
         - `BiPredicate<T, U>`: T, U 타입의 객체를 조사해서 true, false를 리턴한다.
         - `IntPredicate`: int 객체를 조사해서 true, false를 리턴한다.
 
-## 1. 메소드 참조 **(Method Reference)**
+## 메소드 참조 (Method Reference)
 
 - 자바 8부터 도입된 문법으로, 기존 메소드 또는 생성자를 참조하여 함수적 인터페이스의 구현을 간결하게 표현한다.
-- 람다식에서 매개변수 전달과 메소드 호출이 단순히 이어지는 경우, 메소드 참조를 사용해 불필요한 매개변수 표현을 생략할 수 있다.
 
-## 2. 정적 메소드 참조
+- 람다식에서 매개변수 전달과 메소드 호출이 단순히 이어지는 경우, 메소드 참조를 사용해 **불필요한 매개변수 표현을 생략**할 수 있다.
+    ```java
+    IntBinaryOperator ibo = (a, b) -> Math.max(a, b);
+    ```
+    - a, b를 받아서 그대로 `Math.max`의 매개값으로 전달했음
 
-- 클래스 이름 뒤에 :: 붙이고 정적 메소드 이름을 기술하면 된다.
+### 정적 메소드 참조
+
+- 클래스 이름 뒤에 `::` 붙이고 정적 메소드 이름을 기술하면 된다.
     
     ```java
-    IntBinaryOperator intBinaryOperator = Math::max;
+    // 람다식
+    IntBinaryOperator ibo = (a, b) -> Math.max(a, b);
+
+    // 메소드 참조
+    IntBinaryOperator ibo = Math::max;
+    System.out.println(ibo.applyAsInt(10, 20));  // 20
+
+    // IntUnaryOperator iuo = Math::max;  // 매개변수 숫자가 맞지 않으면 에러
     ```
     
 
-## 3. 객체의 메소드 참조
+### 객체의 메소드 참조
 
-- 참조 변수 뒤에 :: 붙이고 메소드 이름을 기술하면 된다.
+- 참조 변수 뒤에 `::` 붙이고 메소드 이름을 기술하면 된다.
     
     ```java
+    // 람다식
+    Consumer<String> consumer = str -> System.out.println(str);
+
+    // 메소드 참조
     Consumer<String> consumer = System.out::println;
+    consumer.accept("hi");  // hi
+    ```
+
+    ```java
+    
+
+    str = "Hello World!"
+    Supplier<Integer> supplier = str::length;
+    System.out.println(supplier.get());  // 12
     ```
     
 
-## 4. 매개변수의 메소드 참조
+### 매개변수의 메소드 참조
 
-- 매개변수의 클래스 이름 뒤에 :: 붙이고 메소드 이름을 기술하면 된다.
+- 매개변수의 클래스 이름 뒤에 `::` 붙이고 메소드 이름을 기술하면 된다.
     
     ```java
-    Function<Student, String> function = Student::getName;
+    // 람다식
+    Function<String, Integer> function = str -> str.length(); 
+
+    // 메소드 참조
+    Function<String, Integer> function = String::length;  // str은 String 클래스의 객체이기 때문
+    System.out.println(function.apply("Hello World!"));  // 12
     ```
     
 
-## 5. 생성자 참조
+### 생성자 참조
 
-- 클래스 이름 뒤에 :: 붙이고 new 연산자를 기술하면 된다.
+- 클래스 이름 뒤에 `::` 붙이고 new 연산자를 기술하면 된다.
     
     ```java
-    Supplier<Student> studentSupplier = Student::new;
-    ```
+    // 람다식
+    Function<Integer, List<String>> listFunction = size -> new ArrayList<>(size);
 
-## 1. 스트림(Stream) API
+    // 메소드 참조
+    Function<Integer, List<String>> listFunction = ArrayList::new;  // 클래스명의 생성자를 찾아서 새로운 객체를 만들어준다
+    System.out.println(listFunction.apply(3));  // [], 아직 안에 넣진 않아서 빈 리스트로 나옴
+    ```
+    - 반드시 해당 생성자(매개변수를 받는)가 존재해야 한다.
+
+
+## 스트림(Stream) API
 
 - 스트림은 자바 8부터 추가된 기능으로 컬렉션(배열)의 저장 요소들을 하나씩 참조해서 람다식으로 처리할 수 있도록 해주는 반복자이다.
+  
 - 스트림은 내부 반복자를 사용해서 병렬 처리와 중간 처리, 최종 처리 작업을 수행할 수 있다.
 
-## 2. 스트림의 생성
+### 스트림의 생성
 
-- java.util.stream 패키지에 존재하고 BaseStream 인터페이스를 부모로 해서 자식 인터페이스들이 상속 관계를 이루고 있다.
+- `java.util.stream` 패키지에 존재하고 `BaseStream` 인터페이스를 부모로 해서 자식 인터페이스들이 상속 관계를 이루고 있다.
     
     ```java
     public interface BaseStream<T, S extends BaseStream<T, S>> extends AutoCloseable {
         ...
     }
     
+    // 객체 타입을 요소로 갖는 스트림
     public interface Stream<T> extends BaseStream<T, Stream<T>> {
         ...
     }
     
+    // 이 밑 3개는 기본 타입을 요소로 갖는 스트림
     public interface IntStream extends BaseStream<Integer, IntStream> {
         ...
     }
@@ -328,18 +368,19 @@ public interface Predicate<T> {
     }
     ```
     
-- IntStream, LongStream의 range(), rangeClosed() 메소드를 이용해서 숫자 범위로 스트림을 생성할 수 있다.
+- `IntStream`, `LongStream`의 `range()`, `rangeClosed()` 메소드를 이용해서 숫자 범위로 스트림을 생성할 수 있다.
     
     ```java
-    IntStream stream = IntStream.range(1, 10);
+    // 1~9까지의 숫자로 스트림을 만듦
+    IntStream stream = IntStream.range(1, 10);  // 테스트용으로 주로 사용
     ```
     
-- Arrays.stream(배열) 메소드를 이용해서 배열로부터 스트림을 생성할 수 있다.
+- `Arrays.stream(배열)` 메소드를 이용해서 배열로부터 스트림을 생성할 수 있다.
     
     ```java
     String[] names = {"임꺽정", "홍길동", "이몽룡"};
     
-    Stream<String> stream = Arrays.stream(names);
+    Stream<String> stream = Arrays.stream(names);  // [임꺽정, 홍길동, 이몽룡]
     ```
     
 - 컬렉션의 stream() 메소드를 이용해서 컬렉션으로부터 스트림을 생성할 수 있다.
@@ -351,7 +392,7 @@ public interface Predicate<T> {
     ```
     
 
-## 3. 중간 처리 메소드
+### 중간 처리 메소드
 
 - 스트림은 데이터의 필터링, 정렬, 매핑 등의 처리를 할 수 있는 중간 처리 메소드를 제공한다.
 - 리턴 타입이 스트림이라면 중간 처리 메소드이다.
@@ -365,7 +406,7 @@ public interface Predicate<T> {
     ```
     
 
-## 4. 최종 처리 메소드
+### 최종 처리 메소드
 
 - 스트림은 데이터의 집계, 수집, 반복 처리 등의 처리를 할 수 있는 최종 처리 메소드를 제공한다.
 - 리턴 타입이 기본 타입이거나 Optional 타입이라면 최종 처리 메소드이다.

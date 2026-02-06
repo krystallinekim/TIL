@@ -1,6 +1,6 @@
 package com.beyond.lambda;
 
-import com.beyond.lambda.practice.PracticeFPredicate;
+import com.beyond.lambda.practice.PracticeGMethodPreference;
 
 public class Application {
     public static void main(String[] args) {
@@ -29,6 +29,9 @@ public class Application {
         // new PracticeEOperator().method1();
 
         // 5. Predicate
-        new PracticeFPredicate().method1();
+        // new PracticeFPredicate().method1();
+
+        // 메소드 참조
+        new PracticeGMethodPreference().method1();
     }
 }
