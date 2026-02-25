@@ -35,7 +35,7 @@
 
 tomcat을 통해 서버를 열면, 다음과 같이 URL이 생성된다.
 
-`http://localhost:8080/servlet`
+`http://localhost:8080/servlet/`
 
 1. `http://`
 
@@ -58,4 +58,8 @@ tomcat을 통해 서버를 열면, 다음과 같이 URL이 생성된다.
     - context path
     - tomcat의 여러 애플리케이션 중 어떤 context path를 사용할지 선언하는 내용
 
+5. `/...`
+
+    - `webapp` 폴더의 어떤 파일을 실행시킬지 선언
+    - `/` 뒤에 아무것도 없다면 자동으로 `index.html` 파일을 실행하고, `index.html`이 없다면 JSP 파일을 찾아서 실행한다.
 
