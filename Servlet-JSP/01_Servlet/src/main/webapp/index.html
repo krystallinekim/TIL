@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <!-- 웹페이지 제목 -->
+        <title>서블릿(Servlet)!!!</title>
+    </head>
+    <body>
+
+        <!-- 제목, 마크업 양식 -->
+        <h2> 서블릿(Servlet)</h2>
+        <h3> 1. 정의 </h3>
+        <!-- 단락 -->
+        <p>
+            Server Side Applet으로 자바 언어로 구현되는 서버 프로그램이다.
+            <!-- 줄바꿈 -->
+            <br>
+            서블릿은 웹 브라우저로부터 요청을 받아 처리하고 결과를 다시 웹 브라우저로 전송하는 역할을 한다.
+            <br>
+            일반적인 자바 클래스와 다르게 `jakarta.servlet.http.HttpServlet` 클래스를 상속해야 한다.
+        </p>
+
+        <p>
+
+            <!-- a: 앵커 태그 -->
+            <a href="http://www.naver.com">네이버 하이퍼링크</a>
+            <br>
+
+            <!-- 서블릿 = 동적 페이지 -->
+            <a href="http://localhost:8080/servlet/first.do">first.do 서블릿 실행</a>
+            <br>
+
+            <!-- /부터 적으면 localhost:8080(현재 도메인+포트번호)으로 인식한다. -->
+            <a href="/servlet/">localhost:8080은 생략 가능하다.</a>
+            <br>
+
+            <!-- 그냥 second.do라고만 적어도 서블릿이 실행된다. -->
+            <a href="second.do">href에 second.do만 적을 경우</a>
+            <br>
+
+        </p>
+
+        <h3>2. 서블릿 생명 주기</h3>
+        <p>
+            객체가 생성되고 소멸하기까지의 과정을 생명주기, Life Cycle이라고 한다.
+        </p>
+        <a href="life.do"> 생명주기 확인</a>
+
+
+    </body>
+</html>
