@@ -83,14 +83,32 @@ Java와 특징을 많이 공유한다.
     
     ```jsp
     <%@ page import="java.io.*"%>
-    <%@ page contentType="text/html;charset=UTF-8"%>
-    <%@ page errorPage="/error/errorForm.jsp" %>
+    <%@ page contentType="text/html; charset=UTF-8"%>
+    <%@ page errorPage="/views/error/error500.jsp" %>
     <%@ page isErrorPage="true" %>
     ```
 
 - `import`는 서블릿에서 받아올 라이브러리를 명시한다.
+
 - `contentType`에서는 페이지 종류 선언, 인코딩 선언 등을 할 수 있다.
+
 - `errorPage`는 예외 발생 시 원하는 페이지로 넘어갈지 정할 수 있다.
+    - 넘어갈 페이지는 폴더 구조가 복잡할 경우 상대 경로로 작성할 수도 있다.
+        ```jsp
+        <%@ page errorPage="../error/error500.jsp" %>
+        ```
+    - 다만, 이 방법으로는 모든 페이지에 에러페이지를 설정해줘야 함
+    - 이때는 전체 웹페이지를 관리하는 `web.xml`에서 에러설정을 넣어주면 된다.
+        ```xml
+        <web-app>
+            <error-page>
+                <error-code>500</error-code>
+                <location>/views/error/error500.jsp</location>
+            </error-page>
+        </web-app>
+        ```
+
+        
 - `isErrorPage`는 에러페이지에서 에러 객체 `exception`을 이용할 수 있게 한다. 
     - `exception` 객체에는 `.getMessage()`, `.getCLass()` 등의 메소드가 있어 상세정보를 이용할 수 있음.
 
@@ -100,8 +118,12 @@ Java와 특징을 많이 공유한다.
 - `include` 지시자는 다른 페이지(JSP, HTML)를 포함할 때 사용하는 지시자이다.
     
     ```jsp
+    <%@ include file="/views/common/header.jsp"%>
+    <main...>
     <%@ include file="footer.html" %>
     ```
+
+- 이 떄 사용된 페이지는 현재 페이지에 끼워넣어서 하나의 페이지처럼 서블릿이 만들어진다.
 
 #### `taglib`
 

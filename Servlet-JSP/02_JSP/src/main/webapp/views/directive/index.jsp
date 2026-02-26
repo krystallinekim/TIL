@@ -1,15 +1,13 @@
-<%@ page import="java.time.LocalDate" %>
-<%@ page import="java.time.format.DateTimeFormatter" %>
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" errorPage="/views/error/error500.jsp" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%--<%@ page errorPage="/views/error/error500.jsp"%>--%>
+<%--<%@ page errorPage="../error/error500.jsp"%>--%>
 
+<%--<%--%>
+<%--    // 에러 페이지 확인--%>
+<%--    int result = 10 / 0;--%>
+<%--    // HTTP 500 - 내부 서버 오류 발생--%>
+<%--%>--%>
 
-<%
-    String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-    // 에러 페이지 확인
-    int result = 10 / 0;
-    // HTTP 500 - 내부 서버 오류 발생
-%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -18,14 +16,9 @@
 </head>
 <body>
     <%--시멘틱 태그: 페이지 구조에서 변하지 않을 부분 고정하는 역할, 문서 구조를 정해놓는다--%>
-    <header>
-        <h1> 지시자 태그</h1>
-        <p>
-            오늘 날짜는 <%=today%>입니다.
-        </p>
-    </header>
+    <%@ include file="/views/common/header.jsp"%>
     <main>
-        <form action="" method="post">
+        <form action="userFormResult.jsp" method="post">
             <label for="userName">이름: </label>
             <input type="text" name="userName" id="userName">
 
@@ -61,8 +54,6 @@
         </form>
 
     </main>
-    <footer>
-        CopyRight@Hong hong123@beyond.com
-    </footer>
+    <%@ include file="../common/footer.jsp"%>
 </body>
 </html>
