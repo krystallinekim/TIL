@@ -192,38 +192,34 @@ Java와 특징을 많이 공유한다.
 - 필드, 메소드 호출 결과, 지역변수 등등 다양하게 들어갈 수 있음
 
 
-## 5. JSP 내장 객체
+## JSP 내장 객체
 
-- JSP에서 기본적으로 제공하는 객체들로 request, response, out 등 스크립트릿 태그와 표현식 태그에서 사용할 수 있게 선언된 객체이다.
+- JSP가 서블릿으로 변환될 때 자바 파일에 자동으로 추가되는 객체들로, 따로 선언하지 않아도 바로 사용이 가능
+    - 스크립트릿 태그와 표현식 태그 등에서 사용할 수 있다.
 
-### 5.1. JSP 내장 객체 종류
+### JSP 내장 객체
 
 - JSP에서 기본적으로 제공하는 객체들은 아래와 같다.
     
-    
     | 내장 객체 명 | 설명 |
     | --- | --- |
-    | request | HttpServletRequest 객체 참조 변수 |
-    | response | HttpServletResponse 객체 참조 변수 |
-    | out | JspWriter 객체 참조 변수 |
-    | session | HttpSession 객체 참조 변수 |
-    | application | ServletContext 객체 참조 변수 |
-    | page | 현재 JSP 페이지에 대한 참조 변수 |
+    | request | `HttpServletRequest` 객체 참조 변수, 사용자의 요청 처리 |
+    | response | `HttpServletResponse` 객체 참조 변수, 서버의 응답 처리 |
+    | out | `JspWriter` 객체 참조 변수, 웹에 출력할 때 사용 |
+    | session | `HttpSession` 객체 참조 변수 |
+    | application | `ServletContext` 객체 참조 변수 |
+    | page | 현재 JSP 페이지(this)에 대한 참조 변수 |
     | pageContext | JSP 페이지와 관련된 다른 내장 객체를 얻어내는 객체 |
     | config | JSP 페이지에 대한 설정 정보를 저장하고 있는 객체 |
     | exception | 발생한 Throwable 객체에 대한 참조 변수 |
 
-## 6. JSP 내장 객체 영역
+### JSP 내장 객체 영역
 
 - Page < Request < Session < Application 영역 순으로 범위가 넓다.
     
     | 영역 | 설명 |
     | --- | --- |
-    | Page | 하나의 JSP 페이지를 처리할 때 사용되는 영역
-    pageContext 내장 객체를 통해 접근할 수 있는 영역 |
-    | Request | 하나의 요청을 처리할 때 사용되는 영역
-    request 내장 객체를 통해 접근할 수 있는 영역 |
-    | Session | 하나의 브라우저와 관련된 영역
-    session 내장 객체를 통해 접근할 수 있는 영역 |
-    | Application | 하나의 웹 애플리케이션과 관련된 영역
-    application 내장 객체를 통해 접근할 수 있는 영역 |
+    | Page | 하나의 JSP 페이지를 처리할 때 사용되는 영역 <br> pageContext 내장 객체를 통해 접근할 수 있는 영역 |
+    | Request | 하나의 요청을 처리할 때 사용되는 영역 <br> request 내장 객체를 통해 접근할 수 있는 영역 |
+    | Session | 하나의 브라우저와 관련된 영역 <br> session 내장 객체를 통해 접근할 수 있는 영역 |
+    | Application | 하나의 웹 애플리케이션과 관련된 영역 <br> application 내장 객체를 통해 접근할 수 있는 영역 |

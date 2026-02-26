@@ -29,5 +29,12 @@
         <a href="/jsp/views/directive/">지시자 태그</a>
         <br>
         <a href="/jsp/views/elements/">기타 태그</a>
+
+        <h2>3. JSP 내장 객체</h2>
+        <p>
+            JSP가 서블릿으로 변환될 때 자바 파일에 자동으로 추가되는 객체들
+        </p>
+        <a href="/jsp/views/objects/">내장 객체</a>
+
     </body>
 </html>
