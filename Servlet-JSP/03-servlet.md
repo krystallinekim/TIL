@@ -91,6 +91,14 @@
 
     - `.getWriter()`를 많이 쓴다.
 
+        ```java
+        PrintWriter out = resp.getWriter();
+
+        out.println("<!DOCTYPE html>");
+        out.println("<html lang=\"ko\">");
+        ...
+        ```
+
 ## 서블릿 매핑
 
 - 사용자의 요청을 서블릿에게 전달하기 위해서는 서블릿을 등록하고 매핑해야 한다.
@@ -163,3 +171,54 @@
 
 - 서블릿을 만들 때 `init`, `service`, `destroy` 등의 메소드를 오버라이드해서 확인 가능
     - 서블릿이 생성되거나 소멸 시에 처리해야 할 내용이 있다면 여기서 적용한다.
+
+
+
+## HTTP 요청
+
+GET, POST, DELETE, FETCH 등등 많지만, html의 <form> 태그로는 GET, POST만 사용할 수 있다.
+
+```html
+<body>
+    <form action="/servlet/method.do" method="post">
+        ...
+    </form>
+```
+
+나중에 REST API 만들 때 더 많이 쓰인다
+
+### GET
+
+- URL에 데이터를 포함시켜 요청하는 것
+    - 보안 유지가 불가능함
+
+- request의 `getParameter()`, `getParameterValues()`를 이용해 전달받은 값을 이용할 수 있다.
+    ```java
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        // 값이 하나만 들어올 경우
+        String userName = req.getParameter("userName");
+
+        // 값이 여러개 들어올 경우 배열로 받을 때 사용
+        String[] foods = req.getParameterValues("food");
+        ...
+    }
+    ```
+
+- 정적 페이지 등을 요청하는데 쓴다
+
+### POST
+
+- 데이터를 요청(request) Body에 담아서 요청하는 것
+    - 보안 유지가 된다
+
+- request, response를 다루는 방법은 GET과 동일하다.
+    ```java
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        this.doGet(req, resp);
+    }
+    ```
+
+- 특정 페이지에 많은 데이터를 보내거나, 리소스를 생성 시에 사용한다.
