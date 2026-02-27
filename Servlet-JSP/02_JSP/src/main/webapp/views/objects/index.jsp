@@ -106,5 +106,16 @@
         지정한 URL로 클라이언트가 요청을 재전송한다.
     </p>
     <a href="redirect.jsp">redirect.jsp로 리다이렉트</a>
+
+    <h2>3. pageContext</h2>
+    <p>
+        JSP와 관련된 다른 내장 객체를 얻어오거나, 포워드하는데 사용하는 객체
+    </p>
+    <h3>1) Forward</h3>
+    <p>
+        지정한 경로로 서버 내부에서 요청을 전달한다.
+    </p>
+
+    <a href="forward.jsp">forward.jsp로 포워드</a>
 </body>
 </html>
