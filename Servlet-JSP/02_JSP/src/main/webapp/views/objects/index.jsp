@@ -181,5 +181,24 @@
             }
         %>
 
+        <h2>5. application</h2>
+        <p>
+            웹 애플리케이션의 실행 환경을 제공하는 서버의 정보와, 서버 측 자원에 대한 정보를 저장하는 객체
+        </p>
+
+        <table border="1">
+            <tr>
+                <td>서버 정보</td>
+                <td><%=application.getServerInfo()%></td>
+            </tr>
+            <tr>
+                <td>웹 모듈 버전</td>
+                <td><%=application.getMajorVersion()%>.<%=application.getMinorVersion()%></td>
+            </tr>
+            <tr>
+                <td>웹 애플리케이션의 물리적 파일 경로</td>
+                <td><%=application.getRealPath("/")%></td>
+            </tr>
+        </table>
     </body>
 </html>

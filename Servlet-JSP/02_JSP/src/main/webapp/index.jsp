@@ -38,9 +38,19 @@
         <p>
             JSP가 서블릿으로 변환될 때 자바 파일에 자동으로 추가되는 객체들
         </p>
-        <a href="/jsp/views/objects/">내장 객체</a>
+        <a href="<%=request.getContextPath()%>/views/objects/">내장 객체</a>
 
         <br>
         세션 userID: <%=session.getAttribute("userID")%>
+
+
+        <h2>4. 영역 객체</h2>
+        <p>
+            JSP 내장 객체 중 pageContext, request, session, application은 데이터를 공유할 수 있는 각각의 유효 범위(Scope)를 가진다.
+            <br>
+            공유되는 데이터를 속성(Attribute)이라고 하며, 속성이 유지되는 범위를 영역(Scope)이라고 한다.
+        </p>
+
+        <a href="<%=request.getContextPath()%>/views/scope/">영역 객체</a>
     </body>
 </html>
