@@ -194,10 +194,8 @@ Java와 특징을 많이 공유한다.
 
 ## JSP 내장 객체
 
-- JSP가 서블릿으로 변환될 때 자바 파일에 자동으로 추가되는 객체들로, 따로 선언하지 않아도 바로 사용이 가능
+- JSP가 서블릿으로 변환될 때 자바 파일에 자동으로 추가되는 객체들로, 따로 선언하지 않아도 바로 사용이 가능함
     - 스크립트릿 태그와 표현식 태그 등에서 사용할 수 있다.
-
-### JSP 내장 객체
 
 - JSP에서 기본적으로 제공하는 객체들은 아래와 같다.
     
@@ -211,41 +209,47 @@ Java와 특징을 많이 공유한다.
     | page | 현재 JSP 페이지(this)에 대한 참조 변수 |
     | pageContext | JSP 페이지와 관련된 다른 내장 객체를 얻어내는 객체 |
     | config | JSP 페이지에 대한 설정 정보를 저장하고 있는 객체 |
-    | exception | 발생한 Throwable 객체에 대한 참조 변수 |
+    | exception | 발생한 Throwable 객체(예외)에 대한 참조 변수 |
 
-#### request 메소드
+### request
 
-1. 헤더
-    - HTTP 메시지의 메타데이터를 담는 부분
-    - `request.getHeader(헤더이름)`를 이용하면 특정 헤더의 값을 가져올 수 있다.
-    - `request.getHeaderNames()`는 전체 헤더 목록을 `Enumeration` 객체로 받아옴
+- 웹 브라우저의 요청 정보를 가지는 객체
+
+- 주로 클라이언트가 보낸 요청에 대해 정보를 받아오는 기능을 한다.
+
+1. 요청 헤더
+    - 클라이언트 정보의 메타데이터를 담는 부분
+    - `.getHeader(헤더이름)`
+        - 특정 헤더의 값을 가져올 수 있다.
+    - `.getHeaderNames()`
+        - 전체 헤더 목록을 `Enumeration` 객체로 받아온다.
 
 2. 프로토콜
     - `.getProtocol()`
-    - 보통 HTTP
+        - 보통 HTTP
 
 3. 요청 방식
     - `.getMethod()`
-    - GET/POST 등등
+        - GET, POST 등등
 
 4. URL(Uniform Resource Location)
-    - `.getRequestURL()`
     - 네트워크 기준으로 현재 페이지의 위치
+    - `.getRequestURL()`
 
 5. URI(Uniform Resource Identifier)
-    - `.getRequestURI()`
     - 현재 서버 기준, 현재 페이지의 식별자
-    - URL에서 서버 관련 내용을 빼면 URI가 된다.
+        - URL에서 서버 관련 내용을 빼면 URI가 된다.
+    - `.getRequestURI()`
 
 6. Query String
-    - `.getQueryString()`
     - 현재 페이지에서 보낸 요청사항들
-    - URL에서 `?` 뒷부분 데이터를 말한다.
+        - URL에서 `?` 뒷부분 데이터를 말한다.
+    - `.getQueryString()`
 
 7. Context Path
-    - `.getContextPath()`
     - 서버에서 웹 애플리케이션의 경로
-    - 서버에 애플리케이션 하나만 돌리면 생략해도 된다.
+        - 서버에 애플리케이션 하나만 돌리면 생략해도 된다.
+    - `.getContextPath()`
     - 애플리케이션을 여러개 이용하거나 / context path가 없을 때나 / context path 이름을 바꿔줄 때, context path를 하드코딩하면 문제가 생길 수 있다.
         - 실행 시점에 얻어와서 동적으로 동작하도록 할 수 있음
             ```jsp
@@ -253,6 +257,37 @@ Java와 특징을 많이 공유한다.
             ```
     - 요즘 코드에서는 주로 SpringBoot를 써서 볼 일 없지만, 레거시 코드에서는 가끔 보인다
 
+### response
+
+- 웹 브라우저의 요청에 대한 응답 객체
+
+- 주로 응답을 커스터마이징 할 때 쓰인다.
+
+1. 응답 헤더
+    - 서버에서 처리된 정보에 대한 메타데이터
+    - `.setContentType()`
+        - 응답 페이지를 어떤 종류로(html, css, ...) 보낼지 결정할 수 있다.
+    - `.setHeader(헤더 이름, 헤더 값)`
+        - 응답에 대해 직접 헤더를 설정할 수도 있다.
+
+2. 응답 상태
+    - 응답 상태를 커스터마이징할 수 있다.
+    - `.setStatus(상태코드)`
+        - 상태코드만 넘겨준다. 실제 화면은 그대로 나옴
+        - `HttpServletResponse.상수` 상수를 이용해 코드값을 몰라도 응답을 만들 수 있다.
+    - `.sendError(404)`
+        - 아예 에러를 보내서 에러페이지로 이동하게 할 수 있다.
+
+3. 리다이렉트
+    - 매개값으로 지정한 경로로 클라이언트가 다시 요청하도록 응답한다.
+    - `response.sendRedirect("redirect_target.jsp");`    
+        - 먼저 원래 페이지로 이동한 뒤, 리다이렉트 코드를 보면 `302 Found`를 반환
+        - 그럼 클라이언트가 응답 헤더에서 새로운 URL을 확인해 다시 요청을 보내게 된다.
+    - 브라우저(클라이언트)가 새로운 요청을 다시 보내기 때문에, 이전 요청과 응답 정보가 유지되지 않는다.
+        - `Forward`와 구분되는 특징
+    - 같은 서버 내의 페이지만이 아니라 아예 다른 서버로 보낼 수도 있다.
+
+### pageContext
 
 ### JSP 내장 객체 영역
 
