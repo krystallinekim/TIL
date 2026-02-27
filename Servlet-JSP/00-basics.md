@@ -35,7 +35,7 @@
 
 tomcat을 통해 서버를 열면, 다음과 같이 URL이 생성된다.
 
-`http://localhost:8080/servlet/`
+`http://localhost:8080/servlet/index.jsp?name=AAA&age=10`
 
 1. `http://`
 
@@ -58,10 +58,16 @@ tomcat을 통해 서버를 열면, 다음과 같이 URL이 생성된다.
     - context path
     - tomcat의 여러 애플리케이션 중 어떤 context path를 사용할지 선언하는 내용
 
-5. `/...`
+5. `/index.jsp`
 
     - `webapp` 폴더의 어떤 파일을 실행시킬지 선언
     - `/` 뒤에 아무것도 없다면 자동으로 `index.html` 파일을 실행하고, `index.html`이 없다면 JSP 파일을 찾아서 실행한다.
+
+6. `?name=AAA&age=10`
+    - Query String
+    - 현재 페이지의 request에 어떤 데이터를 보낼 지 선언하는 부분
+    - GET 방식에서는 URL에 직접 데이터를 얹어서 보내지만, POST에서는 URL이 아니라 request의 body에 보내서 쿼리스트링이 없다.
+
 
 ## 아파치 메이븐(Apache Maven)
 
