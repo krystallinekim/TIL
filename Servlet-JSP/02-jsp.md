@@ -145,9 +145,9 @@ Java와 특징을 많이 공유한다.
     <%! int counter = 0; %>
     
     <%!
-      public String getName(HttpServletRequest request){
-        return request.getParameter("name");
-      }
+        public String getName(HttpServletRequest request){
+            return request.getParameter("name");
+        }
     %>
     ```
 
@@ -161,13 +161,13 @@ Java와 특징을 많이 공유한다.
     
     ```jsp
     <%
-            int sum = 0;
+        int sum = 0;
 
-            for (int i = 1; i <= 10 ; i++) {
-                sum += i;
-            }
-            
-            System.out.println(sum);
+        for (int i = 1; i <= 10 ; i++) {
+            sum += i;
+        }
+        
+        System.out.println(sum);
     %>
     ```
 
@@ -212,6 +212,47 @@ Java와 특징을 많이 공유한다.
     | pageContext | JSP 페이지와 관련된 다른 내장 객체를 얻어내는 객체 |
     | config | JSP 페이지에 대한 설정 정보를 저장하고 있는 객체 |
     | exception | 발생한 Throwable 객체에 대한 참조 변수 |
+
+#### request 메소드
+
+1. 헤더
+    - HTTP 메시지의 메타데이터를 담는 부분
+    - `request.getHeader(헤더이름)`를 이용하면 특정 헤더의 값을 가져올 수 있다.
+    - `request.getHeaderNames()`는 전체 헤더 목록을 `Enumeration` 객체로 받아옴
+
+2. 프로토콜
+    - `.getProtocol()`
+    - 보통 HTTP
+
+3. 요청 방식
+    - `.getMethod()`
+    - GET/POST 등등
+
+4. URL(Uniform Resource Location)
+    - `.getRequestURL()`
+    - 네트워크 기준으로 현재 페이지의 위치
+
+5. URI(Uniform Resource Identifier)
+    - `.getRequestURI()`
+    - 현재 서버 기준, 현재 페이지의 식별자
+    - URL에서 서버 관련 내용을 빼면 URI가 된다.
+
+6. Query String
+    - `.getQueryString()`
+    - 현재 페이지에서 보낸 요청사항들
+    - URL에서 `?` 뒷부분 데이터를 말한다.
+
+7. Context Path
+    - `.getContextPath()`
+    - 서버에서 웹 애플리케이션의 경로
+    - 서버에 애플리케이션 하나만 돌리면 생략해도 된다.
+    - 애플리케이션을 여러개 이용하거나 / context path가 없을 때나 / context path 이름을 바꿔줄 때, context path를 하드코딩하면 문제가 생길 수 있다.
+        - 실행 시점에 얻어와서 동적으로 동작하도록 할 수 있음
+            ```jsp
+            <a href="<%=request.getContextPath()%>/views/elements/">기타 태그</a>
+            ```
+    - 요즘 코드에서는 주로 SpringBoot를 써서 볼 일 없지만, 레거시 코드에서는 가끔 보인다
+
 
 ### JSP 내장 객체 영역
 

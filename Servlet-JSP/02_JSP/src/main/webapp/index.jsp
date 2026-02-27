@@ -26,9 +26,13 @@
             <li>표현식 태그</li>
         </ol>
 
-        <a href="/jsp/views/directive/">지시자 태그</a>
+        <a href="<%=request.getContextPath()%>/views/directive/">지시자 태그</a>
         <br>
-        <a href="/jsp/views/elements/">기타 태그</a>
+        <a href="<%=request.getContextPath()%>/views/elements/">기타 태그</a>
+
+<%--        <a href="/jsp/views/directive/">지시자 태그</a>--%>
+<%--        <br>--%>
+<%--        <a href="/jsp/views/elements/">기타 태그</a>--%>
 
         <h2>3. JSP 내장 객체</h2>
         <p>
