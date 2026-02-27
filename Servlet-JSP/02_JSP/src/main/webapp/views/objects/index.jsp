@@ -91,7 +91,7 @@
         <%
             // response.setContentType("text/css;charset=utf-8");
             // 헤더 이름, 헤더 값
-            response.setHeader("Authorization", "Bearer 24irjg09ue9jdnfvkl");
+            response.setHeader("Authorization", "aaa");
         %>
 
         <h3>2) 응답 상태와 관련된 메소드</h3>
