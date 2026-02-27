@@ -17,7 +17,7 @@
     <p>
         웹 브라우저의 요청 정보를 가지는 객체
     </p>
-    <h3>헤더와 관련된 메소드</h3>
+    <h3>1) 헤더와 관련된 메소드</h3>
     <p>
         헤더는 HTTP 메시지의 메타데이터를 담고 있는 부분
         <br>
@@ -46,7 +46,7 @@
     %>
     </table>
     <br>
-    <h3>URL/URI, 요청 방식과 관련된 메소드</h3>
+    <h3>2) URL/URI, 요청 방식과 관련된 메소드</h3>
 
     <table border="1">
         <tr>
@@ -79,5 +79,32 @@
         </tr>
     </table>
 
+    <h2>2. response</h2>
+    <p>
+        웹 브라우저의 요청에 대한 응답 객체
+    </p>
+    <h3>1) 응답 헤더와 관련된 메소드 </h3>
+    <p>
+        서버에서 처리된 정보에 대한 메타데이터
+    </p>
+    <%
+        // response.setContentType("text/css;charset=utf-8");
+        // 헤더 이름, 헤더 값
+        response.setHeader("Authorization", "Bearer 24irjg09ue9jdnfvkl");
+    %>
+
+    <h3>2) 응답 상태와 관련된 메소드</h3>
+    <p>
+        응답 상태를 커스터마이징할 수 있다.
+    </p>
+    <%
+        // response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    %>
+
+    <h3>3) 리다이렉트</h3>
+    <p>
+        지정한 URL로 클라이언트가 요청을 재전송한다.
+    </p>
+    <a href="redirect.jsp">redirect.jsp로 리다이렉트</a>
 </body>
 </html>
