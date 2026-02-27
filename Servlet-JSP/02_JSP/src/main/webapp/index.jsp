@@ -40,5 +40,7 @@
         </p>
         <a href="/jsp/views/objects/">내장 객체</a>
 
+        <br>
+        세션 userID: <%=session.getAttribute("userID")%>
     </body>
 </html>
