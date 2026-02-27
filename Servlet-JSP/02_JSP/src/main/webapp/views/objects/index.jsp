@@ -1,5 +1,6 @@
 <%@ page import="java.util.Enumeration" %>
 <%@ page import="java.util.Date" %>
+<%@ page import="java.util.Arrays" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <html lang="ko">
     <head>
@@ -123,7 +124,7 @@
         <p>
             웹 브라우저의 정보를 유지하기 위한 세션 정보를 저장하는 객체
         </p>
-        <h3>정의</h3>
+        <h3>4.1. 정의</h3>
         <ol>
            <li>세션은 서버 측의 컨테이너에서 관리되는 정보</li>
            <li>세션은 클라이언트와 서버 간의 상태를 유지시켜주는 역할을 한다.</li>
@@ -149,6 +150,36 @@
             session.setAttribute("userID", "aaa");
         %>
         userID: <%= session.getAttribute("userID")%>
+
+        <h3>4.2. 쿠키</h3>
+        <ol>
+           <li>클라이언트 쪽에서 관리되는 정보</li>
+           <li>클라이언트와 서버 간의 상태를 유지시켜주는 역할</li>
+        </ol>
+
+        <%
+            // 서버에서 쿠키를 생성 후 클라이언트로 전달
+            // 1. 쿠키 생성
+            Cookie cookie = new Cookie("user-name", "choco-cookie");
+            // 2. 쿠키 만료 시간 설정
+            cookie.setMaxAge(-1);
+            // 2-*. 쿠키를 어디서나 사용하도록 설정
+            cookie.setPath("/jsp");
+            // 3. 쿠키를 클라이언트로 전송
+            response.addCookie(cookie);
+        %>
+
+        <%
+            // 클라이언트에서 서버로 전송한 쿠키를 얻어오는 방법
+            // 1, 클라이언트가 전송한 모든 쿠키를 배열로 받아온다.
+            Cookie[] cookies = request.getCookies();
+
+            // 쿠키 배열 내용 확인
+            for (Cookie c: cookies) {
+                out.print(c.getName() + " = " + c.getValue());
+                out.print("<br>");
+            }
+        %>
 
     </body>
 </html>
