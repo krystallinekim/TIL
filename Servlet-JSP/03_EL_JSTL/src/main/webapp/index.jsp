@@ -14,6 +14,8 @@
         <h2>1. EL 내장 객체</h2>
         <a href="<%=request.getContextPath()%>/el.do">View Details</a>
 
+        <h2>2. EL 연산자</h2>
+        <a href="${ pageContext.request.contextPath }/views/el/elOperators.jsp">View Details</a>
 
         <br>
         <h1>JSTL(JSP Standard Tag Library)</h1>

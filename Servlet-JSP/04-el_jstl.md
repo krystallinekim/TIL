@@ -137,7 +137,60 @@ Cookie: ${ cookie.['JSESSIONID'].value }
     | 크거나 같다   | >= | ge (greater or equal) |
     | 같다          | == | eq (equal) |
     | 다르다        | != | ne (not equal) |
-    | null 값 처리  | value == null | empty |
+    | null 값 처리  | value == null | empty value |
+
+- 일반 연산자도 이용할 수 있고, EL에서만 사용되는 기호 연산자를 사용해도 된다.
+
+- 저장된 데이터를 이용한 비교연산의 경우, 표현식 태그를 사용할 때 매우 복잡하다.
+
+    ```jsp
+    <%
+        int a = 10;
+        int b = 3;
+
+        request.setAttribute("a", a);
+        request.setAttribute("b", b);
+    %>
+
+    <%= (Integer) request.getAttribute("a") > (Integer) request.getAttribute("b") %><br>
+    ${ a > b}
+    ```
+
+    - `.getAttribute()`를 하면 object 타입으로 가져오게 된다. object 타입끼리의 산술/비교연산은 불가능하므로, Integer 타입으로 형변환을 해서 계산해 주어야 한다.
+    - EL에서는 자동으로 숫자타입 형변환을 해서 계산까지 해준다.
+        - 문자열 타입으로(`"10"`, `"3"`처럼) 저장한다 해도 변환이 가능하면 숫자타입으로 형변환해서 계산함
+
+
+- 객체의 동등비교에서, 표현식에서는 객체의 주소를 비교하므로 값 비교를 위해서는 `.equals()` 메서드를 호출해야 한다.
+    ```jsp
+    <%
+        request.setAttribute("str1", "Hello");
+        request.setAttribute("str2", new String("Hello"));
+    %>
+    
+    str1 == str2 = <%= request.getAttribute("str1") == request.getAttribute("str2")%><br>           <!-- false -->
+    str1.equals(str2) = <%= request.getAttribute("str1").equals(request.getAttribute("str2"))%><br> <!-- true -->
+            
+    str1 == str2 = ${str1 == str2}<br>  <!-- true -->
+    ```
+    - EL에서는 내부적으로 알아서 `.equals()`메서드를 호출해 비교하기 때문에, 복잡하게 코드를 작성할 필요가 없다.
+
+- EL에서는 `== null`과 `.isEmpty()`를 합쳐서 `empty`를 이용할 수 있다.
+    ```jsp
+    <%
+    String str = null;
+    List<String> names = new ArrayList<>();
+
+    request.setAttribute("str", str);
+    request.setAttribute("names", names);    
+    %>
+
+    str == null = ${ str == null }<br>      <!-- true -->
+    str == empty = ${ empty str }<br>       <!-- true -->
+    names == null = ${ names == null }<br>  <!-- false -->
+    names == empty = ${ empty names }<br>   <!-- true -->
+    ```
+    - 만약 변수가 비어있거나(빈 배열, 빈 String 등), 참조되지 않으면(null) `empty value`에서 true로 나온다.
 
 ### EL 연산자 우선순위
 
