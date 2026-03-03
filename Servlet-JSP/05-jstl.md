@@ -3,6 +3,7 @@
 ## JSP 액션 태그
 
 - JSP 페이지에서 자바 코드를 직접 입력하지 않고 특정 작업을 수행하는데 사용하는 태그이다.
+    - 단, 실제 실행될 때는 서블릿으로 변환 후 자바 코드로 실행된다.
 
 - 액션 태그의 경우 웹 브라우저에서 실행되는 것이 아니라 웹 컨테이너에서 실행된다.  
     
@@ -23,26 +24,42 @@
 
 ### jsp:include 액션 태그
 
+```jsp
+<jsp:include page="포함할 페이지(경로)" /> <!-- 셀프 클로징된 태그 -->
+```
+
 - include 액션 태그는 다른 페이지를 포함 시킬 때 사용하는 액션 태그이다.
 
 - include 지시자와 다르게 include 액션 태그는 런타임 시에 포함된다.
-    
-    ```jsp
-    <jsp:include page="포함할 페이지(경로)" />
-    ```
-    
+    - include 지시자는 다른 페이지를 포함하는 JSP 파일이 컴파일 되기 전에 페이지가 포함된다. (서블릿에 html태그, **선언한 지역변수**도 다 같이 딸려옴)  
+        - 그래서 선언하지도 않았지만 기존 페이지에서 그 지역변수를 이용할 수 있어버린다. 같은 이름의 변수를 선언할 수도 없다.
+
+    - include 액션 태그는 별도의 서블릿을 하나 만들어서 실행 흐름을 넘겼다가 다시 돌아오는 형태임
+        - 포함페이지에서 지역변수를 설정해도, 기존 페이지에는 영향이 없다. (별도 페이지 안에서 만들어진 변수이므로) 동일 변수 이름 선언도 가능함
+
+- 주로 액션 태그를 사용함. include 지시어에서 변수 설정이 너무 까다롭다 + 예전에는 포함페이지를 수정해도 반영이 안되는 경우가 있었다
 
 ### jsp:forward 액션 태그
+
+```jsp
+<jsp:forward page="이동할 페이지" />
+```
+
 
 - forward 액션 태그는 다른 페이지로 요청을 전달할 때 사용하는 액션 태그이다.
     - `pageContext.forward()`로 작업하던 것을 액션 태그로 쓸 수 있는 것
 
 - 요청을 전달하는 페이지에서 request, response 객체가 함께 전달되며 URL은 변경되지 않는다.(포워드 특성)
-    
-    ```jsp
-    <jsp:forward page="이동할 페이지" />
-    ```
-    
+### jsp:param 액션 태그
+
+```jsp
+<jsp:include page="includePage.jsp">
+    <jsp:param name="userName" value="홍길동"/>
+</jsp:include>
+```
+
+- include, fowrard 액션 태그 내부에 사용되며, 해당 페이지에 그 변수를 전달한다.
+    - `includePage.jsp?userName=홍길동`쿼리스트링처럼 전달되며, `request.getParameter("userName")` 혹은 `${ param.userName }`처럼 꺼내 쓸 수 있다.
 
 ## JSTL(JSP Standard Tag Library)
 
