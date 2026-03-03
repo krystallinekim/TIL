@@ -1,257 +1,50 @@
-# EL/JSTL
+# JSTL
 
-## EL
-
-- EL(Expression Language)은 JSP 2.0버전에서 추가된 표현 언어이다.
-
-- 기존 JSP에서는 HTML과 자바 표현이 섞여 표현식 태그를 사용했는데, 가독성이 떨어지는 편이다.
-
-- 표현식(Expression) 태그(`<%= ... %>`)를 대신하여 클라이언트에 출력하고자 하는 값들을 좀 더 간결하게(`$ { ... }`) 사용하는 방법이다.
-    
-    ```jsp
-    <%
-        Student requestStudent = (Student) request.getAttribute("Student");
-    %>
-
-    student: <%= requestStudent.getName() %>
-    ```
-
-    ```jsp
-    student: ${ student.name }
-    ```
-
-- EL은 따로 값을 꺼내오지 않아도 값을 출력할 수 있다.
-    - 영역객체(`request`)에 지정된 속성명을 검색해 존재할 경우 속성값을 가져온다.
-    - 이 때, Page -> Request -> Session -> Application 순서대로 가져온다.
-    
-- 코드만 보면 EL에서 객체의 private 필드에 직접 접근하는 것처럼 보인다. (`student.name`처럼)
-    - 실제로 직접 접근하는건 아니고, 내부적으로 해당 필드의 getter 메소드를 이용해 가져온다.
-    - 클래스에서 getter 메소드를 제거하면 접근할 수 없어 에러가 발생한다.
-
-### EL 내장 객체
-
-- EL 구문 내에서 사용할 수 있는 내장 객체는 아래와 같다.
-    
-    
-    | 객체 명 | 설명 |
-    | --- | --- |
-    | pageScope | Page 영역 객체에 접근 |
-    | requestScope | Request 영역 객체에 접근 |
-    | sessionScope | Session 영역 객체에 접근 |
-    | applicationScope | Application 영역 객체에 접근 |
-    | param | 전달된 파라미터 값을 받아올 때 사용 |
-    | paramValues | 전달된 파라미터 값을 배열로 받아올 때 사용 |
-    | header | 사용자의 특정 헤더 정보를 받아올 때 사용 |
-    | headerValues | 사용자의 헤더 정보를 배열로 받아올 때 사용 |
-    | cookie | `${cookie.key명}`으로 쿠키 값 조회 |
-    | initParam | 초기 파라미터 조회 |
-    | pageContext | Context Path 조회 |
-
-#### 영역 객체
-
-- 만약 request 영역에도 데이터가 있고, 같은 이름의 데이터가 session 영역에도 있을 경우(속성명이 겹칠 때), 일반적으로 `${student.name}`처럼 접근하면 request 영역의 데이터만 가져온다.
-
-    ```jsp
-    student-request: ${student.name}
-    <br>
-    student-session: ${sessionScope.student.name}
-    ``` 
-
-- `${sessionScope.student.name}`처럼 EL 내장 객체를 이용해 특정 영역 객체에 접근하도록 할 수 있다.
-- page, request, session, application 각 영역에 `pageScope`, `requestScope`, `sessionScope`, `applicationScope`를 통해 각각 접근 가능하다.
-
-
-#### Context Path
-
-```jsp
-ContextPath: <%= request.getContextPath() %>
-<br>
-ContextPath: ${ pageContext.request.contextPath }
-```
-- context path에 바로 접근하는 방법이 없어, `pageContent` 객체를 써서 request 객체에 먼저 접근한 뒤 getter를 이용한다.
-- 그래서 그냥 표현식 태그 쓰는 경우도 많다.(더 짧음)
-
-#### 헤더
-
-```jsp
-User-Agent: <%= request.getHeader("User-Agent") %>
-<br>
-User-Agent: ${ header['User-Agent'] }
-```
-
-- `header` 객체를 이용하면 `getHeader()`와 같은 작업을 할 수 있다.
-    - `headerValues`를 이용하면 헤더 정보를 배열로 받아올 수 있다.
-    - 대소문자 구분은 안함
-    - 특수문자가 있어서 입력이 안될 때는 `[]` 안에 문자 데이터로 넣으면 됨
-
-#### 쿠키
-
-```jsp
-Cookie: <%= request.getCookies()[0].getValue() %>
-<br>
-Cookie: ${ cookie.['JSESSIONID'].value }
-```
-
-- `cookie` 객체를 이용해 쿠키값을 가져올 수 있다.
-    - 표현식 태그에서 `.getCOokies()`는 쿠키들의 배열을 들고 오지만, EL의 `cookie`내장객체에서는 쿠키 이름을 지정해서 가져올 수 있다.
-    - 단, 가져올 때 cookie 객체로 가져오므로 `.value` 혹은 `.getValue()`로 쿠키 값을 가져온다.
-
-#### 파라미터
-
-```jsp
-제품명: <%= request.getParameter("pName") %>
-<br>
-제품명: ${ param.pName }
-```
-
-- 사용자가 전달한 내용은 `param`내장객체를 이용해 받아온다.
-    - `param.파라미터이름` 처럼 이용함
-
-- 파라미터명 하나에 값이 여러개일 경우, `paramValues`를 이용하고, 배열로 받아온다.
-    ```jsp
-    옵션1: <%= request.getParameterValues("option")[0]%>
-    <br>
-    옵션2: <%= request.getParameterValues("option")[1]%>
-    <br>
-    옵션1: ${ paramValues.option[0] }
-    <br>
-    옵션2: ${ paramValues.option[1] }
-    ```
-
-
-### EL 연산자
-
-- EL 구문에서 사용할 수 있는 연산자는 아래와 같다.
-    
-    | 구분 | 일반 연산자 | EL 기호 연산자 |
-    | --- | --- | --- |
-    | 덧셈, 뺄셈    | +, - | +, - |
-    | 곱셈, 나눗셈  | *, / | *, div |
-    | 나머지 연산   | % | mod |
-    | and 연산      | && | and |
-    | or 연산       | || | or |
-    | ! 연산        | ! | not |
-    | 작다          | < | lt (less than) |
-    | 크다          | > | gt (greater than) |
-    | 작거나 같다   | <= | le (less or equal) |
-    | 크거나 같다   | >= | ge (greater or equal) |
-    | 같다          | == | eq (equal) |
-    | 다르다        | != | ne (not equal) |
-    | null 값 처리  | value == null | empty value |
-
-- 일반 연산자도 이용할 수 있고, EL에서만 사용되는 기호 연산자를 사용해도 된다.
-
-- 저장된 데이터를 이용한 비교연산의 경우, 표현식 태그를 사용할 때 매우 복잡하다.
-
-    ```jsp
-    <%
-        int a = 10;
-        int b = 3;
-
-        request.setAttribute("a", a);
-        request.setAttribute("b", b);
-    %>
-
-    <%= (Integer) request.getAttribute("a") > (Integer) request.getAttribute("b") %><br>
-    ${ a > b}
-    ```
-
-    - `.getAttribute()`를 하면 object 타입으로 가져오게 된다. object 타입끼리의 산술/비교연산은 불가능하므로, Integer 타입으로 형변환을 해서 계산해 주어야 한다.
-    - EL에서는 자동으로 숫자타입 형변환을 해서 계산까지 해준다.
-        - 문자열 타입으로(`"10"`, `"3"`처럼) 저장한다 해도 변환이 가능하면 숫자타입으로 형변환해서 계산함
-
-
-- 객체의 동등비교에서, 표현식에서는 객체의 주소를 비교하므로 값 비교를 위해서는 `.equals()` 메서드를 호출해야 한다.
-    ```jsp
-    <%
-        request.setAttribute("str1", "Hello");
-        request.setAttribute("str2", new String("Hello"));
-    %>
-    
-    str1 == str2 = <%= request.getAttribute("str1") == request.getAttribute("str2")%><br>           <!-- false -->
-    str1.equals(str2) = <%= request.getAttribute("str1").equals(request.getAttribute("str2"))%><br> <!-- true -->
-            
-    str1 == str2 = ${str1 == str2}<br>  <!-- true -->
-    ```
-    - EL에서는 내부적으로 알아서 `.equals()`메서드를 호출해 비교하기 때문에, 복잡하게 코드를 작성할 필요가 없다.
-
-- EL에서는 `== null`과 `.isEmpty()`를 합쳐서 `empty`를 이용할 수 있다.
-    ```jsp
-    <%
-    String str = null;
-    List<String> names = new ArrayList<>();
-
-    request.setAttribute("str", str);
-    request.setAttribute("names", names);    
-    %>
-
-    str == null = ${ str == null }<br>      <!-- true -->
-    str == empty = ${ empty str }<br>       <!-- true -->
-    names == null = ${ names == null }<br>  <!-- false -->
-    names == empty = ${ empty names }<br>   <!-- true -->
-    ```
-    - 만약 변수가 비어있거나(빈 배열, 빈 String 등), 참조되지 않으면(null) `empty value`에서 true로 나온다.
-
-### EL 연산자 우선순위
-
-- 연산자 우선순위는 아래와 같다.
-    
-    | 순위 | 기호 |
-    | --- | --- |
-    | 1 | [], . |
-    | 2 | ( ) |
-    | 3 | not, !, empty |
-    | 4 | *, /, div, %, mod |
-    | 5 | +, - |
-    | 6 | <, <=, >, >=, lt, le, gt, ge |
-    | 7 | ==, !=, eq, ne |
-    | 8 | &&, and |
-    | 9 | ||, or |
-    | 10 | ? : (삼항 연산자) |
-
-## 2. JSP 액션 태그
+## JSP 액션 태그
 
 - JSP 페이지에서 자바 코드를 직접 입력하지 않고 특정 작업을 수행하는데 사용하는 태그이다.
-- 액션 태그의 경우 웹 브라우저에서 실행되는 것이 아니라 웹 컨테이너에서 실행된다.
-    
+
+- 액션 태그의 경우 웹 브라우저에서 실행되는 것이 아니라 웹 컨테이너에서 실행된다.  
     
     | 구분 | 표준 액션 태그 | 커스텀 액션 태그 |
     | --- | --- | --- |
     | 사용법 | JSP 페이지에서 바로 사용함. 태그 앞에 jsp 접두어가 붙음 | 별도의 라이브러리 설치 필요함. 라이브러리 선언에 맞는 접두어가 붙음 |
     | 사용 예시 | `<jsp:include page="../sample.jsp"/>` | `<c:set var="count" value="0"/>` |
 
-## 3. 표준 액션 태그
+## 표준 액션 태그
 
 - JSP에서 기본으로 제공하는 액션 태그로 별도의 라이브러리 설치 없이 바로 사용할 수 있다.
     
-    
     | 태그 명 | 설명 |
     | --- | --- |
-    | jsp:include | 현재 페이지에 특정 페이지를 포함할 때 사용 |
-    | jsp:forward | 현재 페이지 접근 시 특정 페이지로 이동 (pageContext.forward()와 동일) |
-    | jsp:param | <jsp:include>, <jsp:forward>의 하위 요소로 사용되며 해당 페이지에 전달할 값을 기록할 때 사용 |
+    | `jsp:include` | 현재 페이지에 특정 페이지를 포함할 때 사용 |
+    | `jsp:forward` | 현재 페이지 접근 시 특정 페이지로 이동 (`pageContext.forward()`와 동일) |
+    | `jsp:param` | <jsp:include>, <jsp:forward>의 하위 요소로 사용되며 해당 페이지에 전달할 값을 기록할 때 사용 |
 
-### 3.1. jsp:include 액션 태그
+### jsp:include 액션 태그
 
 - include 액션 태그는 다른 페이지를 포함 시킬 때 사용하는 액션 태그이다.
+
 - include 지시자와 다르게 include 액션 태그는 런타임 시에 포함된다.
     
-    ```
-    <jsp:include page="포함할 페이지" />
+    ```jsp
+    <jsp:include page="포함할 페이지(경로)" />
     ```
     
 
-### 3.2. jsp:forward 액션 태그
+### jsp:forward 액션 태그
 
 - forward 액션 태그는 다른 페이지로 요청을 전달할 때 사용하는 액션 태그이다.
-- 요청을 전달하는 페이지에서 request, response 객체가 함께 전달되며 URL은 변경되지 않는다.
+    - `pageContext.forward()`로 작업하던 것을 액션 태그로 쓸 수 있는 것
+
+- 요청을 전달하는 페이지에서 request, response 객체가 함께 전달되며 URL은 변경되지 않는다.(포워드 특성)
     
     ```jsp
     <jsp:forward page="이동할 페이지" />
     ```
     
 
-## 4. JSTL(JSP Standard Tag Library)
+## JSTL(JSP Standard Tag Library)
 
 - JSP Standard Tag Library의 약자로 JSP에서 사용하는 커스텀 태그이다.
 - JSP 페이지에서 자주 사용하는 코드들을 사용하기 쉽게 태그로 만들어 표준으로 제공한다.
