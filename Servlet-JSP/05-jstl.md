@@ -64,106 +64,134 @@
 
 ## JSTL(JSP Standard Tag Library)
 
-- JSP Standard Tag Library의 약자로 JSP에서 사용하는 커스텀 태그이다.
-- JSP 페이지에서 자주 사용하는 코드들을 사용하기 쉽게 태그로 만들어 표준으로 제공한다.
+- 표준 액션 태그와 달리, 커스텀 태그는 개발자가 직접 정의 가능한 태그이다.
 
-### 4.1. JSTL 라이브러리 등록
+- JSTL은 JSP Standard Tag Library의 약자로 JSP에서 자주 사용하는 코드들을 사용하기 쉽게 커스텀 태그로 만들어 표준으로 제공한다.
 
-- 메이븐 저장소에서 JSTL 라이브러리를 다운로드한다.
+### JSTL 라이브러리 등록
+
+1. 메이븐 저장소에서 JSTL API(Jakarta Standard Tag Library API) + 인터페이스(Jakarta Standard Tag Library Implementation)를 다운로드한다.
     
     [maven repository](https://mvnrepository.com/)
     
-- JSTL 라이브러리는 JSP 페이지에서 taglib 지시자로 선언해야 사용이 가능하다.
+2. JSP 페이지에서 taglib 지시자로 JSTL 라이브러리를 선언해야 사용이 가능하다.
     
     ```jsp
     <%@ taglib uri="jakarta.tags.core" prefix="c" %>
     ```
     
 
-### 4.2. JSTL 태그 종류
+### JSTL 태그 종류
 
 - JSTL은 용도에 따라 다양한 종류의 태그들을 제공한다.
     
     
-    | 태그 명 | 설명 |
-    | --- | --- |
-    | Core Tags | 변수와 URL, 조건문, 반복문 등의 로직과 관련된 액션 태그를 제공한다.
-    <%@ taglib uri="jakarta.tags.core" prefix="c" %> |
-    | Formatting Tags | 메시지 형식이나 숫자, 날짜 형식과 관련된 액션 태그를 제공한다.
-    <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %> |
-    | Function | trim, substring과 같은 여러 문자열 처리 함수를 제공한다.
-    <%@ taglib uri="jakarta.tags.functions" prefix="fn" %> |
-    | XML Tags | 데이터의 XML 파싱 처리 등 XML 문서를 화면으로 읽어오는데 필요한 라이브러리이다.
-    <%@ taglib uri="jakarta.tags.xml" prefix="x" %> |
-    | SQL Tags | 페이지 내에서 Database를 연동하고 필요한 쿼리를 실행할 수 있는 라이브러리이다.
-    <%@ taglib uri="jakarta.tags.sql" prefix="sql" %> |
+    | 태그 명 | 설명 | 선언 코드 |
+    | --- | --- | --- |
+    | Core Tags | 변수와 URL, 조건문, 반복문 등의 로직과 관련된 액션 태그를 제공한다. | `<%@ taglib uri="jakarta.tags.core" prefix="c" %>` |
+    | Formatting Tags | 메시지 형식이나 숫자, 날짜 형식과 관련된 액션 태그를 제공한다. | `<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>` |
+    | Function | trim, substring과 같은 여러 문자열 처리 함수를 제공한다. | `<%@ taglib uri="jakarta.tags.functions" prefix="fn" %>` |
+    | XML Tags | 데이터의 XML 파싱 처리 등 XML 문서를 화면으로 읽어오는데 필요한 라이브러리이다. | `<%@ taglib uri="jakarta.tags.xml" prefix="x" %>` |
+    | SQL Tags | 페이지 내에서 Database를 연동하고 필요한 쿼리를 실행할 수 있는 라이브러리이다. | `<%@ taglib uri="jakarta.tags.sql" prefix="sql" %>` |
 
-## 5. JSTL Core Tags
+## JSTL Core Tags
 
-### 5.1 c:set 태그
+- 변수와 URL, 조건문, 반복문 등의 로직과 관련된 액션 태그
+
+### 변수 관련 태그
+
+#### 변수 선언 및 초기화 - `c:set`
 
 - 변수를 선언하고 초기 값을 대입하는 태그이다.
-- 변수의 자료형은 별도로 선언하지 않지만 초기 값은 반드시 기술해야 한다.
-- 선언된 변수는 EL 구문에서 사용이 가능하다.
+    - 변수의 자료형은 별도로 선언하지 않지만 초기 값은 반드시 기술해야 한다.
+
+- 선언된 변수는 **EL 구문에서만 사용**이 가능하다.
+    - 영역 객체에 attribute로 생성되기 때문임
+    - scope 속성은 변수가 저장된 영역을 지정한다. (기본값은 page)
     
     ```jsp
-    <c:set var="num" value="100" />
+    <% request.setAttribute("num", "100") %>
+    <c:set var="num" value="100" scope="request"/>
     
-    ${num}
+    ${ num } <!-- 100 -->
     ```
-    
-- scope 속성은 변수가 저장된 영역을 지정한다. (기본값은 page)
-    
+
+- EL을 잘 이용하면 계산도 가능
+
     ```jsp
-    <c:set var="num" value="100" scope="request" />
+    <c:set var="num1" value="10"/>
+    <c:set var="num2" value="3" scope="request"/>
+    <c:set var="result" value="${ num1 + num2 }"/>
+    
+    result: ${ result }  <!-- 13 -->      
     ```
-    
-- `<c:set> ~ </c:set>` 사이에 ","를 이용해서 배열이나 Collection처럼 여러 개의 값 지정할 수 있다.
-    
+        
+- `<c:set> ~ </c:set>` 사이에 ","를 이용해서 배열이나 Collection처럼 여러 개의 값을 지정할 수 있다.
+    - EL을 이용해서 stream처럼 하나씩 출력할 수도 있다.
+
     ```jsp
-    <c:set var="array" scope="request">
-      yellow, blue, pink, red, green
+    <c:set var="colors" scope="request">
+        red, green, blue
     </c:set>
+
+    ${ colors } <!-- red, green, blue -->
     ```
     
+#### 변수 삭제 - `c:remove`
 
-### 5.2 c:remove 태그
-
-- c:set 태그로 선언한 변수를 삭제할 때 사용하는 태그이다.
-- scope 속성을 지정하지 않으면 page, request, session, application 영역에 저장되어 있는 속성을 모두 찾아 제거한다.
+- `c:set` 태그로 선언한 변수를 삭제할 때 사용하는 태그이다.
+- scope 속성을 지정하지 않으면 page, request, session, application 영역에 저장되어 있는 속성을 *모두* 찾아 제거한다.
     
     ```jsp
     <c:remove var="num1" scope="request">
     ```
-    
 
-### 5.3. c:out 태그
+### 출력 관련 태그
 
-- 클라이언트로 데이터 출력할 때 사용하는 태그이다.
+#### 출력 - `c:out`
+
+- 클라이언트로 데이터를 출력할 때 사용하는 태그이다.
     
     ```jsp
-    <c:out value="<h2>데이터 출력</h2>" escapeXml="false"/>
-    <c:out value="<h2>데이터 출력</h2>" escapeXml="true"/>
+    <c:out value="<h2>데이터 출력</h2>" escapeXml="true"/>  <!-- <h2>데이터 출력</h2> -->
+    <c:out value="<h2>데이터 출력</h2>" escapeXml="false"/> <!-- 데이터 출력 -->
     ```
-    
+- 값을 태그로 읽게 할건지, 아니면 그냥 문자열로 읽게 할건지 정의할 수 있다.
+    - `escapeXml="true"`면 그냥 문자열로 출력
+    - `escapeXml`이 없으면 true로 인식(일반 문자열로)
 
-### 5.4. c:if 태그
+- `default="기본값"`을 주면, 만약 value값이 없을 때 대신 기본값을 준다.
+
+
+### 조건문 관련 태그
+
+- 조건문을 JSTL이 아니라 표현식으로 출력하려고 하면, 중간중간 스크립트릿으로 끊어가면서 써야 한다
+    - 매우 가독성이 떨어지고, 쓰기도 힘들다
+
+#### if문 - `c:if`
 
 - 자바의 if 구문과 같은 역할을 하는 태그이다.
-- 조건식은 test 속성에 EL 구문으로 기술해야 한다.
+
+- 조건식은 test 속성에 **EL 구문**으로 기술해야 한다.
+
 - 조건식의 결과가 참일 때 `<c:if> ~ </c:if>` 사이에 있는 내용을 처리한다.
+    - `c:if`구문에는 else 역할을 하는 태그가 없다.
     
     ```jsp
     <c:if test="${num1 > num2}">
-      ...
+        num1 > num2
     </c:if>
     ```
-    
 
-### 5.5. c:choose 태그
+- 이 때 num1, num2를 문자열로 인식하면 조건식이 제대로 처리되지 않는 경우가 있으므로, <c:set var="num1" value="${10}"/>처럼 EL을 이용해 표시해 주는 것이 좋다.
 
-- 자바의 switch 구문과 같은 역할을 하는 태그이다.
+#### switch문 - `c:choose`
+
+- 자바의 if구문, 또는 switch 구문과 같은 역할을 하는 태그이다.
+
 - 하위 태그인 `<c:when>`, `<c:otherwise>` 태그와 함께 사용되는데, 각각 switch 구문의 case, default 절과 비슷한 역할을 한다.
+    - 위에서 아래로 `c:when`절을 확인하고, true인 `c:when`절이 있다면 실행 후 나머지는 실행하지 않는다.
+    - 만약 모든 `c:when`이 false라면, `c:otherwise`구문을 실행한다.
     
     ```jsp
     <c:choose>
@@ -179,8 +207,9 @@
     </c:choose>
     ```
     
+### 반복문 관련 태그
 
-### 5.6. c:forEach 태그
+#### c:forEach 태그
 
 - 자바의 for 구문에 해당하는 역할을 하는 태그이다.
     
@@ -202,7 +231,7 @@
     | var | 현재 반복 횟수에 해당하는 변수 이름 |
     | varStatus | 현재 반복 상태 정보를 담은 객체 |
 
-### 5.7. c:forTokens 태그
+#### c:forTokens 태그
 
 - 문자열에 포함된 구분자를 통해 토큰을 분리해 반복을 수행하는 태그이다.
     
@@ -212,8 +241,9 @@
     </c:forTokens>
     ```
     
+### URL 태그
 
-### 5.8. c:url 태그
+#### c:url 태그
 
 - URL을 생성하고 쿼리 스트링을 미리 설정하는 태그이다.
     
@@ -226,9 +256,9 @@
     ```
     
 
-## 6. JSTL Formatting Tags
+### JSTL Formatting Tags
 
-### 6.1. fmt:formatNumber 태그
+#### fmt:formatNumber 태그
 
 - 숫자의 포맷을 통화 기호, ',' 표시, % 표시 등 원하는 쓰임에 맞게 지정할 수 있는 태그이다.
     
@@ -254,7 +284,7 @@
     ```
     
 
-### 6.2. fmt:formatDate 태그
+#### fmt:formatDate 태그
 
 - 날짜나 시간의 포맷 방식을 지정하기 위해 사용하는 태그이다.
 - value 속성으로는 java.util.Date() 객체를 사용해야 한다.
@@ -277,7 +307,7 @@
     ```
     
 
-### 6.3. fmt:setLocale 태그
+#### fmt:setLocale 태그
 
 - 지역 설정을 통해 통화 기호나 시간 대역을 다르게 설정 가능하다.
     
@@ -287,7 +317,7 @@
     ```
     
 
-## 7. JSTL Function
+### JSTL Function
 
 - 문자열 처리에 관련된 함수들을 EL 구문에서 사용할 수 있게 하는 라이브러리이다.
     

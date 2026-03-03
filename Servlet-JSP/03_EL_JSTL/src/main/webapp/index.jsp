@@ -1,4 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+
+<c:set var="contextPath" value="${ pageContext.request.contextPath }"/>
+
 <!DOCTYPE html>
 <html lang="ko">
     <head>
@@ -17,19 +21,29 @@
         <h2>2. EL 연산자</h2>
         <a href="${ pageContext.request.contextPath }/views/el/elOperators.jsp">View Details</a>
 
-        <br>
+
         <h1>JSTL(JSP Standard Tag Library)</h1>
 
-        <h2>JSP Action Tag</h2>
+        <h2>1. JSP Action Tag</h2>
 
         <p>
             JSP에서 자바코드를 직접 입력하지 않아도 특정 작업을 수행할 수 있도록 사용하는 태그
         </p>
+
         <h3>표준 액션 태그</h3>
         <p>
             별도의 라이브러리 없이 사용 가능한 기본 제공 액션 태그
         </p>
         <a href="${ pageContext.request.contextPath }/views/actiontag/include.jsp">include</a>
         <a href="${ pageContext.request.contextPath }/views/actiontag/forward.jsp">forward</a>
+
+        <h2>2. JSTL</h2>
+
+        <p>
+            JSP에서 자주 사용하는 코드들을 사용하기 쉽게 커스텀 태그로 만들어 표준으로 제공
+        </p>
+        <a href="${ contextPath }/views/jstl/core.jsp">View Details</a>
+
+
     </body>
 </html>
