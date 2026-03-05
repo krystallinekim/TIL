@@ -26,7 +26,7 @@
 
                 <br><br>
 
-                <input type="button" onclick="alert('미구현');" value="회원가입">
+                <input type="button" onclick="location.assign('${ contextPath }/auth/sign-up');" value="회원가입">
                 <input type="submit" value="로그인">
 
             </form>

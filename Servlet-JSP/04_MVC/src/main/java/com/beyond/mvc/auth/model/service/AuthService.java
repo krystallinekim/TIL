@@ -4,4 +4,6 @@ import com.beyond.mvc.auth.model.vo.User;
 
 public interface AuthService {
     User login(String userId, String userPwd);
+
+    int save(User user);
 }

@@ -23,4 +23,13 @@ public class AuthServiceImpl implements AuthService {
 
         return user;
     }
+
+    @Override
+    public int save(User user) {
+        int result;
+
+        result = authDao.insertUser(user);
+
+        return result;
+    }
 }

@@ -53,9 +53,7 @@ public class AuthDaoImpl implements AuthDao {
                        .updatedAt(resultSet.getDate("updated_at"))
                        .build();
             }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         } finally {
             try {
@@ -68,5 +66,45 @@ public class AuthDaoImpl implements AuthDao {
         }
 
         return user;
+    }
+
+    @Override
+    public int insertUser(User user) {
+        int result = 0;
+        Connection connection = null;
+        String query = "INSERT INTO user VALUES(NULL,?,?,DEFAULT,?,?,?,?,?,DEFAULT,DEFAULT,DEFAULT)";
+        PreparedStatement statement = null;
+
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+
+            connection = DriverManager.getConnection(
+                    "jdbc:mariadb://localhost:3306/web",
+                    "beyond",
+                    "beyond"
+            );
+            statement = connection.prepareStatement(query);
+            statement.setString(1, user.getUsername());
+            statement.setString(2, user.getPassword());
+            statement.setString(3, user.getNickname());
+            statement.setString(4, user.getPhone());
+            statement.setString(5, user.getEmail());
+            statement.setString(6, user.getAddress());
+            statement.setString(7, user.getHobby());
+
+            result = statement.executeUpdate();
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                statement.close();
+                connection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return result;
     }
 }
