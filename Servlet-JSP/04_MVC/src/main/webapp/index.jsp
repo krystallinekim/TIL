@@ -14,19 +14,32 @@
     <body>
         <h2>Hello World!</h2>
 
-        <form action="${ contextPath }/auth/login" method="post">
-            <label for="userId">아이디 : </label>
-            <input type="text" name="userId" id="userId" required>
+        <c:if test="${ empty loginUser }">
+            <form action="${ contextPath }/auth/login" method="post">
+                <label for="userId">아이디 : </label>
+                <input type="text" name="userId" id="userId" required>
 
-            <br>
+                <br>
 
-            <label for="userPwd">비밀번호 : </label>
-            <input type="password" name="userPwd" id="userPwd" required>
+                <label for="userPwd">비밀번호 : </label>
+                <input type="password" name="userPwd" id="userPwd" required>
 
+                <br><br>
+
+                <input type="button" onclick="alert('미구현');" value="회원가입">
+                <input type="submit" value="로그인">
+
+            </form>
+        </c:if>
+
+        <c:if test="${ not empty loginUser }">
+            ${ loginUser.nickname }님 안녕하세요!
             <br><br>
 
-            <input type="button" onclick="alert('미구현');" value="회원가입">
-            <input type="submit" value="로그인">
-        </form>
+            <form action="${ contextPath }/auth/logout" method="post">
+                <input type="submit" value="로그아웃">
+            </form>
+        </c:if>
+
     </body>
 </html>

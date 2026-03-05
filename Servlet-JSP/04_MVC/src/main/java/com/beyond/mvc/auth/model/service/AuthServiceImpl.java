@@ -17,6 +17,10 @@ public class AuthServiceImpl implements AuthService {
 
         user = authDao.getUserById(userId);
 
+        if (user == null || !user.getPassword().equals(userPwd)) {
+            return null;
+        }
+
         return user;
     }
 }

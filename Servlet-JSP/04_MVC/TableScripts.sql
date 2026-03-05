@@ -32,7 +32,7 @@ VALUES('admin', '1234', 'ROLE_ADMIN', '관리자', '01023234341', 'admin@gmail.c
 
 -- 데이터 조회web
 SELECT * FROM user
-WHERE username = 'admin' AND status ='Y';
+WHERE usernameweb = 'admin' AND status ='Y';
 
 -- 멤버 조회
 -- SELECT * FROM user WHERE username=? AND status='Y'

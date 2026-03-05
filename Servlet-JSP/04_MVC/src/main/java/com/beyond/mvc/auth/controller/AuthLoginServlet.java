@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -25,12 +26,19 @@ public class AuthLoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session;
         String userId = request.getParameter("userId");
         String userPwd = request.getParameter("userPwd");
 
         User loginUser = authService.login(userId, userPwd);
 
-        System.out.println(loginUser);
+        if (loginUser != null) {
+            session = request.getSession();
+
+            session.setAttribute("loginUser", loginUser);
+        }
+
+        // System.out.println(loginUser);
 
         response.sendRedirect(request.getContextPath() + "/");
     }
