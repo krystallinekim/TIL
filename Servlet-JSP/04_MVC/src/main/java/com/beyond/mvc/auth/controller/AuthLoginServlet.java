@@ -32,6 +32,7 @@ public class AuthLoginServlet extends HttpServlet {
 
         User loginUser = authService.login(userId, userPwd);
 
+        // System.out.println(userId + ", " + userPwd);
 
         if (loginUser != null) {
             session = request.getSession();

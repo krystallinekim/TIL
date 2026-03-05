@@ -21,8 +21,8 @@
             <td><input type="text" id="userName" name="userName" placeholder="아이디(4글자 이상)" required/></td>
         </tr>
         <tr>
-            <th><label for="password">패스워드</label></th>
-            <td><input type="password" id="password" name="password" placeholder="패스워드" required/></td>
+            <th><label for="userPwd">패스워드</label></th>
+            <td><input type="password" id="userPwd" name="userPwd" placeholder="패스워드" required/></td>
         </tr>
         <tr>
             <th><label for="userPwd2">패스워드 확인</label></th>

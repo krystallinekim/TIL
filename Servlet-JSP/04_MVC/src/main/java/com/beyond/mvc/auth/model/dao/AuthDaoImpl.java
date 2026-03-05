@@ -3,34 +3,24 @@ package com.beyond.mvc.auth.model.dao;
 import com.beyond.mvc.auth.model.vo.User;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.beyond.mvc.common.jdbc.JDBCTemplate.close;
+
 public class AuthDaoImpl implements AuthDao {
 
     @Override
-    public User getUserById(String userId) {
+    public User getUserById(Connection connection, String userId) {
         User user = null;
-        Connection connection = null;
-        // Statement statement = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
-        // String query = "SELECT * FROM user WHERE username = 'admin' AND status ='Y'";
-        // String query = "SELECT * FROM user WHERE username = '" + userId + "' AND status ='Y'";
         String query = "SELECT * FROM user WHERE username = ? AND status ='Y'";
 
         try {
             Class.forName("org.mariadb.jdbc.Driver");
 
-            connection = DriverManager.getConnection(
-                    "jdbc:mariadb://localhost:3306/web",
-                    "beyond",
-                    "beyond"
-            );
-            // statement = connection.createStatement();
-            // resultSet = statement.executeQuery(query);
             statement = connection.prepareStatement(query);
 
             statement.setString(1, userId);
@@ -56,34 +46,23 @@ public class AuthDaoImpl implements AuthDao {
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         } finally {
-            try {
-                resultSet.close();
-                statement.close();
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            close(resultSet);
+            close(statement);
         }
 
         return user;
     }
 
     @Override
-    public int insertUser(User user) {
+    public int insertUser(Connection connection, User user) {
         int result = 0;
-        Connection connection = null;
+
         String query = "INSERT INTO user VALUES(NULL,?,?,DEFAULT,?,?,?,?,?,DEFAULT,DEFAULT,DEFAULT)";
         PreparedStatement statement = null;
 
         try {
-            Class.forName("org.mariadb.jdbc.Driver");
-
-            connection = DriverManager.getConnection(
-                    "jdbc:mariadb://localhost:3306/web",
-                    "beyond",
-                    "beyond"
-            );
             statement = connection.prepareStatement(query);
+
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getPassword());
             statement.setString(3, user.getNickname());
@@ -94,15 +73,10 @@ public class AuthDaoImpl implements AuthDao {
 
             result = statement.executeUpdate();
 
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            e.printStackTrace();
         } finally {
-            try {
-                statement.close();
-                connection.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            close(statement);
         }
 
         return result;

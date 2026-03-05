@@ -2,8 +2,10 @@ package com.beyond.mvc.auth.model.dao;
 
 import com.beyond.mvc.auth.model.vo.User;
 
-public interface AuthDao {
-    User getUserById(String userId);
+import java.sql.Connection;
 
-    int insertUser(User user);
+public interface AuthDao {
+    User getUserById(Connection connection, String userId);
+
+    int insertUser(Connection connection, User user);
 }

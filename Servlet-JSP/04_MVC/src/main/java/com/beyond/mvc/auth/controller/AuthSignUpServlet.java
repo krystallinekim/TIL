@@ -34,7 +34,7 @@ public class AuthSignUpServlet extends HttpServlet {
 
         User user = User.builder()
                 .username(request.getParameter("userName"))
-                .password(request.getParameter("password"))
+                .password(request.getParameter("userPwd"))
                 .nickname(request.getParameter("nickname"))
                 .phone(request.getParameter("phone"))
                 .email(request.getParameter("email"))
