@@ -1,98 +1,97 @@
 <%@ page import="com.beyond.eljstl.Student" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<!DOCTYPE html>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <html lang="ko">
-    <head>
-        <meta charset="UTF-8">
-        <title>EL 연산자</title>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <title>EL 연산자</title>
+</head>
+<body>
+    <h2>EL 연산자</h2>
 
-    <body>
-        <h1>EL 연산자</h1>
-        <h2>산술연산자</h2>
-        <p>
-            10 + 3 = ${ 10 + 3 }<br>
-            10 - 3 = ${ 10 - 3 }<br>
-            10 * 3 = ${ 10 * 3 }<br>
-            10 / 3 = ${ 10 / 3 } 또는 ${ 10 div 3 }<br>
-            10 % 3 = ${ 10 % 3 } 또는 ${ 10 mod 3 }<br>
-            연산자, 혹은 키워드를 통해 연산이 가능함
-        </p>
-        <h2>논리연산자</h2>
-        <p>
-            True and False = ${ true && false } 또는 ${ true and false }<br>
-            True or False = ${ true || false } 또는 ${ true or false }<br>
-            not True = ${ !true }
-        </p>
+    <h3>1. 산술 연산자</h3>
+    ${ 10 + 5 }<br>
+    ${ 10 - 5 }<br>
+    ${ 10 * 5 }<br>
+    ${ 10 / 5 } 또는 ${ 10 div 5 }<br>
+    ${ 10 % 3 } 또는 ${ 10 mod 3 }<br>
 
-        <h2>비교연산자</h2>
-        <h3>숫자 비교</h3>
-        <%
-            int a = 10;
-            int b = 3;
+    <h3>2. 논리 연산자</h3>
+    ${ true && true} 또는 ${ true and true}
+    <br>
+    ${ true || false} 또는 ${ true or false}
+    <br>
+    ${ !(10 > 5) } 또는 ${ not(10 > 5) }
 
-            request.setAttribute("a", a);
-            request.setAttribute("b", b);
-        %>
-        <p>
-            표현식 태그를 사용할 경우: <%= (Integer) request.getAttribute("a") > (Integer) request.getAttribute("b") %><br>
-            그냥 사용할 경우 object 타입 끼리의 계산이라 계산이 불가함 - 매우 길고 복잡하다
-        </p>
+    <h3>3. 비교 연산자</h3>
 
-        <p>
-            EL을 사용할 경우 자동으로 형변환을 해서 계산한다.<br>
-            10 > 3 = ${ a > b } 또는 ${ a gt b }<br>
-            10 >= 3 = ${ a >= b } 또는 ${ a ge b }<br>
-            10 < 3 = ${ a < b } 또는 ${ a lt b }<br>
-            10 <= 3 = ${ a <= b } 또는 ${ a le b }<br>
-        </p>
+    <h4>1) 숫자 비교</h4>
+    <%
+        int big = 10;
+        int small = 3;
 
-        <h3>객체 동등 비교</h3>
-        <%
-            request.setAttribute("str1", "Hello");
-            request.setAttribute("str2", new String("Hello"));
-            request.setAttribute("student1", new Student("홍길동", 34, 80, 30));
-            request.setAttribute("student2", new Student("홍길동", 34, 80, 30));
-        %>
-        <p>
-            표현식 태그 - 객체의 주소를 비교하므로 값이 같아도 일반 동등비교로는 다르다고 나온다.<br>
-            str1 == str2 = <%= request.getAttribute("str1") == request.getAttribute("str2")%><br>
-            str1.equals(str2) = <%= request.getAttribute("str1").equals(request.getAttribute("str2"))%><br>
-            student1 == student2 = <%= request.getAttribute("student1") == request.getAttribute("student2")%><br>
-            student1.equals(student2) = <%= request.getAttribute("student1").equals(request.getAttribute("student2"))%><br>
-        </p>
-        <p>
-            EL의 경우, 알아서 값을 가지고 비교함. 내부적으로 `.equals()` 메서드를 호출해 비교한다.<br>
-            str1 == str2 = ${str1 == str2}<br>
-            student1 == student2 = ${student1 == student2}<br>
-        </p>
+        request.setAttribute("big", big);
+        request.setAttribute("small", small);
+    %>
+    <%-- Object 타입의 산술 연산, 비교 연산은 수행할 수 없다.  --%>
+    <%-- 표현식 태그 : <%= request.getAttribute("big") > request.getAttribute("small") %> --%>
+    표현식 태그 : <%= (Integer) request.getAttribute("big") > (Integer) request.getAttribute("small") %>
 
-        <h3>null 비교</h3>
-        <%
-            String str = null;
-            List<String> names = new ArrayList<>();
+    <br>
 
-            request.setAttribute("str", str);
-            request.setAttribute("names", names);
-        %>
+    <%-- EL은 영역 객체의 속성을 자동으로 형 변환 후 연산을 처리한다. --%>
+    EL : ${ big > small } 또는 ${ big gt small }<br>
+    EL : ${ big >= small } 또는 ${ big ge small }<br>
+    EL : ${ big < small } 또는 ${ big lt small }<br>
+    EL : ${ big <= small } 또는 ${ big le small }<br>
+    EL : ${ big == small } 또는 ${ big eq small }<br>
+    EL : ${ big != small } 또는 ${ big ne small }<br>
 
-        <p>
-            표현식 태그 - 일반 변수의 경우<br>
-            str == null = <%= str == null %><br>
-            names == null = <%= names == null %><br>
-            names.isEmpty() = <%= names.isEmpty() %><br>
-        </p>
-        <p>
-            EL에서는 ==null과 .isEmpty()를 합쳐서 empty로 사용함. null이 아니지만, 내용이 없으면 empty에서는 true로 나온다.<br>
-            str == null = ${ str == null }<br>
-            str == empty = ${ empty str }<br>
-            names == null = ${ names == null }<br>
-            names == empty = ${ empty names }<br>
+    <h4>2) 객체의 동등 비교</h4>
+    <%
+        request.setAttribute("str1", "Hello");
+        request.setAttribute("str2", new String("Hello"));
+        request.setAttribute("student1", new Student("홍길동", 34, 80, 80));
+        request.setAttribute("student2", new Student("홍길동", 34, 80, 80));
+        // request.setAttribute("student2", new Student("성춘향", 24, 90, 90));
+    %>
+    표현식 태그 :
+    <%= request.getAttribute("str1") == request.getAttribute("str2") %>,
+    <%= request.getAttribute("str1").equals(request.getAttribute("str2")) %>
+    <br>
+    <%-- EL에서 객체의 == 연산은 equals() 호출과 같은 동작을 한다. --%>
+    EL : ${ str1 == str2 }
+    <br>
+    EL : ${ str1 != str2 }
+    <br>
+    EL : ${ student1 == student2 }
+    <br>
+    EL : ${ student1 != student2 }
 
+    <h4>3) 객체의 null 비교</h4>
+    <%
+        // String str = null;
+        String str = ""; // 빈 문자열의 경우에 empty 연산의 결과는 true이다.
+        List<String> names = new ArrayList<>();
 
+        // names.add("홍길동");
 
-        </p>
-    </body>
+        request.setAttribute("str", str);
+        request.setAttribute("names", names);
+    %>
+    표현식 태그 : <%= str == null %>, <%= names == null %>, <%= names.isEmpty() %>
+    <br>
+    EL : ${ str == null }, ${ names == null }
+    <br>
+    EL : ${ empty str}, ${ empty names }
+
+    <br><br><br><br><br>
+    <br><br><br><br><br>
+    <br><br><br><br><br>
+    <br><br><br><br><br>
+    <br><br><br><br><br>
+    <br><br><br><br><br>
+    <br><br><br><br><br>
+</body>
 </html>

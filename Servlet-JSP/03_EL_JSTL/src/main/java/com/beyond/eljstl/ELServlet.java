@@ -14,34 +14,29 @@ import java.io.Serial;
 @WebServlet("/el.do")
 public class ELServlet extends HttpServlet {
 
+    @Serial
+    private static final long serialVersionUID = -2952761693551385580L;
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        // 세션, 어플리케이션 객체(요청 객체는 내장객체로 제공)
         HttpSession session = request.getSession();
         ServletContext application = request.getServletContext();
 
-        // 요청영역에 데이터를 저장
-        request.setAttribute("scope", "request");
+        // Request 영역에 데이터를 저장
         request.setAttribute("classRoom", 1);
-        request.setAttribute("student", new Student("홍길동", 34, 70, 30));
+        request.setAttribute("student", new Student("홍길동", 34, 70, 70));
+        request.setAttribute("scope", "request");
 
-        // 세션 영역에 데이터 저장
-        session.setAttribute("scope", "session");
+        // Session 영역에 데이터를 저장
         session.setAttribute("classRoom", 2);
-        session.setAttribute("student", new Student("이몽룡", 24, 80, 50));
+        session.setAttribute("student", new Student("성춘향", 24, 90, 90));
+        session.setAttribute("scope", "session");
 
-        // 어플리케이션 영역에 데이터 저장
-        application.setAttribute("scope", "application");
+        // Application 영역에 데이터를 저장
         application.setAttribute("classRoom", 3);
-        application.setAttribute("student", new Student("성춘향", 18, 90, 70));
+        application.setAttribute("student", new Student("이몽룡", 24, 80, 80));
+        application.setAttribute("scope", "application");
 
-
-
-        // 비즈니스 로직 수행 후, RequestDispatcher 객체를 이용해 포워딩
         request.getRequestDispatcher("/views/el/el.jsp").forward(request, response);
     }
-
-    @Serial
-    private static final long serialVersionUID = -9182725307739245528L;
 }
