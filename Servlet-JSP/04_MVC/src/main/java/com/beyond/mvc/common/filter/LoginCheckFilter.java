@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-@WebFilter(filterName = "loginCheckFilter", servletNames = { "authProfileServlet" })
+@WebFilter(filterName = "loginCheckFilter", servletNames = { "authProfileServlet", "authDeleteServlet" })
 public class LoginCheckFilter implements Filter {
 
     @Override

@@ -7,5 +7,5 @@ public interface AuthService {
 
     int save(User user);
 
-    void delete(User user);
+    int delete(int userNo);
 }

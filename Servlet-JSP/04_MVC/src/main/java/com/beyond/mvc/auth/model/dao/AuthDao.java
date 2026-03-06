@@ -10,4 +10,8 @@ public interface AuthDao {
     int insertUser(Connection connection, User user);
 
     int updateUser(Connection connection, User user);
+
+    int deleteUser(Connection connection, int userNo);
+
+    int updateUserStatus(Connection connection, int userNo, String status);
 }

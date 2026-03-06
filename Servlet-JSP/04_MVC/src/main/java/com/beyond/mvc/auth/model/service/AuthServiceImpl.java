@@ -62,7 +62,21 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void delete(User user) {
+    public int delete(int userNo) {
+        int result;
+        Connection connection = getConnection();
 
+        // result = authDao.deleteUser(connection, userNo);
+        result = authDao.updateUserStatus(connection, userNo, "N");
+
+        if (result > 0) {
+            commit(connection);
+        } else {
+            rollback(connection);
+        }
+
+        close(connection);
+
+        return result;
     }
 }

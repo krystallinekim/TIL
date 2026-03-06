@@ -109,4 +109,52 @@ public class AuthDaoImpl implements AuthDao {
 
         return result;
     }
+
+    @Override
+    public int deleteUser(Connection connection, int userNo) {
+
+        int result = 0;
+        String query = "DELETE FROM user WHERE no=?";
+        PreparedStatement statement = null;
+
+        try {
+            statement = connection.prepareStatement(query);
+
+            statement.setInt(1, userNo);
+
+            result = statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(statement);
+        }
+
+        return result;
+    }
+
+    @Override
+    public int updateUserStatus(Connection connection, int userNo, String status) {
+        int result = 0;
+        String query = "UPDATE user SET status=? WHERE no=?";
+
+        PreparedStatement statement = null;
+
+
+        try {
+            statement = connection.prepareStatement(query);
+
+            statement.setString(1, status);
+            statement.setInt(2, userNo);
+
+            result = statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(statement);
+        }
+
+        return result;
+    }
 }

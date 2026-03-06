@@ -26,7 +26,7 @@
         </tr>
         <tr>
             <th><label for="userPwd2">패스워드 확인</label></th>
-            <td><input type="password" id="userPwd2" placeholder="패스워드 확인" /></td>
+            <td><input type="password" id="userPwd2" name = "userPwd2" placeholder="패스워드 확인" /></td>
         </tr>
         <tr>
             <th><label for="nickname">닉네임</label></th>
