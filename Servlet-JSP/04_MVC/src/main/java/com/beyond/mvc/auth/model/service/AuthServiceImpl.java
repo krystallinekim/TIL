@@ -41,7 +41,14 @@ public class AuthServiceImpl implements AuthService {
         int result;
         Connection connection = getConnection();
 
-        result = authDao.insertUser(connection, user);
+        // PK는 DB에 INSERT되는 시점에 생기므로, 회원가입시 데이터가 들어올 때는 PK가 없음
+        if (user.getNo() > 0) {
+            // PK가 있다면, 이미 DB에 있는 데이터를 UPDATE
+            result = authDao.updateUser(connection, user);
+        } else {
+            // PK가 없으므로 새로 저장
+            result = authDao.insertUser(connection, user);
+        }
 
         if (result > 0) {
             commit(connection);
@@ -52,5 +59,10 @@ public class AuthServiceImpl implements AuthService {
         close(connection);
 
         return result;
+    }
+
+    @Override
+    public void delete(User user) {
+
     }
 }

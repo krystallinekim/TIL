@@ -2,10 +2,12 @@ package com.beyond.mvc.auth.model.vo;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Date;
 
+@Setter
 @Getter
 @Builder
 @ToString

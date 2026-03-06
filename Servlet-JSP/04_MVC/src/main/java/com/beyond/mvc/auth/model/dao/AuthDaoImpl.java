@@ -81,4 +81,32 @@ public class AuthDaoImpl implements AuthDao {
 
         return result;
     }
+
+    @Override
+    public int updateUser(Connection connection, User user) {
+        int result = 0;
+
+        String query = "UPDATE user SET nickname=?,phone=?,email=?,address=?,hobby=?,updated_at=CURDATE() WHERE no=?";
+        PreparedStatement statement = null;
+
+        try {
+            statement = connection.prepareStatement(query);
+
+            statement.setString(1, user.getNickname());
+            statement.setString(2, user.getPhone());
+            statement.setString(3, user.getEmail());
+            statement.setString(4, user.getAddress());
+            statement.setString(5, user.getHobby());
+            statement.setInt(6, user.getNo());
+
+            result = statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(statement);
+        }
+
+        return result;
+    }
 }

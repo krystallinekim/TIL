@@ -8,4 +8,6 @@ public interface AuthDao {
     User getUserById(Connection connection, String userId);
 
     int insertUser(Connection connection, User user);
+
+    int updateUser(Connection connection, User user);
 }
