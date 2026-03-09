@@ -14,6 +14,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>21</maven.compiler.release>
+    <org.springframework.version>6.2.16</org.springframework.version>
   </properties>
 
   <dependencyManagement>
@@ -51,7 +52,27 @@
       <scope>test</scope>
     </dependency>
 
-    
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.42</version>
+    </dependency>
+
+    <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-context -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${org.springframework.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-test -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${org.springframework.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

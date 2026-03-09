@@ -17,8 +17,6 @@ public class Owner {
     public Owner(String name, int age, Pet pet) {
         this.name = name;
         this.age = age;
-        // this.dog = dog;
-        // this.cat = cat;
         this.pet = pet;
     }
 

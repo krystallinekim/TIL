@@ -70,11 +70,12 @@
 
 ### XML 방식
 
-- 스프링 컨테이너 구동 시 생성해야 하는 객체(Bean)들과 의존 관계를 XML 파일로 작성하는 방식이다.
+- 애플리케이션 컨텍스트 구동 시 생성해야 하는 객체(Bean)들과 의존 관계를 XML 파일로 작성하는 방식이다.
 - `<beans>` 요소는 최상위 요소로 하위 요소들로 다양한 스프링 설정을 할 수 있다. (DI, AOP, Transaction 등)
-- `<bean>` 요소는 스프링 컨테이너가 관리할 빈을 선언하는 요소이다.
+- `<bean>` 요소는 애플리케이션 컨텍스트가 관리할 빈을 선언하는 요소이다.
     
     ```xml
+    <!-- Student student = new Student(); -->
     <beans>
         <bean id="student" class="com.ismoon.spring.person.model.vo.Student"/>
     </beans>
@@ -84,11 +85,19 @@
     
     ```xml
     <beans>
+        <!-- 
+        Student student = new Student();
+
+        student.setName("홍길동");
+        student.setWallet(money);
+        -->
         <bean id="student" class="com.ismoon.spring.person.model.vo.Student">
             <property name="name" value="홍길동"/>
+            <!-- 다른 객체(Bean)을 주고 싶다면, value 대신 ref를 사용함 -->
             <property name="wallet" ref="money"/>
         </bean>
         
+        <!-- Wallet money = new Wallet(); -->
         <bean id="money" class="com.ismoon.spring.wallet.model.vo.Wallet" />
     </beans>
     ```
@@ -97,27 +106,35 @@
     
     ```xml
     <beans>
+        <!-- Student student = new Student("홍길동", money) -->
         <bean id="student" class="com.ismoon.spring.person.model.vo.Student">
             <constructor-arg name="name" value="홍길동"/>
-            <constructor-arg name="wallet" ref="money"/>
+            <!-- name 대신에 순서를 의미하는 index를 쓸 수도 있다(잘 안쓴다) -->
+            <constructor-arg index="1" ref="money"/>
         </bean>
         
+        <!-- Wallet money = new Wallet(); -->
         <bean id="money" class="com.ismoon.spring.wallet.model.vo.Wallet" />
     </beans>
     ```
-    
+
 - `<import>` 요소를 사용하여 다른 XML 설정을 가져올 수 있다.
+    - 실제로 운영할 때는 주제별로 XML 파일들을 따로따로 관리해야 하기 때문
     
     ```xml
     <beans>
         <import resource="config.xml"/>
     </beans>
     ```
-    
+
+- `<property>`, `<constructor-arg>`를 이용해 빈을 주입할 때, 직접 요소를 사용하는게 아니라 p-namespace, c-namespace를 이용해 더 간단하게 표현할 수도 있다.
+
+- XML 방식은 현재 권장되는 방식은 아니다.
+
 ### Java 방식
 
-- 스프링 컨테이너 구동 시 생성해야 하는 객체(Bean)들과 의존 관계를 Java 파일로 작성하는 방식이다.
-- 스프링 컨테이너가 자바 파일을 설정 파일로 식별하기 위해서는 @Configuration 어노테이션을 클래스에 작성해야 한다.
+- 애플리케이션 컨텍스트 구동 시 생성해야 하는 객체(Bean)들과 의존 관계를 Java 파일로 작성하는 방식이다.
+- 애플리케이션 컨텍스트가 자바 파일을 설정 파일로 식별하기 위해서는 `@Configuration` 어노테이션을 클래스에 작성해야 한다.
     
     ```java
     @Configuration
@@ -125,7 +142,7 @@
     }
     ```
     
-- 자바 파일에서 빈을 선언하기 위해서는 객체를 리턴하는 메소드를 만들고 @Bean 어노테이션을 메소드에 작성해야 한다.
+- 자바 파일에서 빈을 선언하기 위해서는 객체를 리턴하는 메소드를 만들고 `@Bean` 어노테이션을 메소드에 작성해야 한다.
     
     ```java
     @Configuration

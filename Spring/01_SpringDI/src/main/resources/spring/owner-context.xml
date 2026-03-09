@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <import resource="pet-context.xml"/>
+    <!--1. Setter를 이용해 빈 등록하기-->
+    <!--
+    Owner hong = new Owner();
+
+    hong.setName("홍길동");
+    hong.setAge(34);
+    hong.setPet(dog);
+    -->
+
+    <bean id="hong" class="com.beyond.di.owner.Owner">
+        <property name="name" value="홍길동"/>
+        <property name="age" value="34"/>
+        <!--다른 객체(Bean)을 주고 싶다면, value 대신 ref를 사용함-->
+        <property name="pet" ref="dog"/>
+    </bean>
+
+    <!-- p namespace를 이용해 property 태그 없이 더 간단하게 표현할 수도 있다. -->
+    <bean id="hong2" class="com.beyond.di.owner.Owner"
+          p:name="홍길동" p:age="34" p:pet-ref="dog"/>
+
+    <!--2. 생성자를 통해 빈 생성-->
+    <!--Owner lee = new Owner("이몽룡", 24, cat);-->
+    <bean id="lee" class="com.beyond.di.owner.Owner">
+        <constructor-arg name="name" value="이몽룡"/>
+        <!--index를 name 대신에 쓸 수도 있다.-->
+        <constructor-arg index="1" value="24"/>
+        <constructor-arg name="pet" index="2" ref="cat"/>
+    </bean>
+
+    <!-- c namespace를 이용하면 constructor-arg 없이 표현 가능 -->
+    <bean id="lee2" class="com.beyond.di.owner.Owner"
+          c:_0="이몽룡" c:_1="24" c:_2-ref="cat"/>
+</beans>
