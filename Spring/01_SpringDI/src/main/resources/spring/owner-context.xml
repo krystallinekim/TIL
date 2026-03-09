@@ -17,7 +17,7 @@
     hong.setPet(dog);
     -->
 
-    <bean id="hong" class="com.beyond.di.owner.Owner">
+    <bean id="hong" class="com.beyond.di.owner.Owner" primary="true">
         <property name="name" value="홍길동"/>
         <property name="age" value="34"/>
         <!--다른 객체(Bean)을 주고 싶다면, value 대신 ref를 사용함-->

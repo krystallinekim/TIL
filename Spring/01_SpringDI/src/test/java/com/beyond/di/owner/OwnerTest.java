@@ -1,16 +1,43 @@
 package com.beyond.di.owner;
 
+import com.beyond.di.config.RootConfig;
 import com.beyond.di.pet.Cat;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+// Junit에서 Spring을 사용할 수 있도록 자동으로 확장(SpringExtension.class 기준) -> 애플리케이션 컨텍스트를 직접 만들 필요가 없어진다.
+@ExtendWith(SpringExtension.class)
+// @ContextConfiguration에서 설정파일어 컨텍스트를 생성함
+// locations: xml 설정 읽어옴
+// @ContextConfiguration(locations = "classpath:spring/root-context.xml")
+//
+@ContextConfiguration(classes = RootConfig.class)
 @DisplayName("Owner 클래스 테스트")
 class OwnerTest {
+
+    @Autowired
+    @Qualifier("lee")
+    private Owner owner;
+
+    @Test
+    void autowiredTest() {
+        System.out.println(owner);
+
+        assertThat(owner).isNotNull();
+        assertThat(owner.getPet()).isNotNull();
+    }
+
 
     @Test
     @Disabled
@@ -19,7 +46,6 @@ class OwnerTest {
     }
 
     @Test
-    @Disabled
     @DisplayName("Owner 객체 생성 테스트")
     void createOwner() {
 
@@ -62,4 +88,22 @@ class OwnerTest {
         assertThat(owner).isNotNull();
         assertThat(owner.getPet()).isNotNull();
     }
+
+    @Test
+    @DisplayName("Java 방식 어플리케이션 컨텍스트 테스트")
+    void annotationConfigApplicationContextTest() {
+        ApplicationContext context = new AnnotationConfigApplicationContext(RootConfig.class);
+
+        // Owner owner = context.getBean("hong", Owner.class);
+        Owner owner = context.getBean("lee", Owner.class);
+
+        System.out.println(owner);
+
+        assertThat(context).isNotNull();
+        assertThat(owner).isNotNull();
+        assertThat(owner.getPet()).isNotNull();
+    }
+
+
+
 }

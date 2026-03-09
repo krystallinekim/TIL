@@ -135,22 +135,22 @@
 
 - 애플리케이션 컨텍스트 구동 시 생성해야 하는 객체(Bean)들과 의존 관계를 Java 파일로 작성하는 방식이다.
 - 애플리케이션 컨텍스트가 자바 파일을 설정 파일로 식별하기 위해서는 `@Configuration` 어노테이션을 클래스에 작성해야 한다.
-    
+- 설정 파일에는 어떠한 비즈니스 로직도 작성하지 않는다.
+
     ```java
     @Configuration
-    public class JavaConfig {
-    }
+    public class JavaConfig { ... }
     ```
-    
+
+
 - 자바 파일에서 빈을 선언하기 위해서는 객체를 리턴하는 메소드를 만들고 `@Bean` 어노테이션을 메소드에 작성해야 한다.
+    - `@Bean` 어노테이션은 싱글턴 패턴을 따른다. 하나 만들고 나면 다음부터는 그 객체를 주입함.
     
     ```java
     @Configuration
     public class JavaConfig {
         @Bean
-        public Student student() {
-            return new Student();
-        }
+        public Student student() { return new Student(); }
     }
     ```
     
@@ -159,7 +159,9 @@
     ```java
     @Configuration
     public class JavaConfig {
-        @Bean
+        // Bean 이름을 따로 설정할 수 있다.
+        // 설정하지 않으면 클래스 이름(student)을 따라감.
+        @Bean("hong")
         public Student student() {
             Student student = new Student();
         
@@ -170,9 +172,7 @@
         }
         
         @Bean
-        public Wallet wallet() {
-            return new Wallet();
-        }
+        public Wallet wallet() { return new Wallet(); }
     }
     ```
     
@@ -181,27 +181,72 @@
     ```java
     @Configuration
     public class JavaConfig {
-        @Bean
-        public Student student() {
-            return new Student("홍길동", wallet());
-        }
+        @Bean("hong")
+        public Student student() { return new Student("홍길동", wallet()); }
         
         @Bean
-        public Wallet wallet() {
-            return new Wallet();
-        }
+        public Wallet wallet() { return new Wallet(); }
     }
     ```
     
-- @Import 어노테이션을 사용하여 다른 Java 설정 파일을 가져올 수 있다.
+- `@Import` 어노테이션을 사용하여 다른 Java 설정 파일을 가져올 수 있다.
+    - value값으로 클래스의 배열을 주면 여러 설정 파일들을 가져올 수도 있다.
     
     ```java
     @Configuration
+    // @Import(value = {Config.class, Config2.class, ...})
     @Import(Config.class)
-    public class JavaConfig {
-    }
+    public class JavaConfig { ... }
     ```
-    
+
+- `@Autowired` 어노테이션을 사용하여 알맞은 타입의 빈을 찾아 자동으로 의존성 주입을 할 수 있다.
+
+    ```java
+    @Bean
+    public Owner lee(@Autowired @Qualifier("dog") Pet pet) { return new Owner("이몽룡", 24, pet); }
+
+    @Bean
+    public Dog dog() { return new Dog(); }
+
+    @Primary
+    @Bean
+    public Cat cat() { return new Cat("야옹이"); }
+
+    // >> lee에는 dog가 pet으로 들어간다.
+    ```
+    - `@Autowired`에서 선언된 타입의 빈이 여러 개일 경우, 어플리케이션 컨텍스트가 어떤 빈을 가져와야 할 지 몰라 에러가 발생한다.
+        - `@Primary`를 이용해 우선적으로 가져올 빈을 선언할 수 있다.
+        - `@Qualifier(이름)`을 이용하면 특정 빈을 선택해서 선언할 수 있다.
+
+
+- 어플리케이션 컨텍스트를 직접 생성하지 않고, 자동으로 생성하도록 할 수 있다.
+    - `@ExtendWith`을 이용하면, Junit에서 Spring을 사용할 수 있도록 자동으로 확장(`SpringExtension.class` 기준)해준다.
+    - `@ContextConfiguration`에서 설정파일을 주면 컨텍스트를 설정대로 생성한다.
+        - XML 설정이면 `locations = classpath: ... `, 자바 설정이면 `classes = 설정 클래스`
+
+    - 이 때 `@Autowired`를 이용해 원하는 타입의 빈을 자동으로 연결할 수 있다.
+        - 역시 `@Qualifier`를 이용해 원하는 빈을 선언할 수 있다.
+        ```java
+        @ExtendWith(SpringExtension.class)
+        @ContextConfiguration(locations = "classpath:spring/root-context.xml")
+        class OwnerTest {
+
+            @Autowired
+            @Qualifier("lee")
+            private Owner owner;
+                    
+            @Test
+            void autowiredTest() {
+                assertThat(owner).isNotNull();
+                assertThat(owner.getPet()).isNotNull();
+            }
+        }
+        // 이 때 owner에는 lee 빈이 들어간다.
+        ```
+
+
+- `@Autowired` 어노테이션은 필드, 메소드, 생성자에도 적용할 수 있다.
+
 
 ### 어노테이션 방식
 
@@ -233,12 +278,11 @@
     // Java 방식
     @Configuration
     @ComponentScan("com.ismoon.spring")
-    public class JavaConfig {
-    }
+    public class JavaConfig { ... }
     ```
     
-- `@Autowired` 어노테이션을 사용하여 스프링 컨테이너에서 빈을 찾아 자동으로 의존성 주입을 할 수 있다.
-- `@Autowired` 어노테이션은 필드, 메소드, 생성자에 적용할 수 있다.
+
+
 - `@Value` 어노테이션을 사용하여 빈이 아닌 값을 주입할 수 있다.
     
     ```java
