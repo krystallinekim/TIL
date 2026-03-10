@@ -382,6 +382,7 @@
 - AOP는 이러한 횡단 관심사를 분리하고 분리한 기능을 어디에 어떻게 적용할지 선언적으로 정의할 수 있다.
 - AOP의 목적은 횡단 관심사와 이에 영향받는 객체 간 결합도를 낮추는데 있다.
 
+![AOP](img/aop.png)
 
 ### AOP 용어
 
@@ -416,8 +417,11 @@
 ### Spring AOP 구현 방법
 
 - 스프링은 AspectJ의 어노테이션을 사용하여 애스펙트를 생성할 수 있다.
+    - 이 떄 어드바이스에서 해야 하는 작업은 메소드로 정의해서 넣어준다.
+    - 이 어드바이스를 언제 실행할지가 어노테이션(`@Before`, `@After`)으로 작성되고, 포인트컷 지정자를 통해 조인포인트를 좁힐 수 있다.
     
     ```java
+    // Aspect 클래스는 bean이면서 aspect가 된다.
     @Aspect
     @Component
     public class 클래스명 {
@@ -428,7 +432,7 @@
         
         @After("포인트컷 지정자")
         public void after() {
-            //  메소드 실행 후에 적용되는 어드바이스를 정의
+            // 결과에 상관없이 메소드 실행 후에 적용될 어드바이스를 정의
         }
         
         @AfterReturning("포인트컷 지정자")
@@ -447,7 +451,10 @@
         }
     }
     ```
-    
+    - `@After`는 대상 메소드의 수행 결과가 제대로 리턴이 되던, 예외가 발생하던 어드바이스가 실행된다.
+        - `@AfterReturning`, `@AfterThrowing` 으로 케이스를 나눠 주어야 한다.
+
+
 - AsepctJ 어노테이션을 적용을 위해서는 설정 파일에 아래와 같이 프록시 설정을 해야한다.
     
     ```xml
@@ -464,6 +471,59 @@
     public class RootConfig {
     }
     ```
+
+#### 포인트컷 지정자
+
+스프링 AOP에서는, AspectJ의 포인트컷 표현식(어떤 메소드를 실행시킬지)을 이용해 포인트컷 지정자를 표현한다.
+
+```java
+@Before("execution([접근제한자] 리턴타입 클래스.메소드([파라미터, ...])) && args(매개값)")
+```
+- `*`: 모든 타입을 의미함
+- `..`을 주면 0개 이상을 의미
+- 접근제한자는 생략 가능함
+- `args`: 대상 메소드에 전달되는 매개값을 어드바이스에 전달하기 위한 표현식
+
+
+
+1. `@PointCut` 어노테이션을 이용해 포인트컷 지정자도 변수처럼 이용할 수 있다.
+    ```java
+    @Pointcut("execution(* com.beyond.aop.character.Character.quest(..))")
+    public void questPointCut() {}
+
+    @Before("questPointCut()")
+    public void beforeQuest() { ... }
+    ```
+
+2. 대상 메소드에서 주어진 매개변수를 어드바이스에서도 사용할 수 있다.
+    ```java
+    @Pointcut("execution(* com.beyond.aop.character.Character.quest(..)) && args(questName)")
+    public void questPointCut(String questName) {}
+
+    @Before(value = "questPointCut(questName)", argNames = "questName")
+    public void beforeQuest(String questName) { ... }
+    ```
+    
+3. 대상 메소드가 어떤 값을 return할경우, 이 결과값을 `@AfterReturning` 어드바이스에서 이용 가능하다.
+    ```java
+    @AfterReturning(
+            value = "questPointCut(questName)",
+            returning = "result",  // 대상 메소드가 return한 값
+            argNames = "questName, result")
+    public void success(String questName, String result) { ... }
+    ```
+
+4. 대상 메소드가 에러를 throw할 경우에도 이 값을 객체에 넣어서 이용 가능하다.
+    ```java
+    @AfterThrowing(
+            value = "questPointCut(questName)",
+            throwing = "exception",  // 대상 메소드가 throw한 예외
+            argNames = "questName, exception")
+    public void fail(String questName, Exception exception) { ... }
+
+    ```
+
+
 ## POJO (Plain Old Java Object)
 
 - 특정 프레임워크나 기술에 종속되지 않는 순수 자바 객체 기반으로 개발하는 방식을 의미한다.

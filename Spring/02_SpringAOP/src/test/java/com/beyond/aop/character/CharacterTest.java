@@ -33,6 +33,6 @@ class CharacterTest {
     @Test
     @DisplayName("quest 메소드 테스트")
     void questTest() {
-        character.quest("나선검 반환");
+        character.quest("스트라솔름 정화하기");
     }
 }

@@ -23,8 +23,12 @@ public class Character {
 //    @Qualifier("bow")
     private Weapon weapon;
 
-    public void quest(String questName) {
-        System.out.printf("[%s] 퀘스트 진행 중\n", questName);
+    public String quest(String questName) {
+        if (true) {
+            throw new RuntimeException("예외 발생");
+        }
+
+        return String.format("[%s] 퀘스트 진행 중..\n", questName);
     }
 
 }
