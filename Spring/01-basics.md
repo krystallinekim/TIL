@@ -68,7 +68,7 @@
     - 객체 간의 의존 관계를 개발자가 직접 생성하지 않고, 설정 파일(XML, Java Config)이나 어노테이션 설정을 기반으로 애플리케이션 컨텍스트가 객체를 주입한다.
     - 이를 통해 의존 관계에 있는 객체들 간의 결합도를 낮출 수 있다.
 
-### XML 방식
+### XML 설정 파일 이용
 
 - 애플리케이션 컨텍스트 구동 시 생성해야 하는 객체(Bean)들과 의존 관계를 XML 파일로 작성하는 방식이다.
 - `<beans>` 요소는 최상위 요소로 하위 요소들로 다양한 스프링 설정을 할 수 있다. (DI, AOP, Transaction 등)
@@ -131,7 +131,7 @@
 
 - XML 방식은 현재 권장되는 방식은 아니다.
 
-### Java 방식
+### Java 설정 파일
 
 - 애플리케이션 컨텍스트 구동 시 생성해야 하는 객체(Bean)들과 의존 관계를 Java 파일로 작성하는 방식이다.
 - 애플리케이션 컨텍스트가 자바 파일을 설정 파일로 식별하기 위해서는 `@Configuration` 어노테이션을 클래스에 작성해야 한다.
@@ -217,6 +217,19 @@
     - `@Autowired`에서 선언된 타입의 빈이 여러 개일 경우, 어플리케이션 컨텍스트가 어떤 빈을 가져와야 할 지 몰라 에러가 발생한다.
         - `@Primary`를 이용해 우선적으로 가져올 빈을 선언할 수 있다.
         - `@Qualifier(이름)`을 이용하면 특정 빈을 선택해서 선언할 수 있다.
+    
+    - `@Autowired` 로 받을 빈이 없다면, 기본적으로 에러를 반환한다.
+        - required 속성의 기본값이 true이기 때문인데, false를 줄 경우 빈이 없으면 null을 반환한다. 
+        - 보통 기본값 그대로 쓴다. null처리하기도 힘들고, 굳이 할 이유가 없기 때문
+
+        ```java
+        @Autowired(required = false)
+        private Character character;
+
+        @Test
+        void create() { System.out.println(character); }
+        // null을 반환함
+        ```
 
 
 - 어플리케이션 컨텍스트를 직접 생성하지 않고, 자동으로 생성하도록 할 수 있다.
@@ -244,14 +257,15 @@
         // 이 때 owner에는 lee 빈이 들어간다.
         ```
 
-
 - `@Autowired` 어노테이션은 필드, 메소드, 생성자에도 적용할 수 있다.
 
+- 요즘은 보통 어노테이션 방식을 사용하고, 어노테이션을 붙이기 어려운 경우에 자바 방식을 사용한다.
 
 ### 어노테이션 방식
 
 - 스프링 컨테이너 구동 시 생성해야 하는 객체(Bean)들과 의존 관계를 어노테이션을 사용하여 구성하는 방식이다.
-- 어노테이션으로 빈을 선언하기 위해서는 빈으로 생성하고 싶은 클래스에 `@Component`을 작성해야 한다.
+- 어노테이션으로 빈을 선언하기 위해서는 빈으로 생성하고 싶은 클래스에 바로 `@Component`을 작성해야 한다.
+    - 따로 ID를 지정 안하면 클래스명이 빈 이름이 된다.
     
     ```java
     @Component
@@ -265,8 +279,10 @@
     }
     ```
     
-- 컴포넌트 스캐닝(Component Scanning)을 통해 `@Component` 어노테이션이 작성된 클래스가 빈으로 등록된다.
-    
+- 컴포넌트 스캐닝(Component Scanning)을 활성화해 `@Component` 어노테이션이 작성된 클래스가 빈으로 등록된다.
+    - 컴포넌트 스캐닝 자체는 XML 혹은 자바 설정 파일에서 활성화한다고 선언해야 한다.
+    - 컴포넌트 스캐닝의 기준 패키지를 주면, 그 하위의 `@Componenet` 어노테이션이 붙은 클래스를 전부 검색해 빈으로 등록
+
     ```xml
     <!-- XML 방식 -->
     <beans>
@@ -280,24 +296,82 @@
     @ComponentScan("com.ismoon.spring")
     public class JavaConfig { ... }
     ```
-    
 
-
-- `@Value` 어노테이션을 사용하여 빈이 아닌 값을 주입할 수 있다.
+- `@Value` 어노테이션을 사용하면 빈이 아닌 값도 주입할 수 있다.
     
     ```java
     @Component
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
     public class Student {
         @Value("홍길동")
         private String name;
-        
+
         @Autowired
         private Wallet wallet;
     }
     ```
+
+- `@Autowired` 어노테이션을 사용하면 알맞은 타입의 빈을 찾아 자동으로 주입을 할 수 있다.
+    1. 필드에 직접 빈을 주입(필드에 바로 어노테이션 사용), 
+    2. Setter 메소드로 빈을 주입(직접 Setter 메소드를 생성하고 메소드 전체에 어노테이션 사용, lombok의 `@Setter(onMethod_ = @Autowired)` 사용)
+    3. 생성자를 생성할 때 빈을 주입하면 초기화 시 자동으로 알맞은 빈을 주입하게 된다.(직접 생성자 생성, 필드를 final로 선언 후 lombok의 `@RequiredConstructor` 사용)
+        - 가장 선호되는 방식이다. 의존하는 객체가 있어야만 전체 객체가 생성될 수 있기 때문임
+
+    ```java
+    @Component
+    @RequiredConstructor
+    public class Character {
+        private final Weapon weapon;
+    }
+    ```
+
+- `character.properties` 파일을 읽어오기
+
+    1. 설정 파일에 `character.properties` 등록
+        - XML: location 속성에 지정된 properties 파일의 값을 읽어오게 설정
+            ```xml
+            <beans>
+                <context:property-placeholder location="경로"/>`
+            </beans>
+            ```
+        - 자바: 자바 설정 파일에 정해진 타입의 빈을 추가
+            ```java
+            public class RootConfig{
+                @Bean
+                public PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+                    PropertySourcesPlaceholderConfigurer configurer
+                            = new PropertySourcesPlaceholderConfigurer();
+
+                    configurer.setLocation(new ClassPathResource("character.properties"));
+
+                    return configurer;
+                }
+            }
+
+    2. 읽어올 properties 파일이 여러 개인 경우
+        - XML: location에 파일 여러개를 `,`로 구분해서 넣는다.
+            ```xml
+            <context:property-placeholder location="character.properties,driver.properties"/>
+            ```
+        - 자바: `PropertySourcesPlaceholderConfigurer`의 `.setLocations()` 메소드를 이용함.
+        
+            ```java
+            configurer.setLocations(
+                    new ClassPathResource("character.properties"),
+                    new ClassPathResource("driver.properties"));
+            ```
+            ``` 
+
+    3. spring property placeholder를 이용해 프로퍼티 파일의 값을 읽어온다.
+        - 이 떄 플레이스홀더의 형태는 `${key:기본값}` 형태이다.
+            
+        ```java
+        public class Character {
+
+            @Value("${character.name:홍길동}")
+            private String name;
+        
+        }
+        ```
 
 ## AOP (Aspect Oriented Programming, 관점 지향 프로그래밍)
 
