@@ -14,28 +14,28 @@
     <!-- FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
     <Loggers>
         <!-- 일반적인 로그 정책을 의미 -->
-        <Root level="INFO">
+        <Root level="DEBUG">
             <AppenderRef ref="console" additivity="false"/>
         </Root>
 
         <!-- 추가로 필요한 로그 정책을 정의한다. -->
-        <logger name="com.beyond.mvc" level="INFO" additivity="false">
+        <logger name="com.beyond.mvc" level="DEBUG" additivity="false">
             <AppenderRef ref="console"/>
         </logger>
 
-        <Logger name="org.springframework.core" level="INFO" additivity="false">
+        <Logger name="org.springframework.core" level="DEBUG" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
 
-        <Logger name="org.springframework.beans" level="INFO" additivity="false">
+        <Logger name="org.springframework.beans" level="DEBUG" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
 
-        <Logger name="org.springframework.context" level="INFO" additivity="false">
+        <Logger name="org.springframework.context" level="DEBUG" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
 
-        <Logger name="org.springframework.web" level="INFO" additivity="false">
+        <Logger name="org.springframework.web" level="DEBUG" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
     </Loggers>
