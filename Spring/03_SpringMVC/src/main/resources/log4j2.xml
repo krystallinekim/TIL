@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Configuration은 가장 최상위 요소이다. -->
+<Configuration stauts="INFO">
+    <!-- 로그의 출력 위치를 정하는 요소이다. (콘솔, 파일, DB 등등) -->
+    <Appenders>
+        <!-- 콘솔에 로그 메시지를 출력한다. -->
+        <Console name="console" target="SYSTEM_OUT">
+            <!-- 로그의 출력 포멧을 지정한다. -->
+            <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{5} %M - %msg - %n"/>
+        </Console>
+    </Appenders>
+    <!-- 로깅이 일어나는 부분을 그룹화하는 역할을 한다. -->
+    <!-- FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+    <Loggers>
+        <!-- 일반적인 로그 정책을 의미 -->
+        <Root level="INFO">
+            <AppenderRef ref="console" additivity="false"/>
+        </Root>
+
+        <!-- 추가로 필요한 로그 정책을 정의한다. -->
+        <logger name="com.beyond.mvc" level="INFO" additivity="false">
+            <AppenderRef ref="console"/>
+        </logger>
+
+        <Logger name="org.springframework.core" level="INFO" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+
+        <Logger name="org.springframework.beans" level="INFO" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+
+        <Logger name="org.springframework.context" level="INFO" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+
+        <Logger name="org.springframework.web" level="INFO" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+    </Loggers>
+</Configuration>
