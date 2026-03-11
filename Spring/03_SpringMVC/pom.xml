@@ -59,6 +59,15 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--logging 관련 라이브러리-->
+        <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.25.3</version>
+            <scope>compile</scope>
+        </dependency>
+
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
@@ -86,6 +95,7 @@
             <version>3.27.7</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
