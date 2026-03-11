@@ -454,6 +454,31 @@
     - `@After`는 대상 메소드의 수행 결과가 제대로 리턴이 되던, 예외가 발생하던 어드바이스가 실행된다.
         - `@AfterReturning`, `@AfterThrowing` 으로 케이스를 나눠 주어야 한다.
 
+    - `@Around`는 @Before, @After, @AfterReturning, @AfterThrowing의 기능을 다 합친 기능
+        ```java
+        @Around("execution(* com.beyond.aop.character.Character.quest(..))")
+        public String around(ProceedingJoinPoint jp) {    
+            try {
+                // @Before
+                result = (String) jp.proceed();
+                // @AfterReturning
+            } catch (Throwable e) {
+                // @AfterThrowing
+            }
+            return result;
+        }
+        ```
+        - 다양한 기능을 하나의 어드바이스에서 전부 수행하게 할 수 있다.
+            - `.proceed()`에서 대상 메소드가 실행된다.
+            - try 구문 안 `.proceed()` 이전은 @Before, 이후는 @AfterReturning, catch 내부는 @AfterThrowing이 된다.
+
+        - 어드바이스 내에 `jp.proceed()` 메소드를 넣으면 proceed() 기준으로 대상 메소드가 실행되고, 리턴값도 저장된다.
+            - 타겟 객체의 메소드에 매개값을 변환해서 다시 전달할 수도 있다.
+            - 기존 대상 메소드의 파라미터 순서에 맞게 `new Object[] {파라미터, ..}`(`Object` 배열) 형식으로 전달함
+
+
+        - `jp.getArge()`는 대상 메소드의 매개값들을 `Object` 배열에 담아서 반환한다.
+            - 굳이 포인트컷 지정자에 매개값을 넣고 returning, argNames 작성하면서 귀찮게 작성할 필요가 없어진다. 
 
 - AsepctJ 어노테이션을 적용을 위해서는 설정 파일에 아래와 같이 프록시 설정을 해야한다.
     
@@ -477,12 +502,21 @@
 스프링 AOP에서는, AspectJ의 포인트컷 표현식(어떤 메소드를 실행시킬지)을 이용해 포인트컷 지정자를 표현한다.
 
 ```java
-@Before("execution([접근제한자] 리턴타입 클래스.메소드([파라미터, ...])) && args(매개값)")
+@Before("execution([접근제한자] 리턴타입 클래스.메소드([파라미터, ...])) && ...")
 ```
-- `*`: 모든 타입을 의미함
-- `..`을 주면 0개 이상을 의미
 - 접근제한자는 생략 가능함
-- `args`: 대상 메소드에 전달되는 매개값을 어드바이스에 전달하기 위한 표현식
+
+- `*`: 모든 타입을 의미
+    - 모든 리턴타입에 대해 어드바이스를 실행하고 싶다면 리턴타입 자리에 `*`을 표현하는 식
+    - 특정 패키지의 모든 클래스에 대해 실행하고 싶을 때 패키지 아래에 `*`을 주면 모든 클래스를 선언
+
+- `..`을 주면 0개 이상을 의미
+    - 주로 파라미터들에 대해 작성한다
+
+- execution 뒤에 `&&`, `||`을 이용해 특정 조건 하에 어드바이스가 실행되도록 할 수 있다.
+    - `args(매개값)`: 대상 메소드에 전달되는 매개값을 어드바이스에 전달하기 위한 표현식(`@Around`부터는 사용 안함)
+    - `bean(빈ID)`: 특정 빈에만 어드바이스를 실행하고 싶을 때 이용한다.
+    - `@annotation(어노테이션 이름)`: 특정 어노테이션이 있을 때만 어드바이스를 붙이도록 하고 싶을 때
 
 
 
@@ -520,7 +554,6 @@
             throwing = "exception",  // 대상 메소드가 throw한 예외
             argNames = "questName, exception")
     public void fail(String questName, Exception exception) { ... }
-
     ```
 
 

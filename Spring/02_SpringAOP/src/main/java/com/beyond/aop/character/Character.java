@@ -19,16 +19,14 @@ public class Character {
     private int level;
 
     @Autowired
-    @Qualifier("sword")
-//    @Qualifier("bow")
+//    @Qualifier("sword")
+    @Qualifier("bow")
     private Weapon weapon;
 
     public String quest(String questName) {
-        if (true) {
-            throw new RuntimeException("예외 발생");
-        }
+        // if (true) { throw new RuntimeException("예외 발생"); }
 
-        return String.format("[%s] 퀘스트 진행 중..\n", questName);
+        return String.format("%s 퀘스트 진행 중..", questName);
     }
 
 }

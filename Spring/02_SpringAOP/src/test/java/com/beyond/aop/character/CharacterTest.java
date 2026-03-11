@@ -33,6 +33,20 @@ class CharacterTest {
     @Test
     @DisplayName("quest 메소드 테스트")
     void questTest() {
-        character.quest("스트라솔름 정화하기");
+        // String quest = character.quest("스트라솔름 정화하기");
+        // System.out.println(quest);
+        // character는 프록시 객체가 되고, 현재 around 객체가 아무것도 리턴하지 않으므로 null
+        assertThat(character.quest("스트라솔름 정화하기")).isNotNull().contains("스트라솔름 정화하기");
+
+
+
+    }
+
+
+    @Test
+    @DisplayName("attack 메소드 테스트")
+    void attackTest() {
+        assertThat(character.getWeapon()).isNotNull();
+        assertThat(character.getWeapon().attack()).isNotNull();
     }
 }
