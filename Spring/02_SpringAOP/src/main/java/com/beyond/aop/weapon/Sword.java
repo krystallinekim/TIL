@@ -1,5 +1,6 @@
 package com.beyond.aop.weapon;
 
+import com.beyond.aop.annotation.Repeat;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,11 @@ public class Sword extends Weapon {
     }
 
     @Override
+    // @Nologging
+    @Repeat(value = "반복 횟수 지정", count = 3)
     public String attack() {
+
+
         return "검을 휘두르다";
     }
 }

@@ -19,8 +19,8 @@ public class Character {
     private int level;
 
     @Autowired
-//    @Qualifier("sword")
-    @Qualifier("bow")
+    @Qualifier("sword")
+//    @Qualifier("bow")
     private Weapon weapon;
 
     public String quest(String questName) {

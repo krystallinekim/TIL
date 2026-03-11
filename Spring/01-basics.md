@@ -502,19 +502,17 @@
 스프링 AOP에서는, AspectJ의 포인트컷 표현식(어떤 메소드를 실행시킬지)을 이용해 포인트컷 지정자를 표현한다.
 
 ```java
-@Before("execution([접근제한자] 리턴타입 클래스.메소드([파라미터, ...])) && ...")
+@Before("execution([접근제한자] 리턴타입 클래스.메소드([파라미터, ...])) && args(매개값)")
 ```
-- 접근제한자는 생략 가능함
-
-- `*`: 모든 타입을 의미
-    - 모든 리턴타입에 대해 어드바이스를 실행하고 싶다면 리턴타입 자리에 `*`을 표현하는 식
-    - 특정 패키지의 모든 클래스에 대해 실행하고 싶을 때 패키지 아래에 `*`을 주면 모든 클래스를 선언
-
-- `..`을 주면 0개 이상을 의미
-    - 주로 파라미터들에 대해 작성한다
-
-- execution 뒤에 `&&`, `||`을 이용해 특정 조건 하에 어드바이스가 실행되도록 할 수 있다.
+- `execution`은 특정 메소드의 (실행 전/실행 후/...) 시점에 어드바이스를 실행시킬지를 알려주는 지정자이다. 
+    - 접근제한자는 생략 가능
+    - `*`: 모든 타입을 의미
+        - 모든 리턴타입에 대해 어드바이스를 실행하고 싶다면 리턴타입 자리에 `*`을 표현하는 식
+        - 특정 패키지의 모든 클래스에 대해 실행하고 싶을 때 패키지 아래에 `*`을 주면 모든 클래스를 선언
+    - `..`을 주면 0개 이상을 의미함. 주로 파라미터들에 대해 작성한다
     - `args(매개값)`: 대상 메소드에 전달되는 매개값을 어드바이스에 전달하기 위한 표현식(`@Around`부터는 사용 안함)
+
+- `execution` 뒤에 `&&`, `||`을 이용해 다른 조건 하에 어드바이스가 실행되도록 할 수 있다.
     - `bean(빈ID)`: 특정 빈에만 어드바이스를 실행하고 싶을 때 이용한다.
     - `@annotation(어노테이션 이름)`: 특정 어노테이션이 있을 때만 어드바이스를 붙이도록 하고 싶을 때
 
@@ -529,7 +527,7 @@
     public void beforeQuest() { ... }
     ```
 
-2. 대상 메소드에서 주어진 매개변수를 어드바이스에서도 사용할 수 있다.
+2. `args`를 이용해 대상 메소드에서 주어진 매개변수를 어드바이스에서도 사용할 수 있다.
     ```java
     @Pointcut("execution(* com.beyond.aop.character.Character.quest(..)) && args(questName)")
     public void questPointCut(String questName) {}
@@ -538,7 +536,7 @@
     public void beforeQuest(String questName) { ... }
     ```
     
-3. 대상 메소드가 어떤 값을 return할경우, 이 결과값을 `@AfterReturning` 어드바이스에서 이용 가능하다.
+3. 대상 메소드가 어떤 값을 반환할경우, 이 결과값을 `@AfterReturning` 어드바이스에서 이용 가능하다.
     ```java
     @AfterReturning(
             value = "questPointCut(questName)",
@@ -547,7 +545,7 @@
     public void success(String questName, String result) { ... }
     ```
 
-4. 대상 메소드가 에러를 throw할 경우에도 이 값을 객체에 넣어서 이용 가능하다.
+4. 대상 메소드가 에러를 던질 경우에도 이 값을 객체에 넣어서 이용 가능하다.
     ```java
     @AfterThrowing(
             value = "questPointCut(questName)",
@@ -556,6 +554,65 @@
     public void fail(String questName, Exception exception) { ... }
     ```
 
+### 어노테이션
+
+- JDK 1.5부터 추가된 기능으로, 코드에 대한 추가적인 정보를 제공하는 메타데이터
+    - 비즈니스 로직에 영향을 주지는 않지만, 컴파일 과정에서 유효성 체크, 코드 컴파일 방식 등을 알려주는 정보를 제공
+    - 클래스, 메소드, 필드, 매개변수 등에 추가할 수 있다.
+    - 프레임워크에서도 어노테이션을 이용해 자기 작업을 실행하는데 활용한다.
+
+
+- 어노테이션은 `@`가 붙은 인터페이스 형태로 만들어진다. 
+    ```java
+    @Target({METHOD, FIELD})
+    @Retention(RUNTIME)
+    public @interface Nologging { ... }
+    ```
+    - `@Target({METHOD, FIELD})`
+        - 어디에 이 어노테이션을 붙일 지 선언하는 역할 - 메소드(METHOD)와 필드(FIELD)에만 작성할 수 있게 제한함
+    - `@Retention(RUNTIME)`
+        - 어노테이션의 유효범위를 지정
+            - SOURCE: 소스코드에서만 유효한 범위 - @Data, @Override
+            - CLASS: 클래스를 참조할 때까지 유효
+            - RUNTIME: 코드가 실행 중일 때에도 유지, JVM에 의해 참조 가능 - @AutoWired, @Component
+    - `@Inherited` 
+        - 부모 클래스에서 어노테이션 선언 시 자식 클래스에도 상속됨
+
+- 어노테이션에 직접 속성을 만들 수 있다.
+
+    ```java
+    // 어노테이션
+    @Target(METHOD)
+    @Retention(RUNTIME)
+    public @interface Repeat {
+        String value() default "기본값";
+        int count() default 0;
+    }
+    ```
+    ```java
+    // 빈
+    // @Repeat("반복 횟수 지정")
+    @Repeat(value="반복 횟수 지정", count=10)
+    public String do() { ... }
+    ```
+    ```java
+    @Around("@annotation(com.beyond.aop.annotation.Repeat)")
+    public String repeatAdvice(ProceedingJoinPoint jp) {
+        String result = "";
+        MethodSignature signature = (MethodSignature) jp.getSignature();
+        Repeat repeat = signature.getMethod().getAnnotation(Repeat.class);
+
+        System.out.println(repeat.value());
+        System.out.println(repeat.count());
+        
+        ...
+    }
+    ```
+
+    - 어노테이션에서 속성을 부여할 때는 추상 메소드처럼 작성된다.
+    - 속성을 부여할 수 있고, 그 속성값에 기본값도 줄 수 있다.
+        - 속성명이 value이면 속성명을 생략할 수 있다.
+    - 이 속성을 매우 복잡한 과정을 이용해 사용할 수 있다.
 
 ## POJO (Plain Old Java Object)
 
