@@ -20,7 +20,7 @@
     </properties>
 
     <dependencies>
-        <!-- 스프링 관련 라이브러리 -->
+        <!-- 스프링 관련 라이브러리 - spring framework -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
@@ -34,7 +34,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- aspectj 관련 라이브러리 -->
+        <!-- aspectj 관련 라이브러리 - java aop -->
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
@@ -53,6 +53,14 @@
             <artifactId>lombok</artifactId>
             <version>1.18.42</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- jackson 라이브러리 - json 처리 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.21.1</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- logging 관련 라이브러리 -->
