@@ -13,9 +13,10 @@ public class HomeController {
     @RequestMapping("/")
     public String home() {
 
-        log.info("home() 메소드 호출 [INFO ]");
-        log.debug("home() 메소드 호출 [DEBUG]");
-        log.error("home() 메소드 호출 [ERROR]");
+        log.info("home() 메소드 호출");
+        // log.debug("home() 메소드 호출 [DEBUG]");
+        // log.error("home() 메소드 호출 [ERROR]");
+
         // 뷰의 이름
         return "home";
     }
