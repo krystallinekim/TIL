@@ -1,7 +1,5 @@
 # 스프링 부트(Spring Boot)
 
-## 1. 스프링 부트(Spring Boot)
-
 - 스프링은 장점이 많은 개발도구이지만 설정이 매우 복잡하다는 단점이 있다.
 - 스프링 부트는 스프링 프레임워크를 더 쉽고 빠르게 이용할 수 있도록 만들어주는 도구이다.
     - 빠르게 스프링 프로젝트를 설정할 수 있다.
@@ -19,8 +17,9 @@
     | 데이터베이스 | 인메모리 DB 자동 지원 없음 | 인메모리 DB 자동 설정 지원 |
     | WAS | 별도의 WAS 필요 | 내장 WAS 제공 |
 
-## 2. 스프링 부트 스타터
+## 스프링 부트 스타터
 
+- pom에 의존성으로 작성됨
 - 스프링 부트 스타터는 의존성이 모여있는 그룹이다.
 - 스타터를 사용하면 필요한 기능을 간편하게 설정할 수 있다.
 - 스타터는 `spring-boot-starter-{작업유형}`으로 작성한다.
@@ -35,7 +34,7 @@
     - spring-boot-starter-jpa
         - ORM을 사용하기 위한 인터페이스의 모음인 JPA를 더 쉽게 사용하기 위한 의존성 모음
 
-## 3. 스프링 부트 코드 이해하기
+## 코드
 
 - `@SpringBootApplication`은 스프링 부트의 자동 설정과 컴포넌트 스캔을 활성화하는 어노테이션이다.
 - `@SpringBootApplication`은 `@Configuration`, `@EnableAutoConfiguration`, `@ComponentScan` 어노테이션을 포함하고 있다.
@@ -52,7 +51,7 @@
     - 첫 번째 매개값은 스프링 부트 애플리케이션의 메인 클래스로 사용할 클래스를 지정한다.
     - 두 번째 매개값은 커맨드 라인의 인수들을 전달한다.
 
-## 4. 프로파일(Profile) 설정
+## 프로파일(Profile) 설정
 
 - 스프링 부트는 기본적으로 `application.properties` 또는 `application.yml` 파일을 사용하여 설정을 관리한다.
 - 스프링 부트는 프로파일을 설정해서 환경별로 다른 설정을 적용할 수 있는데 `application-{profile}.properties` 또는 `application-{profile}.yml`로 환경별로 설정 파일을 만들 수 있다.
@@ -69,6 +68,9 @@
         profiles: dev
     server:
         port: 8088
+    logging:
+        level:
+        '[org.springframework.web]': debug
     ```
     
     ```yaml
@@ -121,4 +123,118 @@
         void contextLoads() {
         }
     }
+    ```
+
+## 타임리프(Thymeleaf)
+
+- 타임리프는 템플릿 엔진으로 HTML5와 완전히 호환되며 스프링 부트는 타임리프를 사용하는 것을 권장하고 있다.
+- 스프링 부트에서 타임리프를 사용하려면 `pom.xml`에 의존성을 추가해야 한다.
+    
+    ```xml
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-thymeleaf</artifactId>
+    </dependency>
+    ```
+    
+- 또한 HTML 문서에서 타임리프 속성들을 사용하려면 HTML 문서에 `xmlns`를 설정해야 한다.
+    
+    ```html
+    <!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org">
+      ...
+    </html>
+    ```
+    
+
+### 타임리프 속성
+
+- 태그 안에 텍스트를 설정하려면 `th:text` 속성을 사용한다.
+    
+    ```html
+    <!-- 컨트롤러로 전달받은 Model에 접근할 때는 ${..} 표현법을 사용한다. -->
+    <span th:text="${message}"></span>
+    ```
+    
+- 태그에 링크를 설정하려면 `th:href` 속성을 사용한다.
+    
+    ```html
+    <!-- 링크를 지정할 때는 @{..} 표현법을 사용한다. -->
+    <a th:href="@{/home}">Home</a>
+    ```
+    
+- form 태그에서 데이터를 전송할 서버의 URL을 지정할 때는 `th:action` 속성을 사용한다.
+    
+    ```html
+    <form th:action="@{/submit}" method="post">
+      ...
+    </form>
+    ```
+    
+- input 태그에 값을 설정하려면 `th:value` 속성을 사용한다.
+    
+    ```html
+    <input type="text" th:value="${address}"></span>
+    ```
+    
+- 조건을 만족하는 경우 HTML 요소를 표시하려면 `th:if` 속성을 사용한다.
+    
+    ```html
+    <span th:if="${name != null}" th:text="${name}"></span>
+    ```
+    
+- 배열이나 컬렉션 요소를 반복해 요소를 표시하려면 `th:each`를 사용한다.
+    
+    ```html
+    <ul>
+      <li th:each="item : ${items}" th:text="${item}"></li>
+    </ul>
+    ```
+    
+
+### 프래그먼트(Fragment)
+
+- 타임리프에서는 `th:fragment` 속성을 이용해 공통 부분을 조각화하고 재사용할 수 있다.
+    
+    ```html
+    <!-- fragments.html -->
+    
+    <!DOCTYPE html>
+    <html xmlns:th="<http://www.thymeleaf.org>">
+    <head>
+        <title>Fragments</title>
+    </head>
+    <body>
+        <header th:fragment="header">
+            <h1>Site Header</h1>
+        </header>
+        <div th:fragment="footer">
+            <p>Site Footer</p>
+        </div>
+    </body>
+    </html>
+    ```
+    
+- 프래그먼트를 사용할 때는 `~{ fragment 경로 :: fragment 이름 }` 표현법을 사용한다.
+    - `th:replace`는 해당 요소를 프래그먼트로 지정한 요소로 대체한다.
+    - `th:insert`는 해당 요소 내부에 프래그먼트로 지정한 요소를 삽입한다.
+    
+    ```html
+    <!-- index.html -->
+    
+    <!DOCTYPE html>
+    <html xmlns:th="<http://www.thymeleaf.org>">
+    <head>
+        <title>제목</title>
+    </head>
+    <body>
+        <header th:replace="~{fragments :: header}"></header>
+    
+        <main>
+          ...
+        </main>
+    
+        <footer th:insert="~{fragments :: footer}"></footer>
+    </body>
+    </html>
     ```
