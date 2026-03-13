@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: 04_University
+server:
+  port: 8080
