@@ -200,7 +200,7 @@
     <!-- fragments.html -->
     
     <!DOCTYPE html>
-    <html xmlns:th="<http://www.thymeleaf.org>">
+    <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>Fragments</title>
     </head>
@@ -223,7 +223,7 @@
     <!-- index.html -->
     
     <!DOCTYPE html>
-    <html xmlns:th="<http://www.thymeleaf.org>">
+    <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>제목</title>
     </head>
@@ -238,3 +238,108 @@
     </body>
     </html>
     ```
+
+
+## 마이바티스(Mybatis)
+
+- 마이바티스는 JDBC를 통해 구현했던 상당 부분의 코드와 파라미터 설정 및 결과 매핑을 xml 설정을 통해 쉽게 구현할 수 있게 해주는 영속성 프레임워크이다.
+- 스프링 부트에서 마이바티스를 사용하려면 `pom.xml`에 의존성을 추가해야 한다.
+    
+    ```xml
+    <dependency>
+      <groupId>org.mybatis.spring.boot</groupId>
+      <artifactId>mybatis-spring-boot-starter</artifactId>
+      <version>3.0.3</version>
+    </dependency>
+    ```
+    
+- 또한 application.yml 파일에 데이터베이스에 연결하기 위한 설정과 마이바티스 실행에 필요한 설정들을 해야 한다.
+- `type-aliases-package` 속성은 mybatis에서 사용할 자료형의 별칭을 선언하는 속성이다.
+- `mapper-locations` 속성은 쿼리문들을 담는 Mapper 파일의 경로를 지정하는 속성이다.
+- `jdbc-type-for-null` 속성은 파라미터의 null 값에 대한 JDBC 타입을 지정한다.
+    
+    ```yaml
+    spring:
+      datasource:
+        driver-class-name: org.mariadb.jdbc.Driver
+        url: jdbc:mariadb://localhost:3306/web
+        username: beyond
+        password: beyond
+    mybatis:
+      type-aliases-package: com.beyond.university.*.model.vo
+      mapper-locations:
+      - classpath:mappers/**/*.xml
+      configuration:
+        jdbc-type-for-null: NULL
+    ```
+    
+
+### `mapper.xml`
+
+- mapper.xml은 실행할 쿼리문과 매핑 구문을 정의해 놓은 파일이다.
+    
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!-- mybatis mapper 설정 파일임을 선언한다. -->
+    <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+    
+    <mapper namespace="com.beyond.mybatis.member.model.mapper.MemberMapper">
+      <!-- 필요한 쿼리문과 매핑 구문들을 작성한다. -->
+    </mapper>
+    ```
+    
+- `select` 요소는 SQL의 조회 구문을 작성할 때 사용되는 요소이다.
+- `resultMap`과 `resultType`은 둘 모두를 사용할 수 없으며, 둘 중 하나만 선언해야 된다.
+    
+    ```xml
+    <!-- 구문의 이름은 selectMember이고 int 타입의 파라미터를 가진다. 그리고 결과 데이터는 Member 객체로 반환된다. -->
+    <select id="selectMember" parameterType="int" resultType="Member">
+      SELECT * FROM MEMBER WHERE NO = #{no}
+    </select>
+    ```
+    
+- `resultMap` 요소는 쿼리문의 조회한 결과를 객체와 매핑하기 위한 요소이다.
+    
+    ```xml
+    <!-- type 속성은 실제로 구현해 놓은 자바 클래스를 지정한다. -->
+    <resultMap type="Member" id="memberResultMap">
+      <id property="no" column="NO"/>
+      <result property="id" column="ID" />
+      <result property="password" column="PASSWORD"/>
+      <result property="email" column="EMAIL"/>
+    </resultMap>
+    ```
+    
+- `insert`, `update`, `delete` 요소는 데이터를 변경하는 구문을 작성할 때 사용되는 요소이다.
+    
+    ```xml
+    <insert id="insertMember" parameterType="Member">
+      INSERT INTO MEMBER
+      VALUES (
+        #{no},
+        #{name},
+        #{password},
+        #{email}
+      )
+    </insert>
+    
+    <update id="updateMember" parameterType="Member">
+      UPDATE MEMBER
+      SET
+        NAME = #{name},
+        PASSWORD = #{password},
+        EMAIL = #{email},
+      WHERE NO = #{no}
+    </update>
+    
+    <delete id="deleteMember" parameterType="int">
+      DELETE FROM MEMBER WHERE NO = #{no}
+    </delete>
+    ```
+    
+
+### 매퍼 인터페이스(Mapper Interface)
+
+- 매퍼 인터페이스(Mapper Interface)는 XML 파일이나 어노테이션에 정의된 SQL을 실행하기 위한 인터페이스이다.
+- 매퍼 인터페이스는 MyBatis 프레임워크가 자동으로 구현체를 생성하여 편리하게 데이터베이스 작업을 수행할 수 있다.
+- 스프링 부트에서 매퍼 인터페이스를 선언할 때는 `@Mapper` 어노테이션을 사용하고 필요한 곳에서 `@Autowired` 어노테이션으로 구현 객체를 주입받을 수 있다.
