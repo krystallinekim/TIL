@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/baseLayout::baseLayout(~{::title}, ~{::main})}" lang="ko" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>학생 조회</title>
+    </head>
+    <body>
+        <main>
+            <h2>학생 조회</h2>
+
+            <form>
+                <label>학과</label>
+                <select>
+                    <option>-----선택-----</option>
+                    <option>화학과</option>
+                    <option>교육학과</option>
+                    <option>건축공학과</option>
+                    <option>식품영양학과</option>
+                    <option>산업디자인학과</option>
+                    <option>생태시스템공학과</option>
+                </select>
+            </form>
+        </main>
+    </body>
+</html>
