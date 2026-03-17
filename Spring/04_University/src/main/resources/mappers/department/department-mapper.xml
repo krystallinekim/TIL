@@ -17,6 +17,25 @@
     </resultMap>
 
     <!--
+    연관 관계 매핑
+    학과 상세 조회(학생 목록 포함)에서 사용할 resultMap 정의
+    -->
+    <resultMap id="departmentResultMapWithStudents" type="Department" extends="departmentResultMap">
+        <!--
+        collection 요소
+          - 컬렉션에 해당하는 필드에 조회 결과를 매핑할 때 사용한다.
+
+        1. 쿼리문을 각각 만들어서 하나의 ResultMap에서 매핑하는 방법
+        <collection javaType="arrayList" property="students" column="department_no"
+            select="com.beyond.university.student.model.mapper.StudentMapper.selectAllByDepartmentNo" />
+
+        2. 하나의 쿼리문을 만들어서 ResultMap에서 매핑하는 방법
+        -->
+        <collection javaType="arrayList" property="students" columnPrefix="s_"
+                    resultMap="com.beyond.university.student.model.mapper.StudentMapper.studentResultMap"/>
+    </resultMap>
+
+    <!--
         쿼리문의 수행 결과를 담은 ResultSet은 resultType 객체에 조회 결과를 자동으로 매핑해서 리턴한다.
         단, 조회 결과의 컬럼명과 자바 클래스의 필드명이 동일해야 자동으로 매핑된다. (대소문자는 구분하지 않는다.)
 
@@ -25,22 +44,74 @@
     <select id="selectAll" resultMap="departmentResultMap">
         <!--
         방법 1) 쿼리문에 "AS 별칭"으로 조회되는 컬럼명을 변경한다.
-        SELECT department_no AS 'no',
-               department_name AS 'name',
-               category,
-               open_yn AS 'openYn',
-               capacity
+        SELECT 
+            department_no AS 'no',
+            department_name AS 'name',
+            category,
+            open_yn AS 'openYn',
+            capacity
         FROM department
         ORDER BY department_name
 
         방법 2) resultMap을 이용해서 명시적으로 컬럼과 필드를 매핑한다.
         -->
-        SELECT department_no,
-               department_name,
-               category,
-               open_yn,
-               capacity
+        SELECT 
+            department_no,
+            department_name,
+            category,
+            open_yn,
+            capacity
         FROM department
         ORDER BY department_name
+    </select>
+
+    <!--
+    학과 상세 조회
+    <select id="selectDepartmentByNo" parameterType="string" resultMap="departmentResultMap">
+        SELECT 
+            department_no,
+            department_name,
+            category,
+            open_yn,
+            capacity
+        FROM department
+        WHERE department_no = #{departmentNo}
+    </select>
+
+    연관 관계 매핑
+    학과 상세 조회 (학생 목록 포함)
+
+    1. 쿼리문을 각각 만들어서 하나의 ResultMap에서 매핑하는 방법
+    <select id="selectDepartmentByNo" parameterType="string" resultMap="departmentResultMapWithStudents">
+        SELECT 
+            department_no,
+            department_name,
+            category,
+            open_yn,
+            capacity
+        FROM department
+        WHERE department_no = #{departmentNo}
+    </select>
+
+    2. 하나의 쿼리문을 만들어서 ResultMap에서 매핑하는 방법
+    -->
+    <select id="selectDepartmentByNo" parameterType="string" resultMap="departmentResultMapWithStudents">
+        SELECT 
+            d.department_no,
+            d.department_name,
+            d.category,
+            d.open_yn,
+            d.capacity,
+            s.student_no AS 's_student_no',
+            s.department_no AS 's_department_no',
+            s.student_name AS 's_student_name',
+            s.student_ssn AS 's_student_ssn',
+            s.student_address AS 's_student_address',
+            s.entrance_date AS 's_entrance_date',
+            s.absence_yn AS 's_absence_yn',
+            s.coach_professor_no AS 's_coach_professor_no'
+        FROM department d
+            LEFT OUTER JOIN student s ON d.department_no = s.department_no
+        WHERE d.department_no = #{departmentNo}
     </select>
 </mapper>

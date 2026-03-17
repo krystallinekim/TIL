@@ -18,6 +18,7 @@
         FROM student
     </sql>
 
+    <!-- 기본 Student 객체용 resultmap -->
     <resultMap id="studentResultMap" type="Student">
         <id property="no" column="student_no"/>
         <result property="departmentNo" column="department_no"/>
@@ -38,11 +39,67 @@
         WHERE department_no = #{dno}
     </select>
 
+    <!-- # 특정 학생 기준 학과정보 조회-->
+
+    <resultMap id="studentResultMapWithDepartment" type="Student" extends="studentResultMap">
+        <!--
+        association 요소
+        - 객체에 해당하는 필드에 조회 결과를 매핑할 때 사용한다.
+        - select 속성은 조회하고자 하는 select 쿼리문의 ID를 입력한다.
+        - column 속성은 조회하고자 하는 select 쿼리문에 파라미터를 전달한다.
+        -->
+
+        <!-- 연관관계 매핑에 필요한 ResultMap(학과정보 포함) - studentResultMap 상속 -->
+        <!--
+        <association property="department" javaType="Department" column="department_no"
+                     select="com.beyond.university.department.model.mapper.DepartmentMapper.selectDepartmentByNo"/>
+        -->
+        <!-- d_가 붙은 컬럼은 따로 department Result Map을 참고해서 객체로 만든 다음 department property로 전달 -->
+        <association property="department" javaType="Department" columnPrefix="d_"
+                     resultMap="com.beyond.university.department.model.mapper.DepartmentMapper.departmentResultMap"/>
+    </resultMap>
+
+    <!--
     <select id="selectStudentByNo" parameterType="string" resultMap="studentResultMap">
         <include refid="selectStudentSql"/>
         WHERE student_no = #{sno}
     </select>
-    
+    -->
+
+    <!-- 학생 상세 조회(학과 포함)-->
+    <!-- 1. 쿼리문을 각각(student, department) 만들어서 하나의 ResultMap에 매핑하는 방법 - 이미 만들어진 쿼리를 재활용 가능 -->
+    <!--
+    <select id="selectStudentByNo" parameterType="string" resultMap="studentResultMapWithDepartment">
+        <include refid="selectStudentSql"/>
+        WHERE student_no = #{sno}
+    </select>
+    -->
+
+    <!-- 2. 쿼리문을 하나 만들어서(JOIN을 미리 하고, 따로 저장할 정보는 prefix를 준 형태) ResultMap에서 매핑 - 쿼리가 한번만 실행됨 -->
+    <select id="selectStudentByNo" parameterType="string" resultMap="studentResultMapWithDepartment">
+        SELECT
+            s.student_no,
+            s.department_no,
+            s.student_name,
+            s.student_ssn,
+            s.student_address,
+            s.entrance_date,
+            s.absence_yn,
+            s.coach_professor_no,
+            d.department_no AS 'd_department_no',
+            d.department_name AS 'd_department_name',
+            d.category AS 'd_category',
+            d.open_yn AS 'd_open_yn',
+            d.capacity AS 'd_capacity'
+        FROM student s
+        LEFT OUTER JOIN department d ON s.department_no = d.department_no
+        WHERE s.student_no = #{sno}
+    </select>
+
+
+    <!-- # DB 수정 쿼리-->
+
+    <!-- Insert -->
     <insert id="insertStudent" parameterType="Student">
 
         <!--
@@ -79,6 +136,7 @@
         )
     </insert>
 
+    <!-- Update -->
     <update id="updateStudent" parameterType="Student">
         UPDATE student
         SET
@@ -90,9 +148,11 @@
         WHERE student_no = #{no}
     </update>
 
+    <!-- Delete -->
     <delete id="deleteStudent" parameterType="string">
         DELETE
         FROM student
         WHERE student_no = #{sno}
     </delete>
+
 </mapper>

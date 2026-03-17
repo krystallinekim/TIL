@@ -19,4 +19,10 @@ public class DepartmentServiceImpl implements DepartmentService {
         // 만든 인터페이스에서 원하는 쿼리를 실행
         return departmentMapper.selectAll();
     }
+
+    @Override
+    public Department getDepartmentByNo(String departmentNo) {
+
+        return departmentMapper.selectDepartmentByNo(departmentNo);
+    }
 }

@@ -1,5 +1,6 @@
 package com.beyond.university.student.model.vo;
 
+import com.beyond.university.department.model.vo.Department;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +16,8 @@ public class Student {
     private String no;
 
     private String departmentNo;
+
+    private Department department;
 
     private String name;
 

@@ -2,6 +2,7 @@ package com.beyond.university.student.controller;
 
 import com.beyond.university.department.model.dto.DepartmentsDto;
 import com.beyond.university.department.model.service.DepartmentService;
+import com.beyond.university.department.model.vo.Department;
 import com.beyond.university.student.model.dto.StudentAddRequestDto;
 import com.beyond.university.student.model.dto.StudentUpdateRequestDto;
 import com.beyond.university.student.model.dto.StudentsDto;
@@ -57,6 +58,22 @@ public class StudentController {
     @GetMapping("/student/info")
     public ModelAndView info(ModelAndView modelAndView, String sno) {
         Student student = studentService.getStudentByNo(sno);
+
+        System.out.println();
+
+        // 연관관계 매핑 - 학생 조회시 학과이름, 카테고리도 같이 조회
+        // System.out.println(student);
+        // System.out.println(student.getDepartment());
+
+
+        // 연관관계 매핑 - 특정 학과번호 조회 시 해당하는 학생들 조회
+
+        Department department = departmentService.getDepartmentByNo(student.getDepartmentNo());
+
+        department.getStudents().forEach(System.out::println);
+
+        System.out.println();
+
         List<DepartmentsDto> departments =
                 departmentService.getDepartments()
                         .stream()
