@@ -3,6 +3,7 @@ server:
 spring:
   application:
     name: 04_University
+  # datasource는 DB에 대한 연결 정보를 담고 있다.
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:3306/web

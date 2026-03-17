@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/baseLayout::baseLayout(~{::title}, ~{::main})}" lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>학생 상세 조회</title>
+</head>
+<body>
+    <main>
+        <h3>학생 상세 조회</h3>
+
+        <form th:object="${student}">
+            <label for="no">학번 : </label>
+            <!-- <input type="text" id="no" name="no" th:value="${student.no}" readonly> -->
+            <!-- <input type="text" id="no" name="no" th:value="*{no}" readonly> -->
+            <!--
+            th:field
+              - th:field 속성을 사용하면 태그의 id, name, value 속성이 자동으로 설정된다.
+              - 단, 객체의 경우 th:object 속성과 *{} 표현법을 사용하여 객체의 프로퍼티에 접근할 수 있다.
+              - select 태그에서 th:field 속성을 사용하면 option 태그의 value 속성과 값을 비교하여
+                일치하는 option에 selected 속성이 자동으로 추가된다.
+            -->
+            <input type="text" th:field="*{no}" readonly>
+
+            <br><br>
+
+            <label for="departmentNo">학과 : </label>
+            <!-- <select id="departmentNo" name="departmentNo"> -->
+            <select th:field="*{departmentNo}">
+                <!--
+                <option th:each="department : ${departments}"
+                        th:text="${department.name}"
+                        th:value="${department.no}"
+                        th:selected="${student.departmentNo eq department.no}">
+                </option>
+                -->
+                <option th:each="department : ${departments}"
+                        th:text="${department.name}"
+                        th:value="${department.no}">
+                </option>
+            </select>
+
+            <br><br>
+
+            <label for="name">이름 : </label>
+            <!-- <input type="text" id="name" name="name" th:value="${student.name}"> -->
+            <input type="text" th:field="*{name}">
+
+            <br><br>
+
+            <label for="ssn">주민등록번호 : </label>
+            <!-- <input type="text" id="ssn" name="ssn" th:value="${student.ssn}"> -->
+            <input type="text" th:field="*{ssn}">
+
+            <br><br>
+
+            <label for="address">주소 : </label>
+            <!-- <input type="text" id="address" name="address" th:value="${student.address}" size="50"> -->
+            <input type="text" th:field="*{address}" size="50">
+
+            <br><br>
+
+            <label for="entrance">입학년도</label>
+            <!-- <input type="text" id="entrance" th:value="${#temporals.format(student.entranceDate, 'yyyy년')}" readonly> -->
+            <input type="text" id="entrance" th:value="*{#temporals.format(entranceDate, 'yyyy년 MM월 dd일')}" readonly>
+
+            <br><br>
+
+            <label for="absenceYn">휴학 여부 : </label>
+            <!-- <select id="absenceYn" name="absenceYn"> -->
+            <select th:field="*{absenceYn}">
+                <!--
+                <option value="N" th:selected="${student.absenceYn eq 'N'}">재학중</option>
+                <option value="Y" th:selected="${student.absenceYn eq 'Y'}">휴학중</option>
+                -->
+                <option value="N">재학중</option>
+                <option value="Y">휴학중</option>
+            </select>
+
+            <br><br>
+
+            <input type="submit" value="수정">
+            <input type="button" value="삭제">
+        </form>
+
+    </main>
+</body>
+</html>

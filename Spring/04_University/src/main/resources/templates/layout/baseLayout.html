@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html th:fragment="baseLayout(title, main)" lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
     <title th:replace="${title}">레이아웃 타이틀 / baseLayout - 대체됨</title>
-</head>
-<body>
-    <header th:replace="~{layout/fragments/common::header}"></header>
+    </head>
+    <body>
+        <header th:replace="~{layout/fragments/common::header}"></header>
 
-    <main th:replace="${main}">
+        <main th:replace="${main}">
         레이아웃 컨텐츠 / baseLayout<br>
         대체됨!
-    </main>
+        </main>
 
-    <footer th:replace="~{layout/fragments/common::footer}"></footer>
-</body>
+        <footer th:replace="~{layout/fragments/common::footer}"></footer>
+    </body>
 
 </html>
 

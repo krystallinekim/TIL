@@ -1,20 +1,55 @@
 <!DOCTYPE html>
 <html th:replace="~{layout/baseLayout::baseLayout(~{::title}, ~{::main})}" lang="ko" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <title>학생 조회</title>
-    </head>
-    <body>
-        <main>
-            <h2>학생 조회</h2>
+<head>
+    <meta charset="UTF-8">
+    <title>학생 조회</title>
+</head>
+<body>
+    <main>
+        <h3>학생 조회</h3>
 
-            <form>
-                <label>학과</label>
-                <select>
-                    <option>-----선택-----</option>
-                    <option>화학과</option>
-                </select>
-            </form>
-        </main>
-    </body>
+        <!-- <form th:action="@{/student/search}" method="get" th:with="dno=#strings.toString(param.dno)"> -->
+        <form th:action="@{/student/search}" method="get">
+            <label for="dno">학과 : </label>
+            <select id="dno" name="dno">
+                <option>----- 선택 -----</option>
+                <!--
+                <option th:each="department : ${departments}"
+                        th:text="${department.name}"
+                        th:value="${department.no}"
+                        th:selected="${dno eq department.no}">
+                -->
+                <option th:each="department : ${departments}"
+                        th:text="${department.name}"
+                        th:value="${department.no}"
+                        th:selected="${#strings.toString(param.dno) eq department.no}">
+                </option>
+            </select>
+            <input type="submit" value="검색">
+        </form>
+
+        <br>
+
+        <table border="1">
+            <tr>
+                <th>학번</th>
+                <th>이름</th>
+                <th>주소</th>
+                <th>휴학 여부</th>
+            </tr>
+            <!-- <tr th:if="${students == null}"> -->
+            <tr th:if="${#lists.isEmpty(students)}">
+                <td colspan="4">조회된 데이터가 없습니다.</td>
+            </tr>
+            <tr th:if="${not #lists.isEmpty(students)}" th:each="student : ${students}">
+                <td>
+                    <a th:text="${student.no}" th:href="@{/student/info(sno=${student.no})}"></a>
+                </td>
+                <td th:text="${student.name}"></td>
+                <td th:text="${student.address}"></td>
+                <td th:text="${student.absenceYn}"></td>
+            </tr>
+        </table>
+    </main>
+</body>
 </html>

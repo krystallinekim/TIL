@@ -4,3 +4,5 @@ logging:
   level:
 #    root: debug
     '[org.springframework.web]': debug
+    '[org.mybatis]': debug
+    '[org.mariadb.jdbc.client.impl]': debug

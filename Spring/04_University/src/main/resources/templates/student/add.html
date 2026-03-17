@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/baseLayout::baseLayout(~{::title}, ~{::main})}" lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>학생 등록</title>
+</head>
+<body>
+    <main>
+        <h3>학생 등록</h3>
+
+        <form>
+            <label for="departmentNo">학과 : </label>
+            <select id="departmentNo" name="departmentNo">
+                <option>간호학과</option>
+                <option>건축공학과</option>
+                <option>경영학과</option>
+            </select>
+
+            <br><br>
+
+            <label for="name">이름 : </label>
+            <input type="text" id="name" name="name" placeholder="이름을 입력해 주세요.">
+
+            <br><br>
+
+            <label for="ssn">주민등록번호 : </label>
+            <input type="text" id="ssn" name="ssn" placeholder="주민등록번호를 입력해 주세요.">
+
+            <br><br>
+
+            <label for="address">주소 : </label>
+            <input type="text" id="address" name="address" placeholder="주소를 입력해 주세요.">
+
+            <br><br>
+
+            <label for="entranceDate">입학년도 : </label>
+            <input type="date" id="entranceDate" name="entranceDate">
+
+            <br><br>
+
+            <input type="submit" value="등록">
+            <input type="reset" value="초기화">
+        </form>
+    </main>
+</body>
+</html>

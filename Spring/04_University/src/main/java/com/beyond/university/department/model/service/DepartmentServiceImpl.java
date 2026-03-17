@@ -14,7 +14,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentMapper departmentMapper;
 
     @Override
-    public List<Department> getDepartment() {
+    public List<Department> getDepartments() {
 
         // 만든 인터페이스에서 원하는 쿼리를 실행
         return departmentMapper.selectAll();

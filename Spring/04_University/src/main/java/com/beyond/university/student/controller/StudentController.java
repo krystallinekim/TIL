@@ -1,7 +1,10 @@
 package com.beyond.university.student.controller;
 
+import com.beyond.university.department.model.dto.DepartmentsDto;
 import com.beyond.university.department.model.service.DepartmentService;
-import com.beyond.university.department.model.vo.Department;
+import com.beyond.university.student.model.dto.StudentsDto;
+import com.beyond.university.student.model.service.StudentService;
+import com.beyond.university.student.model.vo.Student;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -14,27 +17,63 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 public class StudentController {
-
-    // final이니 생성자로 받음(@RequiredArgsConstructor)
     private final DepartmentService departmentService;
 
+    private final StudentService studentService;
+
     @GetMapping("/student/search")
-    // 반환이 void면 매핑 URL 기준으로 /student/search를 찾는다.
-    public ModelAndView search(ModelAndView modelAndView) {
-        log.info("search() 메소드 호출");
+    public ModelAndView search(ModelAndView modelAndView, String dno) {
+        // List<Department> departments = departmentService.getDepartments();
+        List<DepartmentsDto> departments =
+                departmentService.getDepartments()
+                        .stream()
+                        .map(DepartmentsDto::new)
+                        .toList();
 
-        List<Department> departments = departmentService.getDepartment();
-        System.out.println(departments.size());
-        System.out.println(departments.getFirst());
+        log.info("Departments Size: {}", departments.size());
 
+        if (dno != null) {
+            List<StudentsDto> students =
+                    studentService.getStudentsByDepartmentNo(dno)
+                            .stream()
+                            .map(StudentsDto::new)
+                            .toList();
 
+            log.info("Students Size : {}", students.size());
 
+            modelAndView.addObject("students", students);
+        }
+
+        modelAndView.addObject("departments", departments);
         modelAndView.setViewName("student/search");
-        modelAndView.addObject("categories");
-
-
 
         return modelAndView;
     }
 
+    @GetMapping("/student/info")
+    public ModelAndView info(ModelAndView modelAndView, String sno) {
+        Student student = studentService.getStudentByNo(sno);
+        List<DepartmentsDto> departments =
+                departmentService.getDepartments()
+                        .stream()
+                        .map(DepartmentsDto::new)
+                        .toList();
+
+        log.info("Student No: {}", student.getNo());
+        log.info("Departments Size: {}", departments.size());
+
+        modelAndView.addObject("student", student);
+        modelAndView.addObject("departments", departments);
+        modelAndView.setViewName("student/info");
+
+        return modelAndView;
+    }
+
+    @GetMapping("/student/add")
+    public ModelAndView add(ModelAndView modelAndView) {
+
+        modelAndView.setViewName("student/add");
+
+        return modelAndView;
+    }
 }
