@@ -38,8 +38,18 @@ public class StudentServiceImpl implements StudentService {
             result = studentMapper.insertStudent(student);
         }
 
-        // Transactional -> 에러 발생시 기존 작업 초기화
+        // @Transactional -> 에러 발생시 기존 작업 초기화
         // if (true) { throw new RuntimeException("예외"); }
+
+        return result;
+    }
+
+    @Transactional
+    @Override
+    public int delete(String sno) {
+        int result = 0;
+
+        result = studentMapper.deleteStudent(sno);
 
         return result;
     }

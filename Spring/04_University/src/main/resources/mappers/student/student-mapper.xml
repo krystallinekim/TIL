@@ -89,4 +89,10 @@
             absence_yn = #{absenceYn}
         WHERE student_no = #{no}
     </update>
+
+    <delete id="deleteStudent" parameterType="string">
+        DELETE
+        FROM student
+        WHERE student_no = #{sno}
+    </delete>
 </mapper>

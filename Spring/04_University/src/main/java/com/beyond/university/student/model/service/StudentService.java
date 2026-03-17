@@ -10,4 +10,6 @@ public interface StudentService {
     Student getStudentByNo(String sno);
 
     int save(Student student);
+
+    int delete(String sno);
 }

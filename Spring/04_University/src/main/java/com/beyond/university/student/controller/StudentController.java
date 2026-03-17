@@ -129,4 +129,24 @@ public class StudentController {
 
         return modelAndView;
     }
+
+    @PostMapping("student/delete")
+    public ModelAndView delete(ModelAndView modelAndView, String sno) {
+
+        log.info("Student No : {}", sno);
+
+        int result = studentService.delete(sno);
+
+        if (result > 0) {
+            modelAndView.addObject("msg", "삭제되었습니다");
+            modelAndView.addObject("location", "/student/search");
+        } else {
+            modelAndView.addObject("msg", "삭제를 실패했습니다");
+            modelAndView.addObject("location", "/student/info?sno=" + sno);
+        }
+
+        modelAndView.setViewName("common/msg");
+
+        return modelAndView;
+    }
 }
