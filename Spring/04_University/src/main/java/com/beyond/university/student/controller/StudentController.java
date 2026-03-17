@@ -2,13 +2,16 @@ package com.beyond.university.student.controller;
 
 import com.beyond.university.department.model.dto.DepartmentsDto;
 import com.beyond.university.department.model.service.DepartmentService;
+import com.beyond.university.student.model.dto.StudentAddRequestDto;
 import com.beyond.university.student.model.dto.StudentsDto;
 import com.beyond.university.student.model.service.StudentService;
 import com.beyond.university.student.model.vo.Student;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -71,9 +74,36 @@ public class StudentController {
 
     @GetMapping("/student/add")
     public ModelAndView add(ModelAndView modelAndView) {
+        List<DepartmentsDto> departments =
+                departmentService.getDepartments()
+                        .stream()
+                        .map(DepartmentsDto::new)
+                        .toList();
 
+        modelAndView.addObject("departments", departments);
         modelAndView.setViewName("student/add");
 
+        return modelAndView;
+    }
+
+    @PostMapping("/student/add")
+    public ModelAndView add(ModelAndView modelAndView, StudentAddRequestDto studentAddRequestDto, Model model) {
+        int result;
+        Student student = studentAddRequestDto.toStudent();
+
+        result = studentService.save(student);
+
+        if (result > 0) {
+            modelAndView.addObject("msg", "학생이 등록되었습니다");
+            modelAndView.addObject("location", "/");
+        } else {
+            modelAndView.addObject("msg", "등록에 실패했습니다");
+            modelAndView.addObject("location", "/student/add");
+        }
+
+        System.out.println(result);
+
+        modelAndView.setViewName("common/msg");
         return modelAndView;
     }
 }

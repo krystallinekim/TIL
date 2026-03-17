@@ -8,4 +8,6 @@ public interface StudentService {
     List<Student> getStudentsByDepartmentNo(String dno);
 
     Student getStudentByNo(String sno);
+
+    int save(Student student);
 }

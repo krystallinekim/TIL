@@ -42,4 +42,30 @@
         <include refid="selectStudentSql"/>
         WHERE student_no = #{sno}
     </select>
+    
+    <insert id="insertStudent" parameterType="Student">
+        <selectKey resultType="string" keyProperty="no" order="BEFORE">
+            SELECT CONCAT('B', RPAD(FLOOR((RAND() * 100000) + 1), 6, '0'))
+        </selectKey>
+
+        INSERT INTO student (
+            student_no,
+            department_no,
+            student_name,
+            student_ssn,
+            student_address,
+            entrance_date,
+            absence_yn,
+            coach_professor_no
+        ) values (
+            #{no},
+            #{departmentNo},
+            #{name},
+            #{ssn},
+            #{address},
+            #{entranceDate},
+            'N',
+            NULL
+        )
+    </insert>
 </mapper>

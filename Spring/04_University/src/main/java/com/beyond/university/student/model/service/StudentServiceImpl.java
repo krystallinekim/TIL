@@ -4,6 +4,7 @@ import com.beyond.university.student.model.mapper.StudentMapper;
 import com.beyond.university.student.model.vo.Student;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,5 +23,21 @@ public class StudentServiceImpl implements StudentService {
     public Student getStudentByNo(String sno) {
 
         return studentMapper.selectStudentByNo(sno);
+    }
+
+    @Transactional
+    @Override
+    public int save(Student student) {
+        int result = 0;
+
+        if (student.getNo() != null) {
+            // update
+        } else {
+            // insert
+            result = studentMapper.insertStudent(student);
+        }
+
+
+        return result;
     }
 }
