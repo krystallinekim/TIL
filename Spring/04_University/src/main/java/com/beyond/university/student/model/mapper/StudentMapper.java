@@ -13,4 +13,7 @@ public interface StudentMapper {
     Student selectStudentByNo(@Param("sno") String sno);
 
     int insertStudent(Student student);
+
+    int updateStudent(Student student);
+
 }

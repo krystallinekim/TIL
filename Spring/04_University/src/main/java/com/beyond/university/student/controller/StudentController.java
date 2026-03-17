@@ -3,6 +3,7 @@ package com.beyond.university.student.controller;
 import com.beyond.university.department.model.dto.DepartmentsDto;
 import com.beyond.university.department.model.service.DepartmentService;
 import com.beyond.university.student.model.dto.StudentAddRequestDto;
+import com.beyond.university.student.model.dto.StudentUpdateRequestDto;
 import com.beyond.university.student.model.dto.StudentsDto;
 import com.beyond.university.student.model.service.StudentService;
 import com.beyond.university.student.model.vo.Student;
@@ -91,11 +92,13 @@ public class StudentController {
         int result;
         Student student = studentAddRequestDto.toStudent();
 
+        log.info("Student No : {}", student.getNo());
+
         result = studentService.save(student);
 
         if (result > 0) {
             modelAndView.addObject("msg", "학생이 등록되었습니다");
-            modelAndView.addObject("location", "/");
+            modelAndView.addObject("location", "/student/info?sno=" + student.getNo());
         } else {
             modelAndView.addObject("msg", "등록에 실패했습니다");
             modelAndView.addObject("location", "/student/add");
@@ -104,6 +107,26 @@ public class StudentController {
         System.out.println(result);
 
         modelAndView.setViewName("common/msg");
+        return modelAndView;
+    }
+
+    @PostMapping("student/update")
+    public ModelAndView update(ModelAndView modelAndView, StudentUpdateRequestDto studentUpdateRequestDto) {
+
+        Student student = studentUpdateRequestDto.toStudent();
+
+        int result = studentService.save(student);
+
+        if (result > 0) {
+            modelAndView.addObject("msg", "정보가 수정되었습니다");
+        } else {
+            modelAndView.addObject("msg", "정보 수정을 실패했습니다");
+        }
+        modelAndView.addObject("location", "/student/info?sno=" + student.getNo());
+
+
+        modelAndView.setViewName("common/msg");
+
         return modelAndView;
     }
 }

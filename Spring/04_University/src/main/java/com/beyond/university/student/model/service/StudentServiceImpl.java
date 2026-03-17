@@ -32,11 +32,14 @@ public class StudentServiceImpl implements StudentService {
 
         if (student.getNo() != null) {
             // update
+            result = studentMapper.updateStudent(student);
         } else {
             // insert
             result = studentMapper.insertStudent(student);
         }
 
+        // Transactional -> 에러 발생시 기존 작업 초기화
+        // if (true) { throw new RuntimeException("예외"); }
 
         return result;
     }

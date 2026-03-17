@@ -44,8 +44,18 @@
     </select>
     
     <insert id="insertStudent" parameterType="Student">
+
+        <!--
+            selectKey 요소는 PK를 생성하기 위한 요소이다.
+                resultType 속성은 쿼리의 실행 결과 자료형이다.
+                keyProperty 속성은 생성된 PK를 저장하기 위해 파라미터로 전달된 객체의 필드명을 작성한다.
+                order 속성은 PK를 생성하기 위한 쿼리의 실행 시점을 결정한다.
+                    BEFORE는 INSERT 쿼리 실행전에 PK를 생성하기 위한 쿼리를 실행한다.
+                    AFTER는 INSERT 쿼리 실행후에 PK를 생성하기 위한 쿼리를 실행한다.
+        -->
+
         <selectKey resultType="string" keyProperty="no" order="BEFORE">
-            SELECT CONCAT('B', RPAD(FLOOR((RAND() * 100000) + 1), 6, '0'))
+            SELECT CONCAT('C', RPAD(FLOOR((RAND() * 100000) + 1), 6, '0'))
         </selectKey>
 
         INSERT INTO student (
@@ -68,4 +78,15 @@
             NULL
         )
     </insert>
+
+    <update id="updateStudent" parameterType="Student">
+        UPDATE student
+        SET
+            department_no = #{departmentNo},
+            student_name = #{name},
+            student_ssn = #{ssn},
+            student_address = #{address},
+            absence_yn = #{absenceYn}
+        WHERE student_no = #{no}
+    </update>
 </mapper>

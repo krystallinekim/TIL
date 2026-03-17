@@ -8,7 +8,7 @@
     <main>
         <h3>학생 상세 조회</h3>
 
-        <form th:object="${student}">
+        <form th:object="${student}" th:action="@{/student/update}" method="post">
             <label for="no">학번 : </label>
             <!-- <input type="text" id="no" name="no" th:value="${student.no}" readonly> -->
             <!-- <input type="text" id="no" name="no" th:value="*{no}" readonly> -->
