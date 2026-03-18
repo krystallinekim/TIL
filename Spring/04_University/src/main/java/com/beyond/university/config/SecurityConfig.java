@@ -1,23 +1,28 @@
 package com.beyond.university.config;
 
+import com.beyond.university.auth.handler.AuthenticationFailureHandlerImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+        HttpSecurity httpSecurity,
+        AuthenticationFailureHandler authenticationFailureHandler
+    ) throws Exception {
 
         /*
         * CSRF(Cross-Site Request Forgery)
@@ -35,6 +40,8 @@ public class SecurityConfig {
                     // 기본적으로 username, password 파라미터를 사용함
                     // .usernameParameter("userName")  // username 파라미터를 "userId"로 표시
                     // .passwordParameter("userPwd")   // password 파라미터를 "userPwd"로 표시
+                    // 요청 실패 시 처리해줄 handler
+                    .failureHandler(authenticationFailureHandler)
             )
             // 로그아웃 설정
             .logout(logout ->
@@ -70,6 +77,7 @@ public class SecurityConfig {
     }
 
     // UserDetailsService: 전달받은 정보를 통해 사용자를 찾아 UserDetails 객체를 생성 후 반환한다.
+    /*
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
         // 1. 인 메모리 방식
@@ -90,6 +98,21 @@ public class SecurityConfig {
 
         return new InMemoryUserDetailsManager(user, admin);
     }
+    */
+
+    // Authentication Manager
+    // - 사용자에 대한 인증 관련 설정을 하는 객체
+    // - 원래 알아서 만들어준다(생략 가능함). 더 만들수도 있음
+    @Bean
+    public AuthenticationManager authenticationManager(
+        PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
+
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+
+        provider.setPasswordEncoder(passwordEncoder);
+
+        return new ProviderManager(provider);
+    }
 
     // 비밀번호를 BCrypt 방식으로 인코딩해서 반환함
     @Bean
@@ -97,4 +120,11 @@ public class SecurityConfig {
 
         return new BCryptPasswordEncoder();
     }
+
+    // 인증 관련 실패가 있을 경우 이를 처리하는 Handler
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new AuthenticationFailureHandlerImpl();
+    }
+
 }
