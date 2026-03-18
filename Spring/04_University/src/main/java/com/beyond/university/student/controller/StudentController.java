@@ -152,11 +152,12 @@ public class StudentController {
 
         log.info("Student No : {}", sno);
 
+        Student student = studentService.getStudentByNo(sno);
         int result = studentService.delete(sno);
 
         if (result > 0) {
             modelAndView.addObject("msg", "삭제되었습니다");
-            modelAndView.addObject("location", "/student/search");
+            modelAndView.addObject("location", "/student/search?dno=" + student.getDepartmentNo());
         } else {
             modelAndView.addObject("msg", "삭제를 실패했습니다");
             modelAndView.addObject("location", "/student/info?sno=" + sno);

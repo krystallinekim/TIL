@@ -112,7 +112,17 @@
         -->
 
         <selectKey resultType="string" keyProperty="no" order="BEFORE">
-            SELECT CONCAT('C', RPAD(FLOOR((RAND() * 100000) + 1), 6, '0'))
+            SELECT CONCAT(
+                CASE
+                    WHEN YEAR(#{entranceDate}) >= 2000
+                    THEN CONCAT(
+                        CHAR(ASCII('A') + FLOOR((YEAR(#{entranceDate}) - 2000) / 10)),
+                        MOD(YEAR(#{entranceDate}), 10)
+                    )
+                    ELSE DATE_FORMAT(#{entranceDate}, '%y')
+                END,
+                LPAD(FLOOR(RAND() * 100000), 5, '0')
+            )
         </selectKey>
 
         INSERT INTO student (

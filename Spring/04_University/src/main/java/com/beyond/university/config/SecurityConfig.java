@@ -1,0 +1,85 @@
+package com.beyond.university.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+
+        /*
+        * CSRF(Cross-Site Request Forgery)
+        *   - 공격자가 사용자의 브라우저를 악용하여 인증된 세션을 가진 사용자의 권한으로 악의적인 요청을 보내는 공격이다.
+        *   - 스프링 시큐리티는 기본적으로 CSRF 보호 기능을 활성화하며 GET 요청을 제외한 요청에 대해 CSRF 토큰을 검증한다.
+        */
+        httpSecurity
+            .csrf(Customizer.withDefaults())           // CSRF 공격을 방지하기 위해 서버에서 임의로 토큰을 발급하고, 이 토큰이 있어야만 요청을 처리
+            // .csrf(AbstractHttpConfigurer::disable)  // CSRF 비활성화
+            .httpBasic(Customizer.withDefaults())      // HTTP 인증 활성화
+            // .formLogin(Customizer.withDefaults())   // 폼 로그인 활성화 - 기본 페이지 사용
+            .formLogin(formLogin ->
+                formLogin
+                    .loginPage("/login")             // 직접 제작한 페이지(/login) 사용
+                    // 기본적으로 username, password 파라미터를 사용함
+                    // .usernameParameter("userName")  // username 파라미터를 "userId"로 표시
+                    // .passwordParameter("userPwd")   // password 파라미터를 "userPwd"로 표시
+            )
+            // 로그아웃 설정
+            .logout(logout ->
+                logout
+                    .logoutUrl("/logout")                          // 로그아웃 시 보낼 URL(기본값)
+                    .logoutSuccessUrl("/login?logout")             // 로그아웃 성공시 이동할 URL(기본값)
+                    .invalidateHttpSession(true)                     // 세션 삭제 여부(기본값)
+                    .deleteCookies("JSESSIONID")  // 로그아웃 시 지울 쿠키(기본값)
+            )
+            // 접근 제어 설정
+            .authorizeHttpRequests(authorizationRequest ->
+                authorizationRequest
+                    .requestMatchers("/login").permitAll()  // 로그인 페이지는 인증에서 제외
+                    .anyRequest().authenticated()             // 들어오는 모든 요청에 대해 인증정보가 없다면 받지 않음
+        );
+
+        return httpSecurity.build();
+    }
+
+    // UserDetailsService: 전달받은 정보를 통해 사용자를 찾아 UserDetails 객체를 생성 후 반환한다.
+    @Bean
+    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+        // 1. 인 메모리 방식
+        UserDetails admin = User.builder()
+            .username("admin")
+            // password 비교를 알아서 해준다.
+            // .password("{noop}1234")
+            .password(passwordEncoder.encode("a1234"))
+            .roles("ADMIN", "USER")
+            .build();
+
+        UserDetails user = User.builder()
+            .username("user")
+            // .password("{noop}5678")
+            .password(passwordEncoder.encode("u1234"))
+            .roles("USER")
+            .build();
+
+        return new InMemoryUserDetailsManager(user, admin);
+    }
+
+    // 비밀번호를 BCrypt 방식으로 인코딩해서 반환함
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+
+        return new BCryptPasswordEncoder();
+    }
+}
