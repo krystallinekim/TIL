@@ -44,12 +44,27 @@ public class SecurityConfig {
                     .invalidateHttpSession(true)                     // 세션 삭제 여부(기본값)
                     .deleteCookies("JSESSIONID")  // 로그아웃 시 지울 쿠키(기본값)
             )
+            // 기억하기 기능 - 세션이 종료되어도 로그인정보를 유지할 수 있는 기능
+            .rememberMe(rememberMe ->
+                rememberMe
+                    .key("beyond")                       // 토큰 생성 시 서명에 사용되는 키 -> 키는 노출되면 안됨
+                    .tokenValiditySeconds(1209600)       // 쿠키 유효시간(초) 지정
+                    // .rememberMeParameter("remember")  // remember-me 파라미터를 "remember"로 표시
+            )
+            // 세션 관리 기능 - 로그인 세션을 하나만 유지
+            .sessionManagement(sessionManagement ->
+                sessionManagement
+                    .invalidSessionUrl("/login?invalid")  // 세션 만료 시 이동할 경로(자연스럽게 세션 만료 시)
+                    .maximumSessions(1)                   // 최대 세션 수
+                    .expiredUrl("/login?expired")         // 마지막 연결된 세션이 끊겼을 때 이동할 경로(새로 로그인해서 세션이 끊겼을 때)
+            )
             // 접근 제어 설정
             .authorizeHttpRequests(authorizationRequest ->
                 authorizationRequest
+                    .requestMatchers("/js/**", "/css/**", "/images/**").permitAll()  // 정적 리소스를 언제나 허용하도록 설정
                     .requestMatchers("/login").permitAll()  // 로그인 페이지는 인증에서 제외
                     .anyRequest().authenticated()             // 들어오는 모든 요청에 대해 인증정보가 없다면 받지 않음
-        );
+            );
 
         return httpSecurity.build();
     }
