@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.beyond.university.department.model.mapper.DepartmentMapper">
+    <resultMap id="departmentResultMap" type="Department">
+        <id property="no" column="department_no"/>
+        <result property="name" column="department_name"/>
+        <result property="category" column="category"/>
+        <result property="openYn" column="open_yn"/>
+        <result property="capacity" column="capacity"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="departmentResultMap">
+        SELECT
+            department_no,
+            department_name,
+            category,
+            open_yn,
+            capacity
+        FROM department
+        ORDER BY department_name
+    </select>
+</mapper>
