@@ -5,6 +5,8 @@ import com.beyond.university.department.model.vo.Department;
 import java.util.List;
 
 public interface DepartmentService {
-    List<Department> getDepartments();
 
+    List<Department> getDepartments(int page, int numOfRows);
+
+    int getDepartmentsCount();
 }
