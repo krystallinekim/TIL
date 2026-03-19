@@ -343,3 +343,85 @@
 - 매퍼 인터페이스(Mapper Interface)는 XML 파일이나 어노테이션에 정의된 SQL을 실행하기 위한 인터페이스이다.
 - 매퍼 인터페이스는 MyBatis 프레임워크가 자동으로 구현체를 생성하여 편리하게 데이터베이스 작업을 수행할 수 있다.
 - 스프링 부트에서 매퍼 인터페이스를 선언할 때는 `@Mapper` 어노테이션을 사용하고 필요한 곳에서 `@Autowired` 어노테이션으로 구현 객체를 주입받을 수 있다.
+
+
+## 스웨거(Swagger)
+
+- API의 인터페이스를 설명하기 위한 오픈 소스 소프트웨어 프레임워크이다.
+- Spring Boot와 통합하여 API 문서화를 자동화할 수 있고 개발자가 API의 기능을 쉽게 이해하고, 테스트할 수 있게 도와주는 도구이다.
+
+### 스프링 부트와 연동하기
+
+- 스프링 부트에서 스웨거를 사용하려면 `pom.xml`에 의존성을 추가해야 한다.
+    
+    ```xml
+    <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        <version>2.8.11</version>
+    </dependency>
+    ```
+    
+- 추가로 `SwaggerConfig.java` 파일을 아래와 같이 작성해야 한다.
+    
+    ```java
+    @Configuration
+    @OpenAPIDefinition(
+        info = @Info(
+            title = "Title",
+            description = "Description",
+            version = "v1.0.0"
+        )
+    )
+    public class SwaggerConfig {
+        @Bean
+        public OpenAPI openAPI() {
+            return new OpenAPI()
+                .components(new Components());
+        }
+    }
+    ```
+    
+- 위 작업들을 완료 후 `/swagger-ui/index.html`로 접속하면 API 문서를 확인할 수 있다.
+
+### API 문서 관련 어노테이션
+
+- `@Tag` 어노테이션은 해당 컨트롤러에 대한 설명을 정의한다.
+    
+    ```java
+    @Tag(name = "Demo APIs", description = "Demo API 목록")
+    public class DemoController {
+        ...
+    }
+    ```
+    
+- `@Operation` 어노테이션은 각각의 API에 대한 설명을 정의한다.
+    
+    ```java
+    @Operation(summary = "목록 조회", description = "전체 목록을 조회한다.")
+    ```
+    
+- `@ApiResponse` 어노테이션은 각각의 응답 코드에 따른 설명을 정의한다.
+    
+    ```java
+    @ApiResponse(responseCode = "200", description = "요청 성공", content = @Content(mediaType = "application/json"))
+    ```
+    
+- `@Parameters` 어노테이션을 사용하여, 파라미터에 대한 정보를 나타낸다.
+    
+    ```java
+    @Parameters({
+        @Parameter(name = "page", description = "페이지 번호", example = "1"),
+        @Parameter(name = "numOfRows", description = "한 페이지 결과 수", example = "10")
+    })
+    ```
+    
+- `@Schema`는 응답 데이터에 대한 설명을 정의한다.
+    
+    ```java
+    @Schema(description = "응답 코드", example = "200")
+    private String code;
+    
+    @Schema(description = "응답 메시지", example = "OK")
+    private String message;
+    ```
