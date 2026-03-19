@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/baseLayout::baseLayout(~{::title}, ~{::main})}" lang="ko"
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>학사 정보 관리</title>
+</head>
+<body>
+    <main>
+        <h3>사용자 정보</h3>
+        <!--바로 인증 관련 파라미터를 출력-->
+        <!--ID: <span sec:authentication="name"></span><br>-->
+        <!--ID: <span th:text="${#authentication.name}"></span><br>-->
+
+        <!--인증 주체에 해당하는 객체 출력-->
+        ID: <span sec:authentication="principal.username"></span><br>
+        이름: <span sec:authentication="principal.nickname"></span><br>
+        전화번호: <span sec:authentication="principal.phone"></span><br>
+        이메일: <span sec:authentication="principal.email"></span><br>
+        주소: <span sec:authentication="principal.address"></span><br>
+        취미: <span sec:authentication="principal.hobby"></span><br>
+        계정 상태: <span sec:authentication="principal.status"></span><br>
+        계정생성일: <span sec:authentication="principal.createdAt"></span><br>
+
+
+    </main>
+</body>
+</html>

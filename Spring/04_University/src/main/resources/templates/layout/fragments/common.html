@@ -1,14 +1,29 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
     <header th:fragment="header">
         <h1><a th:href="@{/}" style="color: black; text-decoration: none">학사 정보 관리</a></h1>
         <form th:action="@{/logout}" method="post">
             <!-- 사실 th:action으로 경로 지정할 경우 알아서 생성되긴 함-->
             <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"> -->
-            <input type="button" value="내 정보 확인">
+
+            <!-- 사용자의 권한에 따라 HTML 요소의 표시 여부를 결정 가능 -->
+            <p sec:authorize="!hasRole('ADMIN')">
+                <span sec:authentication="principal.nickname"></span>님 안녕하세요!
+            </p>
+
+            <button type="button"
+                    th:onclick="|location.href='@{/admin/info}'|"
+                    sec:authorize="hasRole('ROLE_ADMIN')">
+                페이지 관리
+            </button>
+            <button type="button"
+                    th:onclick="|location.href='@{/user/info}'|">
+                내 정보 확인
+            </button>
             <input type="submit" value="로그아웃">
         </form>
+
     </header>
 
     <footer th:fragment="footer">

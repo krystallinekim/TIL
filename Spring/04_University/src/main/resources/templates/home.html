@@ -1,34 +1,31 @@
 <!DOCTYPE html>
-<html th:replace="~{layout/baseLayout::baseLayout(~{::title}, ~{::main})}" lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html th:replace="~{layout/baseLayout::baseLayout(~{::title}, ~{::main})}" lang="ko"
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <head>
         <meta charset="UTF-8">
-    <title>스프링 부트 웹</title>
+        <title>학사 정보 관리</title>
     </head>
     <body>
         <main>
-        <h2>1. 학생 조회</h2>
-        <a th:href="@{/student/search}">View Details</a>
 
-            <!--
-        <h2>스프링 부트 웹</h2>
-            <h3 th:text="${message}">Hello World</h3>
-            <h3 th:if="${message != null}" th:text="${message}">Hello World</h3>
+            <h2>학사관리</h2>
 
-            <input type="text" th:if="${message != null}" th:value="${message}">
+            <button type="button"
+                    th:onclick="|location.href='@{/student/search}'|"
+                    style="cursor: pointer;">
+                학생 조회
+            </button>
 
-            <ul th:if="${names != null}">
-                <li th:each="name : ${names}" th:text="${name}"></li>
-            </ul>
-        -->
-        <!--
-        <header th:replace="~{layout/fragments/common :: header}">home.html</header>
-        <div th:insert="~{layout/fragments/common :: footer}"></div>
-            -->
-
-            <h2>2. 학생 등록</h2>
-
-            <a th:href="@{/student/add}">View details</a>
-            
+            <button type="button"
+                    th:onclick="|location.href='@{/student/add}'|"
+                    style="cursor: pointer;">
+                학생 등록
+            </button>
+            <br>
+            <br>
+            <!-- URL 접근 권한이 있는 경우만 보여주는 경우 -->
+            <a th:href="@{/admin/info}" sec:authorize-url="/admin/info">관리자 페이지</a>
+            <a th:href="@{/user/info}" sec:authorize-url="/user/info">사용자 페이지</a>
         </main>
 
     </body>

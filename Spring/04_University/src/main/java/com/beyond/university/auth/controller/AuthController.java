@@ -1,6 +1,8 @@
 package com.beyond.university.auth.controller;
 
+import com.beyond.university.auth.model.vo.User;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -34,4 +36,48 @@ public class AuthController {
         return modelAndView;
     }
 
+    // 컨트롤러에서 인증된 사용자 정보를 가져옴
+    @GetMapping("/user/info")
+    /*
+    // 1. 직접 가져오는 방법 - SecurityContextHolder에서 SecurityContext 안에 있는 Authentication을 가져옴
+    public String userInfo() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        User loginUser = (User) authentication.getPrincipal();
+    */
+
+    /*
+    // 2. Authentication 객체를 메소드의 매개변수로 가져오는 방법
+    public String userInfo(Authentication authentication) {
+        User loginUser = (User) authentication.getPrincipal();
+    */
+
+    // 3. 어노테이션을 이용해 인증된 유저를 바로 매개변수로 받아오는 방법
+    public String userInfo(@AuthenticationPrincipal User loginUser) {
+
+        log.info("사용자 페이지 요청");
+
+        System.out.println(loginUser);
+
+        return "user/info";
+    }
+
+    @GetMapping("/admin/info")
+    public String adminInfo() {
+        log.info("관리자 페이지 요청");
+
+        return "admin/info";
+    }
+
+    @GetMapping("/access-denied")
+    public ModelAndView accessDenied(ModelAndView modelAndView) {
+
+        log.info("권한 오류 페이지 요청");
+
+        modelAndView.addObject("msg", "접근 권한이 필요합니다");
+        modelAndView.addObject("location", "/");
+        modelAndView.setViewName("common/msg");
+
+        return modelAndView;
+    }
 }

@@ -24,7 +24,7 @@ public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHa
 
         // 나올 수 있는 예외들을 한번 전부 확인하고, 있다면 Handler에서 예외를 받아서 처리함.
         if (exception instanceof UsernameNotFoundException) {
-            message = "존재하지 않는 사용자입니다.";
+            message = "존재하지 않는 사용자입니다.";  // 너무 많은 정보 - BadCredentialsException으로 돌림
         } else if (exception instanceof BadCredentialsException) {
             message = "아이디 또는 비밀번호가 틀립니다.";
         } else if (exception instanceof LockedException) {

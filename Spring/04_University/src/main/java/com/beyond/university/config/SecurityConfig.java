@@ -1,6 +1,7 @@
 package com.beyond.university.config;
 
 import com.beyond.university.auth.handler.AuthenticationFailureHandlerImpl;
+import com.beyond.university.auth.handler.AuthenticationSuccessHandlerImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -21,9 +23,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(
         HttpSecurity httpSecurity,
-        AuthenticationFailureHandler authenticationFailureHandler
+        AuthenticationFailureHandler authenticationFailureHandler,
+        AuthenticationSuccessHandler authenticationSuccessHandler
     ) throws Exception {
-
         /*
         * CSRF(Cross-Site Request Forgery)
         *   - 공격자가 사용자의 브라우저를 악용하여 인증된 세션을 가진 사용자의 권한으로 악의적인 요청을 보내는 공격이다.
@@ -42,6 +44,7 @@ public class SecurityConfig {
                     // .passwordParameter("userPwd")   // password 파라미터를 "userPwd"로 표시
                     // 요청 실패 시 처리해줄 handler
                     .failureHandler(authenticationFailureHandler)
+                    .successHandler(authenticationSuccessHandler)
             )
             // 로그아웃 설정
             .logout(logout ->
@@ -65,11 +68,17 @@ public class SecurityConfig {
                     .maximumSessions(1)                   // 최대 세션 수
                     .expiredUrl("/login?expired")         // 마지막 연결된 세션이 끊겼을 때 이동할 경로(새로 로그인해서 세션이 끊겼을 때)
             )
+            .exceptionHandling(exceptionHandler ->
+                exceptionHandler
+                    .accessDeniedPage("/access-denied")  // 권한 없는 계정에서 잘못된 접근 시 이동할 URL
+            )
             // 접근 제어 설정
             .authorizeHttpRequests(authorizationRequest ->
                 authorizationRequest
                     .requestMatchers("/js/**", "/css/**", "/images/**").permitAll()  // 정적 리소스를 언제나 허용하도록 설정
                     .requestMatchers("/login").permitAll()  // 로그인 페이지는 인증에서 제외
+                    .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")  // USER, ADMIN은 user 요청에 접근 가능
+                    .requestMatchers("/admin/**").hasRole("ADMIN")  // ADMIN만 admin 요청에 접근 가능
                     .anyRequest().authenticated()             // 들어오는 모든 요청에 대해 인증정보가 없다면 받지 않음
             );
 
@@ -125,6 +134,11 @@ public class SecurityConfig {
     @Bean
     public AuthenticationFailureHandler authenticationFailureHandler() {
         return new AuthenticationFailureHandlerImpl();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new AuthenticationSuccessHandlerImpl();
     }
 
 }
