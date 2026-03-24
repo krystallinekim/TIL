@@ -98,6 +98,14 @@ public class JwtTokenProvider {
         redisTemplate.delete(refreshKey);
     }
 
+    // 리프레시 토큰의 유효성을 검증하는 메소드
+    public boolean isValidRefreshToken(String refreshToken) {
+        String username = jwtUtil.getUsername(refreshToken);
+        String storedRefreshToken = redisTemplate.opsForValue().get(String.format("refresh:%s", username));
+        // 만료시 storedRefreshToken = null, 토큰이 변조되었으면 equals에서 걸림
+        return storedRefreshToken != null && storedRefreshToken.equals(refreshToken);
+    }
+
     // 액세스 토큰이 블랙리스트에 등록되어있는지 확인함.
     private boolean isBlackListed(String accessToken) {
         String blackListKey = String.format("blacklist:%s", jwtUtil.getJti(accessToken));
