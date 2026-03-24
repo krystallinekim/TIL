@@ -1,0 +1,4 @@
+server:
+  port: 30022
+department-service:
+  base-url: http://localhost:30021/api/v1/department-service/departments/

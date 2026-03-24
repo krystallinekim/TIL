@@ -1,0 +1,9 @@
+server:
+  port: 8089
+logging:
+  level:
+    '[org.springframework.web]': debug
+    '[org.mybatis]': debug
+    '[org.mariadb.jdbc.client.impl]': debug
+department-service:
+  base-url: http://localhost:8088/api/v1/department-service/departments/

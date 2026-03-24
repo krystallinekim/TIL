@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: subject-service
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/web
+    username: beyond
+    password: beyond
+mybatis:
+  type-aliases-package: com.beyond.university.*.model.vo
+  mapper-locations:
+    - classpath:mappers/**/*.xml
+springdoc:
+  swagger-ui:
+    operations-sorter: method
+  paths-to-match:
+    - /api/v1/**
