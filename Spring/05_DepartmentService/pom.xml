@@ -61,6 +61,12 @@
             <version>${io.jsonwebtoken.version}</version>
         </dependency>
 
+        <!-- Redis 연동을 위한 의존성 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
         <!-- Swagger 관련 의존성 -->
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -111,6 +117,7 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
