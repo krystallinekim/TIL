@@ -6,4 +6,6 @@ public interface AuthService {
     LoginResponse login(String username, String password);
 
     void logout(String bearerToken);
+
+    String createRefreshToken(String username);
 }

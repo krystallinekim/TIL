@@ -23,7 +23,6 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtil jwtUtil;
 
     @Override
-
     public LoginResponse login(String username, String password) {
         // 사용자의 아이디와 비밀번호로 인증 처리를 진행한다.
         // 1. username으로 사용자를 조회
@@ -45,6 +44,14 @@ public class AuthServiceImpl implements AuthService {
         // 로그아웃 요청은 블랙리스트에 액세스 토큰을 저장하는 방식
         // 블랙리스트는 레디스 서버에 있음
         jwtTokenProvider.addBlackList(accessToken);
+
+        // 로그아웃 요청 시 리프레시 토큰은 삭제
+        jwtTokenProvider.deleteRefreshToken(accessToken);
+    }
+
+    @Override
+    public String createRefreshToken(String username) {
+        return jwtTokenProvider.createRefreshToken(username);
     }
 
     private LoginResponse createLoginResponse(User user) {

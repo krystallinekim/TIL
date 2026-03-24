@@ -26,6 +26,7 @@ public class JwtTokenProvider {
     private final UserDetailsService userDetailsService;
     private final RedisTemplate<String, String> redisTemplate;
     private static final long ACCESS_TOKEN_EXPIRATION = 1000L * 60L * 30L; // 30분
+    private static final long REFRESH_TOKEN_EXPIRATION = 1000L * 60L * 60L * 24L; // 1일
 
     // 엑세스 토큰(Access Token)을 생성하는 메소드
     public String createAccessToken(String username, List<String> authorities) {
@@ -33,6 +34,21 @@ public class JwtTokenProvider {
                 Map.of("username", username, "authorities", authorities, "token_type", "access");
 
         return jwtUtil.createJwtToken(claims, ACCESS_TOKEN_EXPIRATION);
+    }
+
+    // 리프레시 토큰(Refresh Token)을 생성하는 메소드
+    public String createRefreshToken(String username) {
+        Map<String, Object> claims =
+                Map.of("username", username, "token_type", "refresh");
+
+        String refreshToken = jwtUtil.createJwtToken(claims, REFRESH_TOKEN_EXPIRATION);
+
+        // Redis에 리프레시 토큰을 저장하고, 토큰이 존재하는 동안만 사용 가능하도록
+        String refreshKey = String.format("refresh:%s", username);
+
+        redisTemplate.opsForValue().set(refreshKey, refreshToken, REFRESH_TOKEN_EXPIRATION, TimeUnit.MILLISECONDS);
+
+        return refreshToken;
     }
 
     // 클라이언트가 헤더를 통해 서버로 전달한 토큰을 추출하는 메소드
@@ -44,12 +60,15 @@ public class JwtTokenProvider {
         return null;
     }
 
-    // 엑세스 토큰의 무결성과 유효성을 검증하는 메소드 & 블랙리스트에 토큰이 있는지 확인하는 메소드
+    // 1. 엑세스 토큰의 무결성과 유효성을 검증하는 메소드
+    // 2. 블랙리스트에 토큰이 있는지 확인하는 메소드
+    // 3. 로그인 시 액세스 토큰만 사용하도록(리프레시 토큰 사용 X)하는 메소드
     public boolean isUsableAccessToken(String accessToken) {
 
         return accessToken != null
                 && jwtUtil.validateToken(accessToken)
-                && !isBlackListed(accessToken);
+                && !isBlackListed(accessToken)
+                && isAccessToken(accessToken);
     }
 
 
@@ -71,10 +90,24 @@ public class JwtTokenProvider {
         redisTemplate.opsForValue().set(blackListKey, accessToken, ACCESS_TOKEN_EXPIRATION, TimeUnit.MILLISECONDS);
     }
 
+    // 로그아웃 시 redis에서 리프레시 토큰을 삭제함
+    public void deleteRefreshToken(String accessToken) {
+        String username = jwtUtil.getUsername(accessToken);
+        String refreshKey = String.format("refresh:%s", username);
+
+        redisTemplate.delete(refreshKey);
+    }
+
     // 액세스 토큰이 블랙리스트에 등록되어있는지 확인함.
     private boolean isBlackListed(String accessToken) {
         String blackListKey = String.format("blacklist:%s", jwtUtil.getJti(accessToken));
 
         return redisTemplate.hasKey(blackListKey);  // 키가 들어있으면(블랙리스트에 있으면) true 반환
+    }
+
+    // 이 토큰이 액세스토큰과 리프레시토큰 중 어떤 것인지 구분
+    private boolean isAccessToken(String accessToken) {
+
+        return jwtUtil.getTokenType(accessToken).equals("access");
     }
 }

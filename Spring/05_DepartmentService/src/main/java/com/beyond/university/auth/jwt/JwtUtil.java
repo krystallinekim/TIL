@@ -61,6 +61,12 @@ public class JwtUtil {
         return getClaims(token).get("username", String.class);
     }
 
+    // 클레임에서 토큰의 타입(액세스/리프레시)을 추출하는 메소드
+    public String getTokenType(String token) {
+
+        return getClaims(token).get("token_type", String.class);
+    }
+
     // 클래임에서 발급 시간(IssuedAt)을 추출하는 메소드
     public long getIssuedAt(String token) {
 
@@ -96,5 +102,4 @@ public class JwtUtil {
             return e.getClaims();
         }
     }
-
 }
