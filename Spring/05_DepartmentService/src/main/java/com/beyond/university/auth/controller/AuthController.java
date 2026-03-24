@@ -5,6 +5,7 @@ import com.beyond.university.auth.model.dto.LoginResponse;
 import com.beyond.university.auth.model.service.AuthService;
 import com.beyond.university.common.model.dto.BaseResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -17,15 +18,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /*
     인증 관련 API
-    1. 로그인
+    1. 로그인(완료)
       - POST /api/v1/auth/login
 
-    2. 로그아웃
+    2. 로그아웃(완료)
       - POST /api/v1/auth/logout
 
     3. 토큰 재발급
@@ -67,5 +69,33 @@ public class AuthController {
         );
 
         return ResponseEntity.ok(new BaseResponseDto<>(HttpStatus.OK, loginResponse));
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃", description = "액세스 토큰을 받아 로그아웃함")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "NO_CONTENT",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "UNAUTHORIZED",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            )
+    })
+    public ResponseEntity<Void> logout(
+            @Parameter(hidden = true)
+            @RequestHeader("Authorization") String bearerToken
+    ) {
+        authService.logout(bearerToken);
+
+        return ResponseEntity.noContent().build();
     }
 }

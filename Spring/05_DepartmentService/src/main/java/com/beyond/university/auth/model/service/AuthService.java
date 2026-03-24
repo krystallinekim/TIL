@@ -4,4 +4,6 @@ import com.beyond.university.auth.model.dto.LoginResponse;
 
 public interface AuthService {
     LoginResponse login(String username, String password);
+
+    void logout(String bearerToken);
 }

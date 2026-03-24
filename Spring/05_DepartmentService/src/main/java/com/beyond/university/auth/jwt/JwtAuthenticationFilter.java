@@ -27,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 1. HttpServletRequest 객체에서 토큰을 추출
         String token = jwtTokenProvider.resolveToken(request.getHeader("Authorization"));
 
-        // 2. 추출한 토큰의 무결성과 유효성을 검증
+        // 2. 추출한 토큰의 무결성과 유효성을 검증 & 블랙리스트 확인
         if (jwtTokenProvider.isUsableAccessToken(token)) {
             // 3. Authentication 객체를 생성
             Authentication authentication = jwtTokenProvider.createAuthentication(token);

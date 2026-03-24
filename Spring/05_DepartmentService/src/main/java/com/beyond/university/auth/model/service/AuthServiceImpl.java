@@ -9,7 +9,6 @@ import com.beyond.university.common.exception.UniversityException;
 import com.beyond.university.common.exception.message.ExceptionMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +36,15 @@ public class AuthServiceImpl implements AuthService {
 
         // 3. LoginResponse 객체를 생성해서 반환
         return createLoginResponse(user);
+    }
+
+    @Override
+    public void logout(String bearerToken) {
+        String accessToken = jwtTokenProvider.resolveToken(bearerToken);
+
+        // 로그아웃 요청은 블랙리스트에 액세스 토큰을 저장하는 방식
+        // 블랙리스트는 레디스 서버에 있음
+        jwtTokenProvider.addBlackList(accessToken);
     }
 
     private LoginResponse createLoginResponse(User user) {
