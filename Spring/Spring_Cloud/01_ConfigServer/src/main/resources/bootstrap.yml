@@ -1,0 +1,40 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: config-server
+  profiles:
+    # Git을 저장소로 사용하도록 프로파일을 설정한다.
+    active:
+    - git
+  cloud:
+    config:
+      server:
+        git:
+          # Git 저장소 URL을 지정한다.
+          uri: git@github.com:beyond-sw-camp-25/spring-cloud-config.git
+          # 설정 파일을 찾을 경로를 지정한다.
+          search-paths:
+          # - config/**
+          - config
+          - config/department
+          - config/subject
+          - config/eureka
+          - config/gateway
+          # 로컬 시스템의 SSH 설정을 무시하고, 스프링 클라우드 컨피스에서 제공하는 SSH 설정을 적용한다.
+          ignore-local-ssh-settings: true
+          # SSH 호스트 공개키를 등록한다.
+          host-key: AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg=
+          # 공개키를 생성할 때 사용한 알고리즘을 작성한다.
+          host-key-algorithm: ecdsa-sha2-nistp256
+          # 생성한 비공개키를 입력한다.
+          private-key: |
+            -----BEGIN OPENSSH PRIVATE KEY-----
+            b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+            QyNTUxOQAAACDLT878Rx1aQdpnYtXftCIz4xB/p6toqGJkWfBKyf7RpAAAAJgpbIUyKWyF
+            MgAAAAtzc2gtZWQyNTUxOQAAACDLT878Rx1aQdpnYtXftCIz4xB/p6toqGJkWfBKyf7RpA
+            AAAEB9tX+ksOK1LSw9D2Vzlk2hLOSyPWz55a5wA/2lElmQbstPzvxHHVpB2mdi1d+0IjPj
+            EH+nq2ioYmRZ8ErJ/tGkAAAAFW1vb25pbnM0MzQxQG5hdmVyLmNvbQ==
+            -----END OPENSSH PRIVATE KEY-----
+encrypt:
+  key: b1e2y3o4n5d6#

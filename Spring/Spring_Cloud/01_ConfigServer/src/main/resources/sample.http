@@ -2,15 +2,14 @@
 POST http://localhost:8888/encrypt
 Content-Type: text/plain
 
-h1o2n3g4g5i6l7d8o9n0g;h1o2n3g4g5i6l7d8o9n0g
+beyond
 
-
-### 복호화
+### 프로퍼티 복호화
 POST http://localhost:8888/decrypt
 Content-Type: text/plain
 
-31c8bd59a1a6a018594e43485e48ad3e2ac9f6a222aacd7581bcc64ad01aa148
-
+ea5933fb0462c6addf60abb1e92c06d965f3f766e34dd2609cd5a1b8dd5cb133
 
 ### 프로퍼티 변경
-POST localhost:8089/actuator/refresh
+POST http://localhost:8089/actuator/refresh
+Content-Type: application/json

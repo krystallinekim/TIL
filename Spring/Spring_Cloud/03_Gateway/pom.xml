@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.beyond</groupId>
-    <artifactId>config-server</artifactId>
+    <artifactId>gateway</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>01_ConfigServer</name>
-    <description>01_ConfigServer</description>
+    <name>03_Gateway</name>
+    <description>03_Gateway</description>
     <url/>
     <licenses>
         <license/>
@@ -31,7 +31,6 @@
         <spring-cloud.version>2025.0.1</spring-cloud.version>
     </properties>
     <dependencies>
-        <!-- 애플리케이션을 모니터링하고 관리할 수 있는 기능을 제공한다. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -39,12 +38,17 @@
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-config-server</artifactId>
+            <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter</artifactId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
         </dependency>
 
         <dependency>
